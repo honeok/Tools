@@ -91,7 +91,7 @@ system_info(){
 		kernel_version=$(uname -r)
 	fi
 
-	# 获取CPU架构，型号和核心数
+	# 获取CPU架构,型号和核心数
 	local cpu_architecture=$(uname -m)
 	local cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
 	local cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
