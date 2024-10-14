@@ -60,7 +60,7 @@ fi
 if ! command -v docker >/dev/null 2>&1; then
 	if [[ "${COUNTRY}" == "CN" ]]; then
 		cd ~
-		curl -fsSL -o "get-docker.sh" "${github_proxy}raw.githubusercontent.com/honeok8s/shell/main/docker/get-docker-official.sh" && chmod +x get-docker.sh
+		curl -fsSL -o "get-docker.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/docker/get-docker-official.sh" && chmod +x get-docker.sh
 		sh get-docker.sh --mirror Aliyun
 		rm -f get-docker.sh
 	else
@@ -72,7 +72,7 @@ fi
 
 # Change Dir TS_WORKDIR
 mkdir -p "${TS_WORKDIR}" && cd "${TS_WORKDIR}"
-curl -fsSL -o "docker-compose.yml" "${github_proxy}raw.githubusercontent.com/honeok8s/conf/main/dockerapp/ts-docker-compose.yml"
+curl -fsSL -o "docker-compose.yml" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/ts-docker-compose.yml"
 if [[ "${COUNTRY}" == "CN" ]]; then
 	sed -i 's|image: teamspeak:3.13.7|image: registry.cn-chengdu.aliyuncs.com/honeok/teamspeak:3.13.7|' docker-compose.yml
 	sed -i 's|image: mariadb:11.4.2|image: registry.cn-chengdu.aliyuncs.com/honeok/mariadb:11.4.2|' docker-compose.yml
