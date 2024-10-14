@@ -862,7 +862,7 @@ docker_main_version() {
 install_docker_official() {
 	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
 		cd ~
-		curl -sL -O https://ghp.ci/github.com/honeok8s/shell/raw/main/docker/get-docker-official.sh && chmod a+x get-docker-official.sh
+		curl -sL -O https://ghp.ci/github.com/honeok/shell/raw/main/docker/get-docker-official.sh && chmod a+x get-docker-official.sh
 		bash get-docker-official.sh --mirror Aliyun
 		[ -f ~/get-docker-official.sh ] && rm -f get-docker-official.sh
 	else
@@ -920,7 +920,7 @@ install_add_docker() {
 generate_docker_config() {
 	local config_file="/etc/docker/daemon.json"
 	local config_dir="$(dirname "$config_file")"
-	local registry_url="https://ghp.ci/github.com/honeok8s/conf/blob/main/docker/registry_mirrors.txt"
+	local registry_url="https://ghp.ci/github.com/honeok/conf/blob/main/docker/registry_mirrors.txt"
 	local is_china_server='false'
 	local cgroup_driver
 
@@ -2061,11 +2061,11 @@ linux_panel() {
 
 						case $choice in
 							1|"")
-								docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/npm/docker-compose-latest.yml)
+								docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/npm/docker-compose-latest.yml)
 								break
 								;;
 							2)
-								docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/npm-docker-compose.yml)
+								docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/npm-docker-compose.yml)
 								break
 								;;
 							0)
@@ -2088,7 +2088,7 @@ linux_panel() {
 				docker_describe="一个支持多种存储,支持网页浏览和WebDAV的文件列表程序,由gin和Solidjs驱动"
 				docker_url="官网介绍: https://alist.nn.ci/zh/"
 				default_port_1=5244
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/alist-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/alist-docker-compose.yml)
 				docker_exec_command="docker exec -it alist ./alist admin random"
 				docker_password=""
 				manage_docker_application
@@ -2099,7 +2099,7 @@ linux_panel() {
 				docker_describe="webtop基于Ubuntu的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
 				docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
 				default_port_1=3000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/webtop-ubuntu-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/webtop-ubuntu-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2138,7 +2138,7 @@ linux_panel() {
 				docker_describe="qbittorrent离线BT磁力下载服务"
 				docker_url="官网介绍: https://hub.docker.com/r/linuxserver/qbittorrent"
 				default_port_1=8081
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/qbittorrent-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/qbittorrent-docker-compose.yml)
 				docker_exec_command="sleep 3"
 				docker_password="docker logs qbittorrent"
 				manage_docker_application
@@ -2201,7 +2201,7 @@ linux_panel() {
 							read -n 1 -s -r -p ""
 
 							install_docker
-							docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/poste-docker-compose.yml)
+							docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/poste-docker-compose.yml)
 							echo "$docker_compose_content" > docker-compose.yml
 							sed -i "s/\${domain}/$domain/g" docker-compose.yml
 
@@ -2243,7 +2243,7 @@ linux_panel() {
 				docker_url="官网介绍: https://www.zentao.net/"
 				default_port_1=8080
 				default_port_2=3306
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/zentao-server-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/zentao-server-docker-compose.yml)
 				docker_exec_command="echo 初始用户名: admin"
 				docker_password="echo 初始密码: 123456"
 				manage_docker_application
@@ -2254,7 +2254,7 @@ linux_panel() {
 				docker_describe="青龙面板是一个定时任务管理平台"
 				docker_url="官网介绍: https://github.com/whyour/qinglong"
 				default_port_1=5700
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/qinglong-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/qinglong-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2265,7 +2265,7 @@ linux_panel() {
 				docker_describe="简单图床是一个简单的图床程序"
 				docker_url="官网介绍: https://github.com/icret/EasyImages2.0"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/easyimage-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/easyimage-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2277,7 +2277,7 @@ linux_panel() {
 				docker_url="官网介绍: https://emby.media/"
 				default_port_1=8096
 				default_port_2=8920
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/emby-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/emby-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2289,7 +2289,7 @@ linux_panel() {
 				docker_url="官网介绍: https://github.com/wikihost-opensource/als"
 				default_port_1=8080
 				default_port_2=30000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/looking-glass-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/looking-glass-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2300,7 +2300,7 @@ linux_panel() {
 				docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件,未来将不止是一个DNS服务器"
 				docker_url="官网介绍: https://hub.docker.com/r/adguard/adguardhome"
 				default_port_1=3000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/adguardhome-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/adguardhome-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2311,7 +2311,7 @@ linux_panel() {
 				docker_describe="onlyoffice是一款开源的在线office工具,太强大了!"
 				docker_url="官网介绍: https://www.onlyoffice.com/"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/onlyoffice-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/onlyoffice-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2382,7 +2382,7 @@ linux_panel() {
 				docker_describe="portainer是一个轻量级的docker容器管理面板"
 				docker_url="官网介绍: https://www.portainer.io/"
 				default_port_1=9000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/portainer-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/portainer-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2393,7 +2393,7 @@ linux_panel() {
 				docker_describe="VScode是一款强大的在线代码编写工具"
 				docker_url="官网介绍: https://github.com/coder/code-server"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/vscode-web-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/vscode-web-docker-compose.yml)
 				docker_exec_command="sleep 3"
 				docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
 				manage_docker_application
@@ -2404,7 +2404,7 @@ linux_panel() {
 				docker_describe="uptimekuma易于使用的自托管监控工具"
 				docker_url="官网介绍: https://github.com/louislam/uptime-kuma"
 				default_port_1=3001
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/uptimekuma-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/uptimekuma-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2415,7 +2415,7 @@ linux_panel() {
 				docker_describe="Memos是一款轻量级,自托管的备忘录中心"
 				docker_url="官网介绍: https://github.com/usememos/memos"
 				default_port_1=5230
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/memeos-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/memeos-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2426,7 +2426,7 @@ linux_panel() {
 				docker_describe="webtop基于Alpine,Ubuntu,Fedora和Arch的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
 				docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
 				default_port_1=3000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/webtop-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/webtop-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2438,7 +2438,7 @@ linux_panel() {
 				docker_url="官网介绍: https://nextcloud.com/"
 				default_port_1=8080
 				random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/nextcloud-simple-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/nextcloud-simple-docker-compose.yml)
 				docker_exec_command="echo 账号: nextcloud  密码: $random_password"
 				docker_password=""
 				manage_docker_application
@@ -2449,7 +2449,7 @@ linux_panel() {
 				docker_describe="QD-Today是一个HTTP请求定时任务自动执行框架"
 				docker_url="官网介绍: https://qd-today.github.io/qd/zh_CN/"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/qd-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/qd-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2460,7 +2460,7 @@ linux_panel() {
 				docker_describe="dockge是一个可视化的docker-compose容器管理面板"
 				docker_url="官网介绍: https://github.com/louislam/dockge"
 				default_port_1=5001
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/dockge-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/dockge-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2471,7 +2471,7 @@ linux_panel() {
 				docker_describe="speedtest是用Javascript实现的轻量级速度测试工具,即开即用"
 				docker_url="官网介绍: https://github.com/librespeed/speedtest"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/speedtest-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/speedtest-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2482,7 +2482,7 @@ linux_panel() {
 				docker_describe="searxng是一个私有且隐私的搜索引擎站点"
 				docker_url="官网介绍: https://hub.docker.com/r/alandoyle/searxng"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/searxng-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/searxng-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2494,7 +2494,7 @@ linux_panel() {
 				docker_url="官网介绍: https://www.photoprism.app/"
 				default_port_1=2342
 				random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/photoprism-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/photoprism-docker-compose.yml)
 				docker_exec_command="echo 账号: admin  密码: $random_password"
 				docker_password=""
 				manage_docker_application
@@ -2505,7 +2505,7 @@ linux_panel() {
 				docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker,允许您对PDF文件执行各种操作,例如拆分合并,转换,重新组织,添加图像,旋转,压缩等"
 				docker_url="官网介绍: https://github.com/Stirling-Tools/Stirling-PDF"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/s-pdf-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/s-pdf-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2516,7 +2516,7 @@ linux_panel() {
 				docker_describe="这是一个强大图表绘制软件,思维导图,拓扑图,流程图,都能画"
 				docker_url="官网介绍: https://www.drawio.com/"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/drawio-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/drawio-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2527,7 +2527,7 @@ linux_panel() {
 				docker_describe="Sun-Panel服务器,NAS导航面板,Homepage,浏览器首页"
 				docker_url="官网介绍: https://doc.sun-panel.top/zh_cn/"
 				default_port_1=3002
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/sun-panel-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/sun-panel-docker-compose.yml)
 				docker_exec_command="echo 账号: admin@sun.cc  密码: 12345678"
 				docker_password=""
 				manage_docker_application
@@ -2538,7 +2538,7 @@ linux_panel() {
 				docker_describe="Pingvin Share是一个可自建的文件分享平台,是WeTransfer的一个替代品"
 				docker_url="官网介绍: https://github.com/stonith404/pingvin-share"
 				default_port_1=3000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/pingvin-share-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/pingvin-share-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2549,7 +2549,7 @@ linux_panel() {
 				docker_describe="极简朋友圈,高仿微信朋友圈,记录你的美好生活"
 				docker_url="官网介绍: https://github.com/kingwrcy/moments?tab=readme-ov-file"
 				default_port_1=3000
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/moments-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/moments-docker-compose.yml)
 				docker_exec_command="echo 账号: admin  密码: a123456"
 				docker_password=""
 				manage_docker_application
@@ -2560,7 +2560,7 @@ linux_panel() {
 				docker_describe="LobeChat聚合市面上主流的AI大模型,ChatGPT/Claude/Gemini/Groq/Ollama"
 				docker_url="官网介绍: https://github.com/lobehub/lobe-chat"
 				default_port_1=3210
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/lobe-chat-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/lobe-chat-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2571,7 +2571,7 @@ linux_panel() {
 				docker_describe="是一个多功能IP工具箱,可以查看自己IP信息及连通性,用网页面板呈现"
 				docker_url="官网介绍: https://github.com/jason5ng32/MyIP/blob/main/README_ZH.md"
 				default_port_1=18966
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/myip-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/myip-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2593,7 +2593,7 @@ linux_panel() {
 					wget -qO "$docker_workdir/config.yml" "https://raw.githubusercontent.com/hr3lxphr6j/bililive-go/master/config.yml"
 				fi
 
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/bililive-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/bililive-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2604,7 +2604,7 @@ linux_panel() {
 				docker_describe="为方便开发人员提供的在线工具"
 				docker_url="官网介绍: https://github.com/CorentinTh/it-tools"
 				default_port_1=8080
-				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok8s/conf/main/docker_app/it-tools-docker-compose.yml)
+				docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/it-tools-docker-compose.yml)
 				docker_exec_command=""
 				docker_password=""
 				manage_docker_application
@@ -2752,7 +2752,7 @@ ldnmp_install_certbot() {
 
 	if [ -z "$existing_cron" ]; then
 		# 下载并使脚本可执行
-		curl -sS -o ./auto_cert_renewal.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/docker_certbot.sh
+		curl -sS -o ./auto_cert_renewal.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/docker_certbot.sh
 		chmod a+x auto_cert_renewal.sh
 
 		# 添加定时任务
@@ -2820,7 +2820,7 @@ ldnmp_install_ngx_logrotate(){
 		_red "Nginx目录不存在"
 		return 1
 	else
-		wget -qO "$logrotate_script" "https://raw.githubusercontent.com/honeok8s/shell/main/nginx/LDNMP_ngx_logrotate.sh"
+		wget -qO "$logrotate_script" "https://raw.githubusercontent.com/honeok/shell/main/nginx/LDNMP_ngx_logrotate.sh"
 		if [[ $? -ne 0 ]]; then
 			_red "脚本下载失败,请检查网络连接或脚本URL"
 			return 1
@@ -3003,7 +3003,7 @@ ldnmp_install_nginx(){
 	fi
 
 	if docker inspect "nginx" &>/dev/null; then
-		if curl -s https://raw.githubusercontent.com/honeok8s/conf/main/nginx/ldnmp-nginx-docker-compose.yml | head -n 20 | diff - "/data/docker_data/web/docker-compose.yml" &>/dev/null; then
+		if curl -s https://raw.githubusercontent.com/honeok/conf/main/nginx/ldnmp-nginx-docker-compose.yml | head -n 20 | diff - "/data/docker_data/web/docker-compose.yml" &>/dev/null; then
 			_yellow "检测到通过本脚本已安装Nginx"
 			return 0
 		else
@@ -3016,12 +3016,12 @@ ldnmp_install_nginx(){
 		ldnmp_install_certbot
 
 		mkdir -p "$nginx_dir" "$nginx_conf_dir" "$nginx_dir/certs"
-		wget -qO "$nginx_dir/nginx.conf" "https://raw.githubusercontent.com/honeok8s/conf/main/nginx/nginx-2C2G.conf"
-		wget -qO "$nginx_conf_dir/default.conf" "https://raw.githubusercontent.com/honeok8s/conf/main/nginx/conf.d/default2.conf"
+		wget -qO "$nginx_dir/nginx.conf" "https://raw.githubusercontent.com/honeok/conf/main/nginx/nginx-2C2G.conf"
+		wget -qO "$nginx_conf_dir/default.conf" "https://raw.githubusercontent.com/honeok/conf/main/nginx/conf.d/default2.conf"
 
 		default_server_ssl
 
-		wget -qO "/data/docker_data/web/docker-compose.yml" "https://raw.githubusercontent.com/honeok8s/conf/main/nginx/ldnmp-nginx-docker-compose.yml"
+		wget -qO "/data/docker_data/web/docker-compose.yml" "https://raw.githubusercontent.com/honeok/conf/main/nginx/ldnmp-nginx-docker-compose.yml"
 
 		cd /data/docker_data/web || { _red "无法进入目录/data/docker_data/web"; return 1; }
 		manage_compose start
@@ -3288,7 +3288,7 @@ fail2ban_sshd() {
 fail2ban_install_sshd() {
 	[ ! -d /data/docker_data/fail2ban ] && mkdir -p /data/docker_data/fail2ban
 	cd /data/docker_data/fail2ban
-	wget -qO docker-compose.yml https://raw.githubusercontent.com/honeok8s/conf/main/fail2ban/fail2ban-docker-compose.yml
+	wget -qO docker-compose.yml https://raw.githubusercontent.com/honeok/conf/main/fail2ban/fail2ban-docker-compose.yml
 
 	manage_compose start
 
@@ -3307,7 +3307,7 @@ fail2ban_install_sshd() {
 		systemctl start rsyslog
 		systemctl enable rsyslog
 		cd /data/docker_data/fail2ban/config/fail2ban/jail.d/
-		curl -sS -O https://raw.githubusercontent.com/honeok8s/conf/main/fail2ban/linux-ssh.conf
+		curl -sS -O https://raw.githubusercontent.com/honeok/conf/main/fail2ban/linux-ssh.conf
 	fi
 }
 
@@ -3376,9 +3376,9 @@ linux_ldnmp() {
 				cd "$web_dir" || { _red "无法进入目录 $web_dir"; return 1; }
 
 				# 下载配置文件
-				wget -qO "$nginx_dir/nginx.conf" "https://raw.githubusercontent.com/honeok8s/conf/main/nginx/nginx-2C2G.conf"
-				wget -qO "$nginx_dir/conf.d/default.conf" "https://raw.githubusercontent.com/honeok8s/conf/main/nginx/conf.d/default2.conf"
-				wget -qO "$web_dir/docker-compose.yml" "https://raw.githubusercontent.com/honeok8s/conf/main/ldnmp/LDNMP-docker-compose.yml"
+				wget -qO "$nginx_dir/nginx.conf" "https://raw.githubusercontent.com/honeok/conf/main/nginx/nginx-2C2G.conf"
+				wget -qO "$nginx_dir/conf.d/default.conf" "https://raw.githubusercontent.com/honeok/conf/main/nginx/conf.d/default2.conf"
+				wget -qO "$web_dir/docker-compose.yml" "https://raw.githubusercontent.com/honeok/conf/main/ldnmp/LDNMP-docker-compose.yml"
 
 				default_server_ssl
 
@@ -4151,7 +4151,7 @@ linux_ldnmp() {
 
 				[ ! -d /data/script ] && mkdir -p /data/script
 				cd /data/script || { _red "进入目录/data/script失败"; return 1; }
-				wget -qO "${useip}_backup.sh" "https://raw.githubusercontent.com/honeok8s/shell/main/callscript/web_backup.sh"
+				wget -qO "${useip}_backup.sh" "https://raw.githubusercontent.com/honeok/shell/main/callscript/web_backup.sh"
 				chmod +x ${useip}_backup.sh
 
 				sed -i "s/0.0.0.0/$useip/g" ${useip}_backup.sh
@@ -4324,7 +4324,7 @@ linux_ldnmp() {
 									fi
 								done
 
-								wget -qO /data/docker_data/web/nginx/conf.d/default.conf https://raw.githubusercontent.com/honeok8s/conf/main/nginx/conf.d/default11.conf
+								wget -qO /data/docker_data/web/nginx/conf.d/default.conf https://raw.githubusercontent.com/honeok/conf/main/nginx/conf.d/default11.conf
 
 								if nginx_check; then
 									docker restart nginx >/dev/null 2>&1
@@ -4334,10 +4334,10 @@ linux_ldnmp() {
 								fi
 
 								cd /data/docker_data/fail2ban/config/fail2ban/jail.d || { _red "无法进入目录 /data/docker_data/fail2ban/config/fail2ban/jail.d"; return 1; }
-								curl -sS -O https://raw.githubusercontent.com/honeok8s/conf/main/fail2ban/nginx-docker-cc.conf
+								curl -sS -O https://raw.githubusercontent.com/honeok/conf/main/fail2ban/nginx-docker-cc.conf
 								
 								cd /data/docker_data/fail2ban/config/fail2ban/action.d || { _red "无法进入目录 /data/docker_data/fail2ban/config/fail2ban/action.d"; return 1; }
-								curl -sS -O https://raw.githubusercontent.com/honeok8s/conf/main/fail2ban/cloudflare-docker.conf
+								curl -sS -O https://raw.githubusercontent.com/honeok/conf/main/fail2ban/cloudflare-docker.conf
 								
 								sed -i "s/kejilion@outlook.com/$CFUSER/g" /data/docker_data/fail2ban/config/fail2ban/action.d/cloudflare-docker.conf
 								sed -i "s/APIKEY00000/$CFKEY/g" /data/docker_data/fail2ban/config/fail2ban/action.d/cloudflare-docker.conf
@@ -5272,13 +5272,13 @@ xanmod_bbr3(){
 					remove 'linux-*xanmod1*'
 					update-grub
 					# wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-					wget -qO - https://raw.githubusercontent.com/honeok8s/shell/main/callscript/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+					wget -qO - https://raw.githubusercontent.com/honeok/shell/main/callscript/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
 					# 添加存储库
 					echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
 					# kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-					local kernel_version=$(wget -q https://raw.githubusercontent.com/honeok8s/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+					local kernel_version=$(wget -q https://raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
 					install linux-xanmod-x64v$kernel_version
 
@@ -5341,13 +5341,13 @@ xanmod_bbr3(){
 				install wget gnupg
 
 				# wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-				wget -qO - https://raw.githubusercontent.com/honeok8s/shell/main/callscript/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+				wget -qO - https://raw.githubusercontent.com/honeok/shell/main/callscript/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
 				# 添加存储库
 				echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
 				# kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-				local kernel_version=$(wget -q https://raw.githubusercontent.com/honeok8s/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+				local kernel_version=$(wget -q https://raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
 				install linux-xanmod-x64v$kernel_version
 
@@ -5665,7 +5665,7 @@ telegram_bot(){
 				chmod +x ~/TG-check-notify.sh
 				vim ~/TG-check-notify.sh
 			else
-				curl -fsSL -o ~/TG-check-notify.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/TG-check-notify.sh
+				curl -fsSL -o ~/TG-check-notify.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/TG-check-notify.sh
 				# 计算文件哈希
 				TG_check_notify=$(sha256sum ~/TG-check-notify.sh | awk '{ print $1 }')
 
@@ -5685,7 +5685,7 @@ telegram_bot(){
 			crontab -l | grep -v '~/TG-check-notify.sh' | crontab - > /dev/null 2>&1
 			(crontab -l ; echo "@reboot tmux new -d -s TG-check-notify '~/TG-check-notify.sh'") | crontab - > /dev/null 2>&1
 
-			curl -fsSL -o ~/TG-SSH-check-notify.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/TG-SSH-check-notify.sh
+			curl -fsSL -o ~/TG-SSH-check-notify.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/TG-SSH-check-notify.sh
 			# 计算文件哈希
 			TG_SSH_check_notify=$(sha256sum ~/TG-SSH-check-notify.sh | awk '{ print $1 }')
 
@@ -6279,7 +6279,7 @@ cloudflare_ddns() {
 				read -r CFTTL
 				CFTTL=${CFTTL:-60}
 
-				curl -fsSL -o ~/cf-v4-ddns.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/cf-v4-ddns.sh
+				curl -fsSL -o ~/cf-v4-ddns.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/cf-v4-ddns.sh
 				# 计算文件哈希
 				FILE_HASH=$(sha256sum ~/cf-v4-ddns.sh | awk '{ print $1 }')
 				
@@ -7878,7 +7878,7 @@ palworld_script(){
 		case $choice in
 			1)
 				cd ~
-				curl -fsSL -o ./palworld.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/palworld.sh
+				curl -fsSL -o ./palworld.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/palworld.sh
 				chmod a+x ./palworld.sh
 				;;
 			2)
@@ -7893,7 +7893,7 @@ palworld_script(){
 				if [ -f ~/palworld.sh ]; then
 					bash ~/palworld.sh
 				else
-					curl -fsSL -o palworld.sh https://raw.githubusercontent.com/honeok8s/shell/main/callscript/palworld.sh
+					curl -fsSL -o palworld.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/palworld.sh
 					chmod a+x palworld.sh
 					bash palworld.sh
 				fi
@@ -7911,7 +7911,7 @@ palworld_script(){
 
 #################### 脚本更新START ####################
 honeok_update() {
-	local remote_script_url="https://raw.githubusercontent.com/honeok8s/shell/main/honeok.sh"
+	local remote_script_url="https://raw.githubusercontent.com/honeok/shell/main/honeok.sh"
 	local local_script_path="$HOME/honeok.sh"
 
 	# 检查本地脚本是否存在
@@ -7950,7 +7950,7 @@ honeok(){
 
 	while true; do
 		clear
-		echo -e "${yellow}Github: https://github.com/honeok8s${white}     ${orange}Version: ${honeok_v}${white}"
+		echo -e "${yellow}Github: https://github.com/honeok${white}     ${orange}Version: ${honeok_v}${white}"
 		echo "-------------------------------------------------------"
 		print_logo
 		echo "-------------------------------------------------------"
