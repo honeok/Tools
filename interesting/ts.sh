@@ -14,6 +14,7 @@ _red() { echo -e ${red}$@${none}; }
 
 # Globle Install Path.
 TS_WORKDIR="/data/docker_data/teamspeak"
+COUNTRY=""
 
 # Country Select
 if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
