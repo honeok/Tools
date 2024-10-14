@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  serverstatus:
+    image: 'cppla/serverstatus'
+    ports:
+      - '35601:35601'
+      - '8080:80'
+    volumes:
+      - './serverstatus-monthtraffic:/usr/share/nginx/html/json'
+      - './serverstatus-config.json:/ServerStatus/server/config.json'
+    container_name: serverstatus
+    restart: unless-stopped
+    networks:
+      - serverstatus
+
+networks:
+  serverstatus:
+    driver: bridge

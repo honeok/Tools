@@ -1,0 +1,8 @@
+# 联网状态下一键脚本
+
+WIN10选择Windows PowerShell管理员模式执行
+WIN11选择终端管理员
+
+
+# 命令行回车执行，选项框选择1 等待激活即可
+irm https://massgrave.dev/get | iex
