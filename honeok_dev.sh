@@ -33,7 +33,6 @@ echo -e "${yellow}   __                      __
 	local os_text="当前操作系统:${os_info}"
 	_yellow "${os_text}"
 }
-
 #################### 系统信息START ####################
 # 查看系统信息
 system_info(){
