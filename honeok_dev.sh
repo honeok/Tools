@@ -35,65 +35,35 @@ echo -e "${yellow}   __                      __
 }
 #################### 系统信息START ####################
 # 查看系统信息
+# 菜单排版参考：https://github.com/spiritLHLS/ecs
 system_info(){
-	local hostname
-	if [ -f "/etc/alpine-release" ]; then
-		hostname=$(hostname)
-	else
-		hostname=$(hostnamectl | sed -n 's/^[[:space:]]*Static hostname:[[:space:]]*\(.*\)$/\1/p')
-	fi
-
-	# 获取运营商信息
-	local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}')
-
-	# 获取操作系统版本信息
-	local os_release
-	if command -v lsb_release >/dev/null 2>&1; then
-		os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs)
-	else
-		os_release=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
-	fi
-
-	# 获取虚拟化类型
-	local virt_type
-	if [ -f "/etc/alpine-release" ]; then
-		virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
-	else
-		virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
-	fi
-	# 检查是否为空，空则认为是物理机
-	if [ -z "$virt_type" ]; then
-		virt_type="Physical Machine"
-	fi
-
-	# 获取内核版本信息
-	local kernel_version
-	if command -v hostnamectl >/dev/null 2>&1; then
-		kernel_version=$(hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p')
-	else
-		kernel_version=$(uname -r)
-	fi
-
-	# 获取CPU架构，型号和核心数
-	local cpu_architecture=$(uname -m)
+	# 获取CPU型号
 	local cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
+	# 获取核心数
 	local cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
-
-	# 计算CPU使用率，处理可能的除零错误
-	local cpu_usage=$(awk -v OFMT='%0.2f' '
-		NR==1 {idle1=$5; total1=$2+$3+$4+$5+$6+$7+$8+$9}
-		NR==2 {
-			idle2=$5
-			total2=$2+$3+$4+$5+$6+$7+$8+$9
-			diff_idle = idle2 - idle1
-			diff_total = total2 - total1
-			if (diff_total == 0) {
-				cpu_usage=0
-			} else {
-				cpu_usage=100*(1-(diff_idle/diff_total))
-			}
-			printf "%.2f%%\n", cpu_usage
-		}' <(sleep 1; cat /proc/stat))
+	# 获取CPU频率
+	local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | cut -d':' -f2 | xargs)
+	# 获取CPU缓存大小
+	local cpu_cache_l1=$(lscpu | grep 'L1d cache' | awk '{print $3, $4}')
+	local cpu_cache_l2=$(lscpu | grep 'L2 cache' | awk '{print $3, $4}')
+	local cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
+	# 检查AES-NI支持
+	local aes_ni
+	if grep -iq 'aes' /proc/cpuinfo; then
+		aes_ni="✔ Enabled"
+	else
+		aes_ni="❌ Disabled"
+	fi
+	# 检查VM-x/AMD-V支持
+	local vm_support
+	if grep -iq 'vmx' /proc/cpuinfo; then
+		vm_support="VM-x Enabled"
+	elif grep -iq 'svm' /proc/cpuinfo; then
+		vm_support="AMD-V Enabled"
+	else	
+		vm_support="❌ Disabled"
+	fi
+	# 内存
 	local mem_usage=$(free -b | awk 'NR==2{printf "%.2f/%.2f MB (%.2f%%)", $3/1024/1024, $2/1024/1024, $3*100/$2}')
 	local swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
 
@@ -113,6 +83,48 @@ system_info(){
 
 	# 启动盘路径
 	local boot_partition=$(findmnt -n -o SOURCE /)
+
+	# 系统在线时间
+	local uptime_str=$(cat /proc/uptime | awk -F. '{run_days=int($1 / 86400);run_hours=int(($1 % 86400) / 3600);run_minutes=int(($1 % 3600) / 60); if (run_days > 0) printf("%d天 ", run_days); if (run_hours > 0) printf("%d时 ", run_hours); printf("%d分\n", run_minutes)}')
+
+	# 计算CPU使用率，处理可能的除零错误
+	local cpu_usage=$(awk -v OFMT='%0.2f' '
+		NR==1 {idle1=$5; total1=$2+$3+$4+$5+$6+$7+$8+$9}
+		NR==2 {
+			idle2=$5
+			total2=$2+$3+$4+$5+$6+$7+$8+$9
+			diff_idle = idle2 - idle1
+			diff_total = total2 - total1
+			if (diff_total == 0) {
+				cpu_usage=0
+			} else {
+				cpu_usage=100*(1-(diff_idle/diff_total))
+			}
+			printf "%.2f%%\n", cpu_usage
+		}' <(sleep 1; cat /proc/stat))
+
+	# 获取操作系统版本信息
+	local os_release
+	if command -v lsb_release >/dev/null 2>&1; then
+		os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs)
+	else
+		os_release=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
+	fi
+
+	# 获取CPU架构
+	local cpu_architecture=$(uname -m)
+	
+	# 获取内核版本信息
+	local kernel_version
+	if command -v hostnamectl >/dev/null 2>&1; then
+		kernel_version=$(hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p')
+	else
+		kernel_version=$(uname -r)
+	fi
+
+	# 获取网络拥塞控制算法和队列算法
+	local congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
+	local queue_algorithm=$(sysctl -n net.core.default_qdisc)
 
 	# 将字节数转换为GB（获取出网入网数据）
 	bytes_to_gb() {
@@ -147,61 +159,67 @@ system_info(){
 		fi
 	done < /proc/net/dev
 
-	# 获取网络拥塞控制算法和队列算法
-	local congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
-	local queue_algorithm=$(sysctl -n net.core.default_qdisc)
+	# 获取虚拟化类型
+	local virt_type
+	if [ -f "/etc/alpine-release" ]; then
+		virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
+	else
+		virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
+	fi
+	# 检查是否为空，空则认为是物理机
+	if [ -z "$virt_type" ]; then
+		virt_type="Physical Machine"
+	fi
+
+	# 获取运营商信息
+	local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}')
 
 	ip_address
 
-	# 获取地理位置、系统时区、系统时间和运行时长
+	# 获取地理位置
 	local location=$(curl -s ipinfo.io/city)
-
+	# 获取系统时区
 	local system_time
 	if grep -q 'Alpine' /etc/issue; then
 		system_time=$(date +"%Z %z")
 	else
 		system_time=$(timedatectl | grep 'Time zone' | awk '{print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
 	fi
-
+	# 获取服务器当前时间
 	local current_time=$(date +"%Y-%m-%d %H:%M:%S")
-	local uptime_str=$(cat /proc/uptime | awk -F. '{run_days=int($1 / 86400);run_hours=int(($1 % 86400) / 3600);run_minutes=int(($1 % 3600) / 60); if (run_days > 0) printf("%d天 ", run_days); if (run_hours > 0) printf("%d时 ", run_hours); printf("%d分\n", run_minutes)}')
 
-	echo ""
 	echo "系统信息查询"
 	echo "-------------------------"
-	echo "主机名: ${hostname}"
-	echo "运营商: ${isp_info}"
+	echo "CPU 型号          : ${cpu_model}"
+	echo "CPU 核心数        : ${cpu_cores}"
+	echo "CPU 频率          : ${cpu_frequency} MHz"
+	echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3} "
+	echo "AES-NI指令集支持  : ${aes_ni}"
+	echo "VM-x/AMD-V支持    : ${vm_support}"
+	echo "物理内存          : ${mem_usage}"
+	echo "虚拟内存          : ${swap_usage}"
+	echo "硬盘空间          : ${disk_output}"
+	echo "启动盘路径        : ${boot_partition}"
+	echo "系统在线时间      : ${uptime_str}"
+	echo "CPU占用率         : ${cpu_usage}"
+	echo "系统              : ${os_release}"
+	echo "架构              : ${cpu_architecture} $(getconf LONG_BIT)Bit"
+	echo "内核              : ${kernel_version}"
+	echo "网络拥塞控制算法  : ${congestion_algorithm} ${queue_algorithm}"
+	echo "网络接收数据量    : $(bytes_to_gb $total_recv_bytes)"
+	echo "网络发送数据量    : $(bytes_to_gb $total_sent_bytes)"
+	echo "虚拟化架构        : ${virt_type}"
 	echo "-------------------------"
-	echo "操作系统: ${os_release}"
-	echo "虚拟化: ${virt_type}"
-	echo "内核版本: ${kernel_version}"
+	echo "运营商            : ${isp_info}"
+	echo "公网IPv4地址      : ${ipv4_address}"
+	echo "公网IPv6地址      : ${ipv6_address}"
 	echo "-------------------------"
-	echo "CPU架构: ${cpu_architecture}"
-	echo "CPU型号: ${cpu_model}"
-	echo "CPU核心: ${cpu_cores}"
-	echo "-------------------------"
-	echo "CPU占用率: ${cpu_usage}"
-	echo "物理内存: ${mem_usage}"
-	echo "虚拟内存: ${swap_usage}"
-	echo "硬盘空间: ${disk_output}"
-	echo "启动盘路径: ${boot_partition}"
-	echo "-------------------------"
-	echo "网络接收数据量: $(bytes_to_gb $total_recv_bytes)"
-	echo "网络发送数据量: $(bytes_to_gb $total_sent_bytes)"
-	echo "-------------------------"
-	echo "网络拥塞控制算法: ${congestion_algorithm} ${queue_algorithm}"
-	echo "-------------------------"
-	echo "公网IPv4地址: ${ipv4_address}"
-	echo "公网IPv6地址: ${ipv6_address}"
-	echo "-------------------------"
-	echo "地理位置: ${location}"
-	echo "系统时区: ${system_time}"
-	echo "系统时间: ${current_time}"
-	echo "运行时长: ${uptime_str}"
+	echo "地理位置          : ${location}"
+	echo "系统时区          : ${system_time}"
+	echo "系统时间          : ${current_time}"
 	echo "-------------------------"
 	echo
 }
-
 #################### 系统信息END ####################
 
 #################### 通用函数START ####################
@@ -1301,7 +1319,7 @@ docker_ps() {
 				docker stop $(docker ps -q)
 				;;
 			8)
-				echo -n -e "${yellow}确定删除所有容器吗？（y/n）:${white}"
+				echo -n -e "${yellow}确定删除所有容器吗?(y/n):${white}"
 				read -r choice
 
 				case "$choice" in
@@ -1402,7 +1420,7 @@ docker_image() {
 				done
 				;;
 			4)
-				echo -n -e "${red}确定删除所有镜像吗？（y/n）:${white}"
+				echo -n -e "${red}确定删除所有镜像吗?(y/n):${white}"
 				read -r choice
 
 				case "$choice" in
@@ -1466,7 +1484,7 @@ docker_manager(){
 				else
 					docker_main_version
 					while true; do
-						echo -n -e "${yellow}是否升级Docker环境？（y/n）${white}"
+						echo -n -e "${yellow}是否升级Docker环境?(y/n)${white}"
 						read -r answer
 
 						case $answer in
@@ -4137,7 +4155,7 @@ linux_ldnmp() {
 
 					while true; do
 						clear
-						echo -n -e "${yellow}要传送文件到远程服务器吗？（y/n）${white}"
+						echo -n -e "${yellow}要传送文件到远程服务器吗?(y/n)${white}"
 						read -r choice
 
 						case "$choice" in
@@ -4448,7 +4466,7 @@ linux_ldnmp() {
 				elif [ -x "$(command -v fail2ban-client)" ] ; then
 					clear
 					_yellow "卸载旧版Fail2ban"
-					echo -n -e "${yellow}确定继续吗？（y/n）${white}"
+					echo -n -e "${yellow}确定继续吗?(y/n)${white}"
 					read -r choice
 					
 					case "$choice" in
@@ -4658,7 +4676,7 @@ linux_ldnmp() {
 							_green "更新${ldnmp_pods}完成"
 							;;
 						5)
-							echo -n -e "${yellow}长时间不更新环境的用户请慎重更新LDNMP环境，会有数据库更新失败的风险，确定更新LDNMP环境吗？（y/n）${white}"
+							echo -n -e "${yellow}长时间不更新环境的用户请慎重更新LDNMP环境，会有数据库更新失败的风险，确定更新LDNMP环境吗?(y/n)${white}"
 							read -r choice
 
 							case "$choice" in
@@ -5353,7 +5371,7 @@ xanmod_bbr3(){
 		echo "VPS是512M内存的，请提前添加1G虚拟内存，防止因内存不足失联！"
 		echo "------------------------------------------------"
 
-		echo -n -e "${yellow}确定继续吗？（y/n）${white}"
+		echo -n -e "${yellow}确定继续吗?(y/n)${white}"
 		read -r choice
 
 		case "$choice" in
