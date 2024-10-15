@@ -104,7 +104,7 @@ system_info(){
 	if [ -f "/etc/alpine-release" ]; then
 		virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
 	else
-		virt_type=$(hostnamectl | awk -F ': ' '/Virtualization/ {print $2}')
+		virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
 	fi
 	# 检查是否为空，空则认为是物理机
 	if [ -z "$virt_type" ]; then
