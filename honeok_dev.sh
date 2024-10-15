@@ -5,47 +5,24 @@
 # Current Author: honeok
 # Blog: https://www.honeok.com
 
-# 细
-yellow='\033[0;33m'       # 黄色
-red='\033[0;31m'          # 红色
-magenta='\033[0;35m'      # 品红色
-green='\033[0;32m'        # 绿色
-blue='\033[0;34m'         # 蓝色
-cyan='\033[0;36m'         # 青色
-purple='\033[0;35m'       # 紫色
-gray='\033[0;30m'         # 灰色
-orange='\033[0;38;5;208m' # 橙色
-light_yellow='\033[93m'   # 浅黄色
-light_green='\033[92m'    # 亮绿色
-light_cyan='\033[96m'     # 亮青色
-light_purple='\033[95m'    # 亮紫色
-white='\033[0m'           # 白色
-
-# 粗
-#yellow='\033[1;33m'       # 黄色
-#red='\033[1;31m'          # 红色
-#magenta='\033[1;35m'      # 品红色
-#green='\033[1;32m'        # 绿色
-#blue='\033[1;34m'         # 蓝色
-#cyan='\033[1;36m'         # 青色
-#purple='\033[1;35m'       # 紫色
-#gray='\033[1;30m'         # 灰色
-#orange='\033[1;38;5;208m' # 橙色
-#white='\033[0m'           # 白色
+yellow='\033[93m'        # 亮黄色
+red='\033[1;31m'         # 亮红色
+green='\033[92m'         # 亮绿色
+blue='\033[1;34m'        # 亮蓝色
+cyan='\033[96m'          # 亮青色
+purple='\033[95m'        # 亮紫色
+gray='\033[1;37m'        # 亮灰色
+orange='\033[38;5;214m'  # 亮橙色
+white='\033[0m'          # 重置为默认颜色
 
 _yellow() { echo -e ${yellow}$@${white}; }
 _red() { echo -e ${red}$@${white}; }
-_magenta() { echo -e ${magenta}$@${white}; }
 _green() { echo -e ${green}$@${white}; }
 _blue() { echo -e ${blue}$@${white}; }
 _cyan() { echo -e ${cyan}$@${white}; }
 _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
-_light_yellow () { echo -e ${light_yellow}$@${white}; }
-_light_green () { echo -e ${light_green}$@${white}; }
-_light_cyan () { echo -e ${light_cyan}$@${white}; }
-_light_purple () { echo -e ${light_purple}$@${white}; }
 
 honeok_v="v3.0.0_dev"
 ########################################
@@ -92,13 +69,13 @@ set_region_config
 ########################################
 print_logo(){
 	local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
-echo -e "${light_yellow}   __                      __ 
+echo -e "${yellow}   __                      __ 
   / /  ___  ___  ___ ___  / /__
  / _ \/ _ \/ _ \/ -_) _ \/  '_/
 /_//_/\___/_//_/\__/\___/_/\_\ 
 "
 	local os_text="当前操作系统:${os_info}"
-	_light_yellow "${os_text}"
+	_yellow "${os_text}"
 }
 
 #################### 系统信息START ####################
@@ -8026,8 +8003,8 @@ honeok(){
 	while true; do
 		clear
 		print_logo
-		_light_purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
-		echo -e "${light_cyan}Author: honeok${white} ${light_yellow} ${honeok_v}${white}"
+		_purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
+		echo -e "${cyan}Author: honeok${white} ${yellow} ${honeok_v}${white}"
 		echo "------------------------"
 		echo "1. 系统信息查询"
 		echo "2. 系统更新"
