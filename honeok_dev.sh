@@ -43,10 +43,29 @@ system_info(){
 	local cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
 	# 获取CPU频率
 	local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | cut -d':' -f2 | xargs)
+
 	# 获取CPU缓存大小
-	local cpu_cache_l1=$(lscpu | grep 'L1d cache' | awk '{print $3, $4}')
-	local cpu_cache_l2=$(lscpu | grep 'L2 cache' | awk '{print $3, $4}')
-	local cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
+	local get_cpu_cache cpu_cache_info
+	get_cpu_cache() {
+		local cpu_cache_l1=$(lscpu | grep 'L1d cache' | awk '{print $3, $4}')
+		local cpu_cache_l2=$(lscpu | grep 'L2 cache' | awk '{print $3, $4}')
+
+		# 检查是否存在L3缓存
+		local cpu_cache_l3=""
+		if lscpu | grep -q 'L3 cache'; then
+			cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
+		fi
+
+		# 格式化输出
+		if [[ -n "$cpu_cache_l3" ]]; then
+			echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
+		else
+			echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
+		fi
+	}
+	# 捕获get_cpu_cache的输出存储变量
+	cpu_cache_info=$(get_cpu_cache)
+
 	# 检查AES-NI支持
 	local aes_ni
 	if grep -iq 'aes' /proc/cpuinfo; then
@@ -54,6 +73,7 @@ system_info(){
 	else
 		aes_ni="❌ Disabled"
 	fi
+
 	# 检查VM-x/AMD-V支持
 	local vm_support
 	if grep -iq 'vmx' /proc/cpuinfo; then
@@ -63,6 +83,7 @@ system_info(){
 	else	
 		vm_support="❌ Disabled"
 	fi
+
 	# 内存
 	local mem_usage=$(free -b | awk 'NR==2{printf "%.2f/%.2f MB (%.2f%%)", $3/1024/1024, $2/1024/1024, $3*100/$2}')
 	local swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
@@ -193,7 +214,7 @@ system_info(){
 	echo "CPU 型号          : ${cpu_model}"
 	echo "CPU 核心数        : ${cpu_cores}"
 	echo "CPU 频率          : ${cpu_frequency} MHz"
-	echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3} "
+	echo "${cpu_cache_info}" # CPU缓存
 	echo "AES-NI指令集支持  : ${aes_ni}"
 	echo "VM-x/AMD-V支持    : ${vm_support}"
 	echo "物理内存          : ${mem_usage}"
