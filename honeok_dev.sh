@@ -4853,7 +4853,7 @@ add_sshpasswd() {
 	fi
 
 	# 清理不再使用的SSH配置文件目录
-	rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/*
+	rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/* >/dev/null 2>&1
 
 	restart_ssh
 
