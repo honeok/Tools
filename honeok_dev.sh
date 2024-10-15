@@ -8029,12 +8029,12 @@ honeok(){
 
 	while true; do
 		clear
-		echo -e "${yellow}Github: https://github.com/honeok${white}     ${orange}Version: ${honeok_v}${white}"
+		echo -e "${yellow}Github: https://github.com/honeok${white}     ${cyan}Version: ${honeok_v}${white}"
 		echo "-------------------------------------------------------"
 		print_logo
 		echo "-------------------------------------------------------"
 		_purple "适配: Ubuntu/Debian/CentOS/Alpine/RedHat/Fedora/Alma/Rocky"
-		_cyan "Author: honeok"
+		_cyan "Author: honeok Blog: www.honeok.com"
 		echo -e "${green}服务器当前时间: $(date +"%Y-%m-%d %H:%M:%S")${white} ${yellow}时区: ${system_time}${white}"
 		echo "-------------------------------------------------------"
 		echo "1. 系统信息查询                   2. 系统更新"
