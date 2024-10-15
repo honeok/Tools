@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# by honeok
-# from https://github.com/honeok/shell
+# Author: honeok
+# Blog：www.honeok.com
+# Github：https://github.com/honeok/shell
 
 yellow='\033[93m'        # 亮黄色
 red='\033[1;31m'         # 亮红色
