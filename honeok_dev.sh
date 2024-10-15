@@ -58,9 +58,9 @@ system_info(){
 
 		# 格式化输出
 		if [[ -n "$cpu_cache_l3" ]]; then
-			echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
+			echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
 		else
-			echo "CPU 缓存          : L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
+			echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
 		fi
 	}
 	# 捕获get_cpu_cache的输出存储变量
@@ -214,7 +214,7 @@ system_info(){
 	echo "CPU 型号          : ${cpu_model}"
 	echo "CPU 核心数        : ${cpu_cores}"
 	echo "CPU 频率          : ${cpu_frequency} MHz"
-	echo "${cpu_cache_info}" # CPU缓存
+	echo "CPU 缓存          : ${cpu_cache_info}"
 	echo "AES-NI指令集支持  : ${aes_ni}"
 	echo "VM-x/AMD-V支持    : ${vm_support}"
 	echo "物理内存          : ${mem_usage}"
