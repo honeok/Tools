@@ -7540,7 +7540,7 @@ linux_workspace() {
 						3)
 							echo -n "请输入要删除的工作区名称:"
 							read -r workspace_name
-							tmux kill-window -t $workspace_name
+							tmux kill-window -t "$workspace_name"
 							;;
 						0)
 							break
@@ -7583,7 +7583,7 @@ servertest_script(){
 		echo "15. Nxtrace 快速回程测试脚本"
 		echo "16. Nxtrace 指定IP回程测试脚本"
 		echo "17. Ludashi2020 三网线路测试"
-		echo "18. I-abc 多功能测速脚本"
+		echo "18. i-abc 多功能测速脚本"
 		echo "------------------------"
 		_yellow "硬件性能测试"
 		echo "20. Yabs 性能测试"
@@ -7610,8 +7610,8 @@ servertest_script(){
 				;;
 			3)
 				clear
-				install wget
-				wget -qO- https://github.com/yeahwu/check/raw/main/check.sh | bash
+				install wget >/dev/null 2>&1
+				wget -qO- "${github_proxy}https://github.com/yeahwu/check/raw/main/check.sh" | bash
 				;;
 			4)
 				clear
@@ -7619,12 +7619,12 @@ servertest_script(){
 				;;
 			12)
 				clear
-				install wget
+				install wget >/dev/null 2>&1
 				wget -qO- git.io/besttrace | bash
 				;;
 			13)
 				clear
-				curl https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh | bash
+				curl -sL "${github_proxy}https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh" | bash
 				;;
 			14)
 				clear
@@ -7660,15 +7660,15 @@ servertest_script(){
 				echo -n -e "${yellow}输入一个指定IP:${white}"
 				read -r testip
 				curl nxtrace.org/nt | bash
-				nexttrace $testip
+				nexttrace "$testip"
 				;;
 			17)
 				clear
-				curl https://raw.githubusercontent.com/ludashi2020/backtrace/main/install.sh -sSf | sh
+				curl ${github_proxy}https://raw.githubusercontent.com/ludashi2020/backtrace/main/install.sh -sSf | sh
 				;;
 			18)
 				clear
-				bash <(curl -sL bash.icu/speedtest)
+				bash <(curl -sL ${github_proxy}https://raw.githubusercontent.com/i-abc/Speedtest/main/speedtest.sh)
 				;;
 			20)
 				clear
