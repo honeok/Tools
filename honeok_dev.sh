@@ -5,16 +5,26 @@
 # Current Author: honeok
 # Blog: https://www.honeok.com
 
-yellow='\033[1;33m'       # 黄色
-red='\033[1;31m'          # 红色
-magenta='\033[1;35m'      # 品红色
-green='\033[1;32m'        # 绿色
-blue='\033[1;34m'         # 蓝色
-cyan='\033[1;36m'         # 青色
-purple='\033[1;35m'       # 紫色
-gray='\033[1;30m'         # 灰色
-orange='\033[1;38;5;208m' # 橙色
+yellow='\033[0;33m'       # 黄色
+red='\033[0;31m'          # 红色
+magenta='\033[0;35m'      # 品红色
+green='\033[0;32m'        # 绿色
+blue='\033[0;34m'         # 蓝色
+cyan='\033[0;36m'         # 青色
+purple='\033[0;35m'       # 紫色
+gray='\033[0;30m'         # 灰色
+orange='\033[0;38;5;208m' # 橙色
 white='\033[0m'           # 白色
+#yellow='\033[1;33m'       # 黄色
+#red='\033[1;31m'          # 红色
+#magenta='\033[1;35m'      # 品红色
+#green='\033[1;32m'        # 绿色
+#blue='\033[1;34m'         # 蓝色
+#cyan='\033[1;36m'         # 青色
+#purple='\033[1;35m'       # 紫色
+#gray='\033[1;30m'         # 灰色
+#orange='\033[1;38;5;208m' # 橙色
+#white='\033[0m'           # 白色
 _yellow() { echo -e ${yellow}$@${white}; }
 _red() { echo -e ${red}$@${white}; }
 _magenta() { echo -e ${magenta}$@${white}; }
