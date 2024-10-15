@@ -4830,18 +4830,26 @@ restart_ssh() {
 }
 
 add_sshpasswd() {
-	_yellow "设置你的root密码"
+	_yellow "设置你的ROOT密码"
 	passwd
 
 	# 处理SSH配置文件以允许root登录和密码认证
-	# 取消注释并启用PermitRootLogin
-	if ! grep -qE '^\s*PermitRootLogin\s+yes' /etc/ssh/sshd_config; then
-		sed -i 's/^\s*#\s*PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+	# 修改PermitRootLogin
+	if ! grep -qE '^\s*PermitRootLogin.*' /etc/ssh/sshd_config; then
+		# 如果没有找到PermitRootLogin，则添加新行
+		echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+	else
+		# 如果存在但被注释，则取消注释并将值改为 yes
+		sed -i 's/^\(\s*#\s*\)\?\(PermitRootLogin\s*.*\)/PermitRootLogin yes/' /etc/ssh/sshd_config
 	fi
 
-	# 取消注释并启用PasswordAuthentication
-	if ! grep -qE '^\s*PasswordAuthentication\s+yes' /etc/ssh/sshd_config; then
-		sed -i 's/^\s*#\s*PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+	# 取消注释并启用 PasswordAuthentication
+	if ! grep -qE '^\s*PasswordAuthentication\s+' /etc/ssh/sshd_config; then
+		# 如果没有找到 PasswordAuthentication，则添加新行
+		echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+	else
+		# 如果存在但被注释，则取消注释并设置为 yes
+		sed -i 's/^\(\s*#\s*\)\?\(PasswordAuthentication\s*.*\)/PasswordAuthentication yes/' /etc/ssh/sshd_config
 	fi
 
 	# 清理不再使用的SSH配置文件目录
