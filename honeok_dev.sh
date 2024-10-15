@@ -39,10 +39,20 @@ echo -e "${yellow}   __                      __
 system_info(){
 	# 获取CPU型号
 	local cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
+	# 如果第一种方法未能获取到CPU型号，则使用第二种方法
+	if [[ -z "$cpu_model" ]]; then
+		cpu_model=$(grep 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}')
+	fi
+
 	# 获取核心数
 	local cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
+	# 如果第一种方法未能获取到CPU核心数，则使用第二种方法
+	if [[ -z "$cpu_cores" ]]; then
+		cpu_cores=$(grep -c '^processor' /proc/cpuinfo)
+	fi
+
 	# 获取CPU频率
-	local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | cut -d':' -f2 | xargs)
+	local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
 
 	# 获取CPU缓存大小
 	local get_cpu_cache cpu_cache_info
@@ -66,20 +76,34 @@ system_info(){
 	# 捕获get_cpu_cache的输出存储变量
 	cpu_cache_info=$(get_cpu_cache)
 
-	# 检查AES-NI支持
+	# 检查AES-NI指令集支持
 	local aes_ni
-	if grep -iq 'aes' /proc/cpuinfo; then
+	# 尝试使用 lscpu 检查 AES-NI 支持
+	if lscpu | grep -q 'aes'; then
 		aes_ni="✔ Enabled"
 	else
-		aes_ni="❌ Disabled"
+		# 如果lscpu未找到，尝试使用 /proc/cpuinfo
+		if grep -iq 'aes' /proc/cpuinfo; then
+			aes_ni="✔ Enabled"
+		else
+			aes_ni="❌ Disabled"
+		fi
 	fi
 
 	# 检查VM-x/AMD-V支持
 	local vm_support
-	if grep -iq 'vmx' /proc/cpuinfo; then
-		vm_support="VM-x Enabled"
+	# 检查是否支持Intel的VM-x
+	if lscpu | grep -iq 'vmx'; then
+		vm_support="✔ VM-x Enabled"
+	# 检查是否支持AMD的AMD-V
+	elif lscpu | grep -iq 'svm'; then
+		vm_support="✔ AMD-V Enabled"
+	# 如果lscpu没有找到，使用/proc/cpuinfo进行检查
+	elif grep -iq 'vmx' /proc/cpuinfo; then
+		vm_support="✔ VM-x Enabled"
 	elif grep -iq 'svm' /proc/cpuinfo; then
-		vm_support="AMD-V Enabled"
+		vm_support="✔ AMD-V Enabled"
+	# 如果两者都不支持
 	else	
 		vm_support="❌ Disabled"
 	fi
@@ -108,6 +132,9 @@ system_info(){
 	# 系统在线时间
 	local uptime_str=$(cat /proc/uptime | awk -F. '{run_days=int($1 / 86400);run_hours=int(($1 % 86400) / 3600);run_minutes=int(($1 % 3600) / 60); if (run_days > 0) printf("%d天 ", run_days); if (run_hours > 0) printf("%d时 ", run_hours); printf("%d分\n", run_minutes)}')
 
+	# 获取负载平均值
+	local load_average=$(uptime | awk -F'load average:' '{ print $2 }' | awk '{ print $1, $2, $3 }')
+
 	# 计算CPU使用率，处理可能的除零错误
 	local cpu_usage=$(awk -v OFMT='%0.2f' '
 		NR==1 {idle1=$5; total1=$2+$3+$4+$5+$6+$7+$8+$9}
@@ -124,6 +151,7 @@ system_info(){
 			printf "%.2f%%\n", cpu_usage
 		}' <(sleep 1; cat /proc/stat))
 
+
 	# 获取操作系统版本信息
 	local os_release
 	if command -v lsb_release >/dev/null 2>&1; then
@@ -133,7 +161,14 @@ system_info(){
 	fi
 
 	# 获取CPU架构
-	local cpu_architecture=$(uname -m)
+	local cpu_architecture
+	if cpu_architecture=$(uname -m); then
+		:
+	elif cpu_architecture=$(lscpu | awk -F ': +' '/Architecture/{print $2}'); then
+		:
+	else
+		cpu_architecture="Full Unknown"
+	fi
 	
 	# 获取内核版本信息
 	local kernel_version
@@ -187,6 +222,10 @@ system_info(){
 	else
 		virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
 	fi
+	# 如果lscpu没有捕捉到虚拟化类型，尝试使用hostnamectl
+	if [ -z "$virt_type" ]; then
+		virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print $2}')
+	fi
 	# 检查是否为空，空则认为是物理机
 	if [ -z "$virt_type" ]; then
 		virt_type="Physical Machine"
@@ -194,11 +233,19 @@ system_info(){
 
 	# 获取运营商信息
 	local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}')
+	# 检查是否获取到信息，如果没有则使用备用命令
+	if [ -z "$isp_info" ]; then
+		isp_info=$(curl -s http://ip-api.com/json | grep -o '"isp":"[^"]*"\|"org":"[^"]*"' | awk -F'"' '{print $4}' | tr '\n' ' ')
+	fi
 
 	ip_address
 
 	# 获取地理位置
 	local location=$(curl -s ipinfo.io/city)
+	if [ -z "$location" ]; then
+		location=$(curl -s https://api.db-ip.com/v2/free/self/city)
+	fi
+
 	# 获取系统时区
 	local system_time
 	if grep -q 'Alpine' /etc/issue; then
@@ -206,6 +253,7 @@ system_info(){
 	else
 		system_time=$(timedatectl | grep 'Time zone' | awk '{print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
 	fi
+
 	# 获取服务器当前时间
 	local current_time=$(date +"%Y-%m-%d %H:%M:%S")
 
@@ -222,7 +270,7 @@ system_info(){
 	echo "硬盘空间          : ${disk_output}"
 	echo "启动盘路径        : ${boot_partition}"
 	echo "系统在线时间      : ${uptime_str}"
-	echo "CPU占用率         : ${cpu_usage}"
+	echo "负载/CPU占用率    : ${load_average} / ${cpu_usage}"
 	echo "系统              : ${os_release} ${cpu_architecture}"
 	echo "架构              : ${cpu_architecture} $(getconf LONG_BIT)Bit"
 	echo "内核              : ${kernel_version}"
