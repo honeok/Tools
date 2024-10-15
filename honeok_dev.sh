@@ -4849,7 +4849,7 @@ add_sshpasswd() {
 
 	restart_ssh
 
-	_green "root登录设置完毕"
+	_green "ROOT登录设置完毕！"
 }
 
 # 备份DNS配置文件
@@ -7860,6 +7860,7 @@ oracle_script() {
 		echo "4. R探长开机脚本"
 		echo "-------------------------"
 		echo "5. 开启ROOT密码登录模式"
+		echo "6. IPV6恢复工具"
 		echo "-------------------------"
 		echo "0. 返回主菜单"
 		echo "------------------------"
@@ -7870,13 +7871,14 @@ oracle_script() {
 		case $choice in
 			1)
 				clear
-				_yellow "活跃脚本: CPU占用10-20% 内存占用20%"
+				_yellow "活跃脚本：CPU占用10-20% 内存占用20%"
 				echo -n -e "${yellow}确定安装吗?(y/n/):${white}"
 				read -r ins
 				
 				case "$ins" in
 					[Yy])
 						install_docker
+
 						# 设置默认值
 						DEFAULT_CPU_CORE=1
 						DEFAULT_CPU_UTIL="10-20"
@@ -7888,7 +7890,7 @@ oracle_script() {
 						read -r cpu_core
 						cpu_core=${cpu_core:-$DEFAULT_CPU_CORE}
 
-						echo -n -e "${yellow}请输入CPU占用百分比范围(例如10-20)[默认:$DEFAULT_CPU_UTIL]:${white}"
+						echo -n -e "${yellow}请输入CPU占用百分比范围（例如10-20）[默认:$DEFAULT_CPU_UTIL]:${white}"
 						read -r cpu_util
 						cpu_util=${cpu_util:-$DEFAULT_CPU_UTIL}
 
@@ -7896,12 +7898,12 @@ oracle_script() {
 						read -r mem_util
 						mem_util=${mem_util:-$DEFAULT_MEM_UTIL}
 
-						echo -n -e "${yellow}请输入Speedtest间隔时间(秒)[默认:$DEFAULT_SPEEDTEST_INTERVAL]:${white}"
+						echo -n -e "${yellow}请输入Speedtest间隔时间（秒）[默认:$DEFAULT_SPEEDTEST_INTERVAL]:${white}"
 						read -r speedtest_interval
 						speedtest_interval=${speedtest_interval:-$DEFAULT_SPEEDTEST_INTERVAL}
 
 						# 运行Docker容器
-						docker run -itd --name=lookbusy --restart=always \
+						docker run -itd --name=lookbusy --restart=unless-stopped \
 							-e TZ=Asia/Shanghai \
 							-e CPU_UTIL="$cpu_util" \
 							-e CPU_CORE="$cpu_core" \
@@ -7913,7 +7915,7 @@ oracle_script() {
 						echo ""
 						;;
 					*)
-						_red "无效选项,请输入Y或N"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -7927,7 +7929,7 @@ oracle_script() {
 				clear
 				_yellow "重装系统"
 				echo "-------------------------"
-				_yellow "注意:重装有风险失联,不放心者慎用,重装预计花费15分钟,请提前备份数据"
+				_yellow "注意：重装有风险失联，不放心者慎用，重装预计花费15分钟，请提前备份数据！"
 				
 				echo -n -e "${yellow}确定继续吗?(y/n):${white}"
 				read -r choice
@@ -7957,23 +7959,27 @@ oracle_script() {
 						read -r vpspasswd
 				
 						install wget
-						bash <(wget --no-check-certificate -qO- 'https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh') $xitong -v 64 -p $vpspasswd -port 22
+						bash <(wget --no-check-certificate -qO- "${github_proxy}https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh") "$xitong" -v 64 -p "$vpspasswd" -port 22
 						;;
 					[Nn])
 						_yellow "已取消"
 						;;
 					*)
-						_red "无效选项,请输入Y或N"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
 			4)
 				clear
-				_yellow "该功能处于开发阶段,敬请期待!"
+				_yellow "该功能处于开发阶段，敬请期待！"
 				;;
 			5)
 				clear
 				add_sshpasswd
+				;;
+			6)
+				echo "该功能由jhb提供，感谢！"
+				bash <(curl -L -s jhb.ovh/jb/v6.sh)
 				;;
 			0)
 				honeok
