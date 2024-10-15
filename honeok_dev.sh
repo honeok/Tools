@@ -555,7 +555,7 @@ end_of(){
 # 检查用户是否为root
 need_root(){
 	clear
-	[ "$(id -u)" -ne "0" ] && _red "提示:该功能需要root用户才能运行！" && end_of && honeok
+	[ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
 }
 
 # 获取公网IP地址
@@ -620,7 +620,7 @@ linux_update(){
 	elif command -v opkg &>/dev/null; then
 		opkg update
 	else
-		_red "未知的包管理器！"
+		_red "未知的包管理器"
 		return 1
 	fi
 	return 0
@@ -663,7 +663,7 @@ linux_clean() {
 		rm -rf /var/log/*
 		rm -rf /tmp/*
 	else
-		_red "未知的包管理器！"
+		_red "未知的包管理器"
 		return 1
 	fi
 	return 0
@@ -690,7 +690,7 @@ linux_tools() {
 		echo "26. 俄罗斯方块小游戏                  27. 贪吃蛇小游戏"
 		echo "28. 太空入侵者小游戏"
 		echo "-------------------------"
-		echo "31. 全部安装                          32. 全部安装(不含屏保和游戏)"
+		echo "31. 全部安装                          32. 全部安装（不含屏保和游戏）"
 		echo "33. 全部卸载"
 		echo "-------------------------"
 		echo "41. 安装指定工具                      42. 卸载指定工具"
@@ -706,28 +706,28 @@ linux_tools() {
 				clear
 				install curl
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				curl --help
 				;;
 			2)
 				clear
 				install wget
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				wget --help
 				;;
 			3)
 				clear
 				install sudo
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				sudo --help
 				;;
 			4)
 				clear
 				install socat
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				socat -h
 				;;
 			5)
@@ -746,28 +746,28 @@ linux_tools() {
 				clear
 				install unzip
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				unzip
 				;;
 			8)
 				clear
 				install tar
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				tar --help
 				;;
 			9)
 				clear
 				install tmux
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				tmux --help
 				;;
 			10)
 				clear
 				install ffmpeg
 				clear
-				_yellow "工具已安装,使用方法如下:"
+				_yellow "工具已安装，使用方法如下:"
 				ffmpeg --help
 				send_stats "安装ffmpeg"
 				;;
@@ -1639,7 +1639,7 @@ docker_manager(){
 						1)
 							echo -n "设置新网络名:"
 							read -r dockernetwork
-							docker network create $dockernetwork
+							docker network create "$dockernetwork"
 							;;
 						2)
 							echo -n "设置新网络名:"
@@ -1647,25 +1647,25 @@ docker_manager(){
 							echo -n "设置新网络名:"
 							read -r dockernames
 
-							for dockername in $dockernames; do
-								docker network connect $dockernetwork $dockername
+							for dockername in "$dockernames"; do
+								docker network connect "$dockernetwork" "$dockername"
 							done                  
 							;;
 						3)
 							echo -n "设置新网络名:"
 							read -r dockernetwork
 
-							echo -n "哪些容器退出该网络(多个容器名请用空格分隔):"
+							echo -n "哪些容器退出该网络（多个容器名请用空格分隔）:"
 							read -r dockernames
                           
-							for dockername in $dockernames; do
-								docker network disconnect $dockernetwork $dockername
+							for dockername in "$dockernames"; do
+								docker network disconnect "$dockernetwork" "$dockername"
 							done
 							;;
 						4)
 							echo -n "请输入要删除的网络名:"
 							read -r dockernetwork
-							docker network rm $dockernetwork
+							docker network rm "$dockernetwork"
 							;;
 						0)
 							break  # 跳出循环,退出菜单
@@ -1698,14 +1698,14 @@ docker_manager(){
 						1)
 							echo -n "设置新卷名:"
 							read -r dockerjuan
-							docker volume create $dockerjuan
+							docker volume create "$dockerjuan"
 							;;
 						2)
-							echo -n "输入删除卷名(多个卷名请用空格分隔):"
+							echo -n "输入删除卷名（多个卷名请用空格分隔）:"
 							read -r dockerjuans
 
-							for dockerjuan in $dockerjuans; do
-								docker volume rm $dockerjuan
+							for dockerjuan in "$dockerjuans"; do
+								docker volume rm "$dockerjuan"
 							done
 							;;
 						3)
@@ -1733,7 +1733,7 @@ docker_manager(){
 				;;
 			7)
 				clear
-				echo -n -e "${yellow}将清理无用的镜像容器网络,包括停止的容器,确定清理吗?(y/n)${white}"
+				echo -n -e "${yellow}将清理无用的镜像容器网络，包括停止的容器，确定清理吗?(y/n)${white}"
 				read -r choice
 
 				case "$choice" in
@@ -1947,8 +1947,8 @@ manage_docker_application() {
 				_green "${docker_name}安装完成"
 				display_docker_access
 				echo ""
-				$docker_exec_command
-				$docker_password
+				"$docker_exec_command"
+				"$docker_password"
 
 				docker_port_1=""
 				docker_port_2=""
@@ -1962,8 +1962,8 @@ manage_docker_application() {
 				_green "$docker_name更新完成"
 				display_docker_access
 				echo ""
-				$docker_exec_command
-				$docker_password
+				"$docker_exec_command"
+				"$docker_password"
 				;;
 			3)
 				cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
@@ -1971,7 +1971,7 @@ manage_docker_application() {
 				vim docker-compose.yml
 				manage_compose start
 
-				if [ $? -eq 0 ]; then
+				if [ "$?" -eq 0 ]; then
 					_green "$docker_name重启成功"
 				else
 					_red "$docker_name重启失败"
@@ -2008,8 +2008,8 @@ find_available_port() {
 	fi
 
 	for port in $(seq $start_port $end_port); do
-		if ! $check_command | grep -q ":$port "; then
-			echo $port
+		if ! "$check_command" | grep -q ":$port "; then
+			echo "$port"
 			return
 		fi
 	done
@@ -2029,14 +2029,14 @@ check_available_port() {
 	# 检查并设置docker_port_1
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		while true; do
-			if $check_command | grep -q ":$default_port_1 "; then
+			if "$check_command" | grep -q ":$default_port_1 "; then
 				# 查找可用的端口
 				docker_port_1=$(find_available_port 30000 50000)
 				_yellow "默认端口$default_port_1被占用,端口跳跃为$docker_port_1"
 				sleep 1
 				break
 			else
-				docker_port_1=$default_port_1
+				docker_port_1="$default_port_1"
 				_yellow "使用默认端口$docker_port_1"
 				sleep 1
 				break
@@ -2048,13 +2048,13 @@ check_available_port() {
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		if [ -n "$default_port_2" ]; then
 			while true; do
-				if $check_command | grep -q ":$default_port_2 "; then
+				if "$check_command" | grep -q ":$default_port_2 "; then
 					docker_port_2=$(find_available_port 35000 50000)
 					_yellow "默认端口$default_port_2被占用,端口跳跃为$docker_port_2"
 					sleep 1
 					break
 				else
-					docker_port_2=$default_port_2
+					docker_port_2="$default_port_2"
 					_yellow "使用默认端口$docker_port_2"
 					sleep 1
 					break
@@ -2067,13 +2067,13 @@ check_available_port() {
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		if [ -n "$default_port_3" ]; then
 			while true; do
-				if $check_command | grep -q ":$default_port_3 "; then
+				if "$check_command" | grep -q ":$default_port_3 "; then
 					docker_port_3=$(find_available_port 40000 50000)
 					_yellow "默认端口$default_port_3被占用,端口跳跃为$docker_port_3"
 					sleep 1
 					break
 				else
-					docker_port_3=$default_port_3
+					docker_port_3="$default_port_3"
 					_yellow "使用默认端口$docker_port_3"
 					sleep 1
 					break
@@ -5298,7 +5298,7 @@ set_default_qdisc(){
 
 	# 使用grep查找现有配置,忽略等号周围的空格,排除注释行
 	if grep -q "^[^#]*${qdisc_control}\s*=" "${config_file}"; then
-		# 存在该设置项,检查其值
+		# 存在该设置项，检查其值
 		current_value=$(grep "^[^#]*${qdisc_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${qdisc_control}\s*=\s*(.*)/\1/")
 		_yellow "当前队列规则为:$current_value"
 	else
@@ -5310,11 +5310,11 @@ set_default_qdisc(){
 	while true; do
 		echo "请选择要设置的队列规则"
 		echo "-------------------------"
-		echo "1. fq (默认)"
+		echo "1. fq （默认）"
 		echo "2 .fq_pie"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认(回车使用默认值:fq):${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值:fq）:${white}"
 		read -r choice
 
 		case "$choice" in
@@ -5332,19 +5332,19 @@ set_default_qdisc(){
 		esac
 	done
 
-	# 如果当前值不等于选择的值,进行更新
+	# 如果当前值不等于选择的值，进行更新
 	if [ "$current_value" != "$chosen_qdisc" ]; then
 		if [ -z "$current_value" ]; then
-			# 如果没有设置项,则新增
+			# 如果没有设置项，则新增
 			echo "${qdisc_control}=${chosen_qdisc}" >> "${config_file}"
 		else
-			# 如果设置项存在但值不匹配,进行替换
+			# 如果设置项存在但值不匹配，进行替换
 			sed -i -E "s|^[^#]*${qdisc_control}\s*=\s*.*|${qdisc_control}=${chosen_qdisc}|" "${config_file}"
 		fi
 		sysctl -p
 		_green "队列规则已设置为:$chosen_qdisc"
 	else
-		_yellow "队列规则已经是$current_value,无需更改"
+		_yellow "队列规则已经是$current_value，无需更改"
 	fi
 }
 
@@ -5354,20 +5354,20 @@ bbr_on(){
 	local config_file="/etc/sysctl.conf"
 	local current_value
 
-	# 使用grep查找现有配置,忽略等号周围的空格,排除注释行
+	# 使用grep查找现有配置，忽略等号周围的空格，排除注释行
 	if grep -q "^[^#]*${congestion_control}\s*=" "${config_file}"; then
-		# 存在该设置项,检查其值
+		# 存在该设置项，检查其值
 		current_value=$(grep "^[^#]*${congestion_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${congestion_control}\s*=\s*(.*)/\1/")
 		if [ "$current_value" = "$congestion_bbr" ]; then
-			# 如果当前值已经是bbr,则跳过
+			# 如果当前值已经是bbr，则跳过
 			return
 		else
-			# 如果当前值不是bbr,则替换为bbr
+			# 如果当前值不是bbr，则替换为bbr
 			sed -i -E "s|^[^#]*${congestion_control}\s*=\s*.*|${congestion_control}=${congestion_bbr}|" "${config_file}"
 			sysctl -p
 		fi
 	else
-		# 如果没有找到该设置项,则新增
+		# 如果没有找到该设置项，则新增
 		echo "${congestion_control}=${congestion_bbr}" >> "${config_file}"
 		sysctl -p
 	fi
