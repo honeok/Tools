@@ -497,7 +497,7 @@ EOF
 
 	_yellow "Author: honeok"
 	_blue "Version: $gitdocker_version"
-	_purple "Project: https://github.com/honeok8s"
+	_purple "Project: https://github.com/honeok"
 }
 
 # 执行逻辑
