@@ -1,9 +1,6 @@
-#!/bin/bash
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2024 honeok
-# Forked from kejilion https://github.com/kejilion
-# Current Author: honeok
-# Blog: https://www.honeok.com
+#!/usr/bin/env bash
+# by honeok
+# from https://github.com/honeok/shell
 
 yellow='\033[93m'        # 亮黄色
 red='\033[1;31m'         # 亮红色
