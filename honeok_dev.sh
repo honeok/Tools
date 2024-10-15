@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2024 honeok
-# Forked from kejilion
+# Forked from kejilion https://github.com/kejilion
 # Current Author: honeok
 # Blog: https://www.honeok.com
 
