@@ -27,7 +27,6 @@ _orange() { echo -e ${orange}$@${white}; }
 
 # 2024/10/14
 honeok_v="v3.0.0_dev"
-
 ########################################
 # 设置地区相关的代理配置
 set_region_config() {
@@ -87,7 +86,7 @@ print_logo(){
 
 	# 设置工具版本文本
 	#local text="Version: ${honeok_v}"
-	local os_text="当前操作系统: ${os_info}"
+	local os_text="当前操作系统:${os_info}"
 	#local padding="                                        "
 
 	# 打印操作系统信息和工具版本信息
@@ -123,6 +122,10 @@ system_info(){
 		virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
 	else
 		virt_type=$(hostnamectl | awk -F ': ' '/Virtualization/ {print $2}')
+	fi
+	# 检查是否为空，空则认为是物理机
+	if [ -z "$virt_type" ]; then
+		virt_type="Physical Machine"
 	fi
 
 	# 获取内核版本信息
@@ -306,7 +309,7 @@ install() {
 # 卸载软件包
 remove() {
 	if [ $# -eq 0 ]; then
-		_red "未提供软件包参数！"
+		_red "未提供软件包参数"
 		return 1
 	fi
 
@@ -485,7 +488,7 @@ end_of(){
 # 检查用户是否为root
 need_root(){
 	clear
-	[ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
+	[ "$(id -u)" -ne "0" ] && _red "提示:该功能需要root用户才能运行！" && end_of && honeok
 }
 
 # 获取公网IP地址
@@ -496,7 +499,7 @@ ip_address() {
 	# 获取IPv4地址
 	for service in "${ipv4_services[@]}"; do
 		ipv4_address=$(curl -s "$service")
-		if [[ $ipv4_address =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+		if [[ "$ipv4_address" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 			break
 		fi
 	done
@@ -504,7 +507,7 @@ ip_address() {
 	# 获取IPv6地址
 	for service in "${ipv6_services[@]}"; do
 		ipv6_address=$(curl -s --max-time 1 "$service")
-		if [[ $ipv6_address =~ ^[0-9a-fA-F:]+$ ]]; then
+		if [[ "$ipv6_address" =~ ^[0-9a-fA-F:]+$ ]]; then
 			break
 		else
 			ipv6_address=""
@@ -628,7 +631,7 @@ linux_tools() {
 		echo "0. 返回主菜单"
 		echo "-------------------------"
 		
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -657,7 +660,7 @@ linux_tools() {
 				clear
 				install socat
 				clear
-				_yellow "工具已安装,使用方法如下："
+				_yellow "工具已安装,使用方法如下:"
 				socat -h
 				;;
 			5)
@@ -676,28 +679,28 @@ linux_tools() {
 				clear
 				install unzip
 				clear
-				_yellow "工具已安装,使用方法如下："
+				_yellow "工具已安装,使用方法如下:"
 				unzip
 				;;
 			8)
 				clear
 				install tar
 				clear
-				_yellow "工具已安装,使用方法如下："
+				_yellow "工具已安装,使用方法如下:"
 				tar --help
 				;;
 			9)
 				clear
 				install tmux
 				clear
-				_yellow "工具已安装,使用方法如下："
+				_yellow "工具已安装,使用方法如下:"
 				tmux --help
 				;;
 			10)
 				clear
 				install ffmpeg
 				clear
-				_yellow "工具已安装,使用方法如下："
+				_yellow "工具已安装,使用方法如下:"
 				ffmpeg --help
 				send_stats "安装ffmpeg"
 				;;
@@ -791,21 +794,21 @@ linux_tools() {
 				;;
 			41)
 				clear
-				echo -n -e "${yellow}请输入安装的工具名(wget curl sudo htop):${white}"
+				echo -n -e "${yellow}请输入安装的工具名（wget curl sudo htop）:${white}"
 				read -r installname
-				install $installname
+				install "$installname"
 				;;
 			42)
 				clear
-				echo -n -e "${yellow}请输入卸载的工具名(htop ufw tmux cmatrix):${white}"
+				echo -n -e "${yellow}请输入卸载的工具名（htop ufw tmux cmatrix）:${white}"
 				read -r removename
-				remove $removename
+				remove "$removename"
 				;;
 			0)
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -832,12 +835,12 @@ linux_bbr() {
 			echo ""
 			echo "BBR管理"
 			echo "-------------------------"
-			echo "1. 开启BBRv3              2. 关闭BBRv3(会重启)"
+			echo "1. 开启BBRv3              2. 关闭BBRv3（会重启）"
 			echo "-------------------------"
 			echo "0. 返回上一级选单"
 			echo "-------------------------"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 			read -r choice
 
 			case $choice in
@@ -853,7 +856,7 @@ linux_bbr() {
 					break  # 跳出循环,退出菜单
 					;;
 				*)
-					break  # 跳出循环,退出菜单
+					_red "无效选项，请重新输入"
 					;;
 			esac
 		done
@@ -892,8 +895,8 @@ docker_main_version() {
 		docker_compose_version=$(docker compose version --short)
 	fi
 
-	echo -e "${white}已安装Docker版本: ${yellow}v$docker_version${white}"
-	echo -e "${white}已安装Docker Compose版本: ${yellow}v$docker_compose_version${white}"
+	echo -e "${white}已安装Docker版本:${yellow}v$docker_version${white}"
+	echo -e "${white}已安装Docker Compose版本:${yellow}v$docker_compose_version${white}"
 }
 
 install_docker_official() {
@@ -994,24 +997,24 @@ generate_docker_config() {
 	local cgroup_driver
 
 	if ! command -v docker &> /dev/null; then
-		_red "Docker未安装在系统上,无法优化"
+		_red "Docker未安装在系统上，无法优化"
 		return 1
 	fi
 
 	if [ -f "$config_file" ]; then
-		# 如果文件存在,检查是否已经优化过
+		# 如果文件存在，检查是否已经优化过
 		if grep -q '"default-shm-size": "128M"' "$config_file"; then
-			_yellow "Docker配置文件已经优化,无需再次优化"
+			_yellow "Docker配置文件已经优化，无需再次优化"
 			return 0
 		fi
 	fi
 
-	# 创建配置目录(如果不存在)
+	# 创建配置目录（如果不存在）
 	if [ ! -d "$config_dir" ]; then
 		mkdir -p "$config_dir"
 	fi
 
-	# 创建配置文件的基础配置(如果文件不存在)
+	# 创建配置文件的基础配置（如果文件不存在）
 	if [ ! -f "$config_file" ]; then
 		echo "{}" > "$config_file"
 	fi
@@ -1074,7 +1077,7 @@ EOF
 	_green "Docker配置文件已重新加载并重启Docker服务"
 	daemon_reload
 	restart docker
-	_yellow "Docker配置文件已根据服务器IP归属做相关优化，如需调整自行修改$config_file。"
+	_yellow "Docker配置文件已根据服务器IP归属做相关优化，如需调整自行修改$config_file"
 }
 
 docker_ipv6_on() {
@@ -1256,10 +1259,10 @@ uninstall_docker() {
 
 	# 检查卸载是否成功
 	if command -v docker &> /dev/null || [ -e "/usr/bin/docker" ]; then
-		_red "Docker卸载失败,请手动检查"
+		_red "Docker卸载失败，请手动检查"
 		return 1
 	else
-		_green "Docker和Docker Compose已卸载,并清理文件夹和相关依赖"
+		_green "Docker和Docker Compose已卸载，并清理文件夹和相关依赖"
 	fi
 }
 
@@ -1284,33 +1287,33 @@ docker_ps() {
 		echo "0. 返回上一级选单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 		case $choice in
 			1)
 				echo -n "请输入创建命令:"
 				read -r dockername
-				$dockername
+				"$dockername"
 				;;
 			2)
 				echo -n "请输入容器名（多个容器名请用空格分隔）:"
 				read -r dockername
-				docker start $dockername
+				docker start "$dockername"
 				;;
 			3)
 				echo -n "请输入容器名（多个容器名请用空格分隔）:"
 				read -r dockername
-				docker stop $dockername
+				docker stop "$dockername"
 				;;
 			4)
 				echo -n "请输入容器名（多个容器名请用空格分隔）:"
 				read -r dockername
-				docker rm -f $dockername
+				docker rm -f "$dockername"
 				;;
 			5)
 				echo -n "请输入容器名（多个容器名请用空格分隔）:"
 				read -r dockername
-				docker restart $dockername
+				docker restart "$dockername"
 				;;
 			6)
 				docker start $(docker ps -a -q)
@@ -1319,7 +1322,7 @@ docker_ps() {
 				docker stop $(docker ps -q)
 				;;
 			8)
-				echo -n -e "${yellow}确定删除所有容器吗？(y/n):${white}"
+				echo -n -e "${yellow}确定删除所有容器吗？（y/n）:${white}"
 				read -r choice
 
 				case "$choice" in
@@ -1329,7 +1332,7 @@ docker_ps() {
 					[Nn])
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -1339,13 +1342,13 @@ docker_ps() {
 			11)
 				echo -n "请输入容器名:"
 				read -r dockername
-				docker exec -it $dockername /bin/sh
+				docker exec -it "$dockername" /bin/sh
 				end_of
 				;;
 			12)
 				echo -n "请输入容器名:"
 				read -r dockername
-				docker logs $dockername
+				docker logs "$dockername"
 				end_of
 				;;
 			13)
@@ -1353,7 +1356,7 @@ docker_ps() {
 				container_ids=$(docker ps -q)
 				echo "------------------------------------------------------------"
 				printf "%-25s %-25s %-25s\n" "容器名称" "网络名称" "IP地址"
-				for container_id in $container_ids; do
+				for container_id in "$container_ids"; do
 					container_info=$(docker inspect --format '{{ .Name }}{{ range $network, $config := .NetworkSettings.Networks }} {{ $network }} {{ $config.IPAddress }}{{ end }}' "$container_id")
 					container_name=$(echo "$container_info" | awk '{print $1}')
 					network_info=$(echo "$container_info" | cut -d' ' -f2-)
@@ -1373,7 +1376,7 @@ docker_ps() {
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -1393,30 +1396,30 @@ docker_image() {
 		echo "0. 返回上一级选单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 		case $choice in
 			1)
 				echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
 				read -r imagenames
-				for name in $imagenames; do
-					_yellow "正在获取镜像:" $name
-					docker pull $name
+				for name in "$imagenames"; do
+					_yellow "正在获取镜像: " "$name"
+					docker pull "$name"
 				done
 				;;
 			2)
 				echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
 				read -r imagenames
-				for name in $imagenames; do
-					_yellow "正在更新镜像:" $name
-					docker pull $name
+				for name in "$imagenames"; do
+					_yellow "正在更新镜像: " "$name"
+					docker pull "$name"
 				done
 				;;
 			3)
 				echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
 				read -r imagenames
-				for name in $imagenames; do
-					docker rmi -f $name
+				for name in "$imagenames"; do
+					docker rmi -f "$name"
 				done
 				;;
 			4)
@@ -1430,7 +1433,7 @@ docker_image() {
 					[Nn])
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -1438,7 +1441,7 @@ docker_image() {
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -1473,7 +1476,7 @@ docker_manager(){
 		echo "0. 返回主菜单"
 		echo "------------------------"
 		
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -1496,7 +1499,7 @@ docker_manager(){
 								break
 								;;
 							*)
-								_red "无效选项，请重新输入。"
+								_red "无效选项，请重新输入"
 								;;
 						esac
 					done
@@ -1562,7 +1565,7 @@ docker_manager(){
 					echo "0. 返回上一级选单"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -1601,7 +1604,7 @@ docker_manager(){
 							break  # 跳出循环,退出菜单
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -1621,7 +1624,7 @@ docker_manager(){
 					echo "0. 返回上一级选单"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -1648,7 +1651,7 @@ docker_manager(){
 								[Nn])
 									;;
 								*)
-									_red "无效选项，请重新输入。"
+									_red "无效选项，请重新输入"
 									;;
 							esac
 							;;
@@ -1656,7 +1659,7 @@ docker_manager(){
 							break  # 跳出循环,退出菜单
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -1673,7 +1676,7 @@ docker_manager(){
 					[Nn])
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -1709,7 +1712,7 @@ docker_manager(){
 					[Nn])
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -1717,7 +1720,7 @@ docker_manager(){
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -1774,7 +1777,7 @@ manage_panel_application() {
 		clear
 		check_panel_status
 		echo -e "$panelname $check_panel"
-		echo "${panelname}是一款时下流行且强大的运维管理面板。"
+		echo "${panelname}是一款时下流行且强大的运维管理面板"
 		echo "官网介绍: $panelurl "
 
 		echo ""
@@ -1784,7 +1787,7 @@ manage_panel_application() {
 		echo "0. 返回上一级"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -1820,7 +1823,7 @@ manage_panel_application() {
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -1848,7 +1851,7 @@ manage_docker_application() {
 		echo "0. 返回上一级"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -1918,7 +1921,7 @@ manage_docker_application() {
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -2049,7 +2052,7 @@ linux_panel() {
 		echo "0. 返回主菜单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -2147,7 +2150,7 @@ linux_panel() {
 								linux_panel # 返回面板管理界面
 								;;
 							*)
-								_red "无效选项，请重新输入。"
+								_red "无效选项，请重新输入"
 								;;
 						esac
 					done
@@ -2189,7 +2192,7 @@ linux_panel() {
 					echo "1. 使用           0. 返回上一级"
 					echo "------------------------"
 					
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -2201,7 +2204,7 @@ linux_panel() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -2248,7 +2251,7 @@ linux_panel() {
 					echo "0. 返回上一级"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -2305,7 +2308,7 @@ linux_panel() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -2412,7 +2415,7 @@ linux_panel() {
 					echo "0. 返回上一级"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -2445,7 +2448,7 @@ linux_panel() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -2692,7 +2695,7 @@ linux_panel() {
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -2898,7 +2901,7 @@ ldnmp_install_ngx_logrotate(){
 	else
 		curl -fsSL -o "$rotate_script" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/nginx/docker_ngx_rotate2.sh"
 		if [[ $? -ne 0 ]]; then
-			_red "脚本下载失败，请检查网络连接或脚本URL。"
+			_red "脚本下载失败，请检查网络连接或脚本URL"
 			return 1
 		fi
 		chmod +x "$rotate_script"
@@ -2911,7 +2914,7 @@ ldnmp_install_ngx_logrotate(){
 		(crontab -l; echo "$crontab_entry") | crontab -
 		_green "Nginx日志轮转任务已安装！"
 	else
-		_yellow "Nginx日志轮转任务已存在。"
+		_yellow "Nginx日志轮转任务已存在"
 	fi
 }
 
@@ -3080,13 +3083,13 @@ ldnmp_install_nginx(){
 
 	# 如果已安装LDNMP环境直接返回
 	if docker inspect "ldnmp" &>/dev/null; then
-		_yellow "LDNMP环境已集成Nginx，无须重复安装。"
+		_yellow "LDNMP环境已集成Nginx，无须重复安装"
 		return 0
 	fi
 
 	if docker inspect "nginx" &>/dev/null; then
 		if curl -sL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/nginx/ldnmp-nginx-docker-compose.yml" | head -n 19 | diff - "/data/docker_data/web/docker-compose.yml" &>/dev/null; then
-			_yellow "检测到通过本脚本已安装Nginx。"
+			_yellow "检测到通过本脚本已安装Nginx"
 			return 0
 		else
 			docker rm -f nginx >/dev/null 2>&1
@@ -3114,7 +3117,7 @@ ldnmp_install_nginx(){
 		nginx_version=$(docker exec nginx nginx -v 2>&1)
 		nginx_version=$(echo "$nginx_version" | grep -oP "nginx/\K[0-9]+\.[0-9]+\.[0-9]+")
 		_green "Nginx安装完成！"
-		echo -e "当前版本：${yellow}v$nginx_version${white}"
+		echo -e "当前版本:${yellow}v$nginx_version${white}"
 		echo ""
 	fi
 }
@@ -3162,7 +3165,7 @@ add_domain() {
 	ip_address
 
 	echo -e "先将域名解析到本机IP: ${yellow}$ipv4_address  $ipv6_address${white}"
-	echo -n "请输入你解析的域名（输入0取消操作）："
+	echo -n "请输入你解析的域名（输入0取消操作）:"
 	read -r domain
 
 	if [[ "$domain" == "0" ]]; then
@@ -3435,7 +3438,7 @@ linux_ldnmp() {
 		echo "0. 返回主菜单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -3732,7 +3735,7 @@ linux_ldnmp() {
 				echo -e "[${yellow}1/6${white}] 上传PHP源码"
 				echo "-------------"
 				echo "目前只允许上传zip格式的源码包，请将源码包放到$dyna_dir目录下"
-				echo -n "也可以输入下载链接远程下载源码包，直接回车将跳过远程下载："
+				echo -n "也可以输入下载链接远程下载源码包，直接回车将跳过远程下载:"
 				read -r url_download
 
 				if [ -n "$url_download" ]; then
@@ -3769,7 +3772,7 @@ linux_ldnmp() {
 						PHP_Version="php74"
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 
@@ -3779,7 +3782,7 @@ linux_ldnmp() {
 				echo "已经安装的扩展"
 				docker exec php php -m
 
-				echo -n "$(echo -e "输入需要安装的扩展名称，如 ${yellow}SourceGuardian imap ftp${white} 等，直接回车将跳过安装：")"
+				echo -n "$(echo -e "输入需要安装的扩展名称，如 ${yellow}SourceGuardian imap ftp${white} 等，直接回车将跳过安装:")"
 				read -r php_extensions
 				if [ -n "$php_extensions" ]; then
 					docker exec $PHP_Version install-php-extensions $php_extensions
@@ -3803,7 +3806,7 @@ linux_ldnmp() {
 						;;
 					2)
 						echo "数据库备份必须是.gz结尾的压缩包，请放到/opt/目录下，支持宝塔/1panel备份数据导入"
-						echo -n "也可以输入下载链接，远程下载备份数据，直接回车将跳过远程下载：" 
+						echo -n "也可以输入下载链接，远程下载备份数据，直接回车将跳过远程下载:" 
 						read -r url_download_db
 
 						cd /opt
@@ -3862,7 +3865,7 @@ linux_ldnmp() {
 				if nginx_check; then
 					docker restart nginx >/dev/null 2>&1
 				else
-					_red "Nginx配置校验失败，请检查配置文件。"
+					_red "Nginx配置校验失败，请检查配置文件"
 					return 1
 				fi
 
@@ -3891,7 +3894,7 @@ linux_ldnmp() {
 				if nginx_check; then
 					docker restart nginx >/dev/null 2>&1
 				else
-					_red "Nginx配置校验失败，请检查配置文件。"
+					_red "Nginx配置校验失败，请检查配置文件"
 					return 1
 				fi
 
@@ -3918,7 +3921,7 @@ linux_ldnmp() {
 				if nginx_check; then
 					docker restart nginx >/dev/null 2>&1
 				else
-					_red "Nginx配置校验失败，请检查配置文件。"
+					_red "Nginx配置校验失败，请检查配置文件"
 					return 1
 				fi
 
@@ -3944,7 +3947,7 @@ linux_ldnmp() {
 				echo -e "[${yellow}1/2${white}] 上传静态源码"
 				echo "-------------"
 				echo "目前只允许上传zip格式的源码包，请将源码包放到$static_dir目录下"
-				echo -n "也可以输入下载链接远程下载源码包，直接回车将跳过远程下载："
+				echo -n "也可以输入下载链接远程下载源码包，直接回车将跳过远程下载:"
 				read -r url_download
 
 				if [ -n "$url_download" ]; then
@@ -3970,7 +3973,7 @@ linux_ldnmp() {
 				if nginx_check; then
 					docker restart nginx >/dev/null 2>&1
 				else
-					_red "Nginx配置校验失败，请检查配置文件。"
+					_red "Nginx配置校验失败，请检查配置文件"
 					return 1
 				fi
 
@@ -4025,7 +4028,7 @@ linux_ldnmp() {
 					echo "0. 返回上一级选单"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -4141,7 +4144,7 @@ linux_ldnmp() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -4182,7 +4185,7 @@ linux_ldnmp() {
 								break
 								;;
 							*)
-								_red "无效选项，请重新输入。"
+								_red "无效选项，请重新输入"
 								;;
 						esac
 					done
@@ -4209,13 +4212,13 @@ linux_ldnmp() {
 				echo "------------------------"
 				echo "1. 每周备份                 2. 每天备份"
 
-				echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+				echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 				read -r choice
 
 				case $choice in
 					1)
 						check_crontab_installed
-						echo -n "选择每周备份的星期几（0-6,0代表星期日）："
+						echo -n "选择每周备份的星期几（0-6,0代表星期日）:"
 						read -r weekday
 						(crontab -l ; echo "0 0 * * $weekday /data/script/${useip}_backup.sh > /dev/null 2>&1") | crontab -
 						;;
@@ -4276,7 +4279,7 @@ linux_ldnmp() {
 						echo "0. 退出"
 						echo "------------------------"
 
-						echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+						echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 						read -r choice
 
 						case $choice in
@@ -4352,7 +4355,7 @@ linux_ldnmp() {
 
 								# 获取CFUSER
 								while true; do
-									echo -n "请输入你的Cloudflare管理员邮箱："
+									echo -n "请输入你的Cloudflare管理员邮箱:"
 									read -r CFUSER
 									if [[ "$CFUSER" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
 										break
@@ -4364,7 +4367,7 @@ linux_ldnmp() {
 								while true; do
 									echo "Cloudflare后台右上角我的个人资料，选择左侧API令牌，获取Global API Key"
 									echo "https://dash.cloudflare.com/login"
-									echo -n "请输入你的Global API Key："
+									echo -n "请输入你的Global API Key:"
 									read -r CFKEY
 									if [[ -n "$CFKEY" ]]; then
 										break
@@ -4400,7 +4403,7 @@ linux_ldnmp() {
 
 								# 获取CFUSER
 								while true; do
-									echo -n "请输入你的Cloudflare管理员邮箱："
+									echo -n "请输入你的Cloudflare管理员邮箱:"
 									read -r CFUSER
 									if [[ "$CFUSER" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
 										break
@@ -4412,7 +4415,7 @@ linux_ldnmp() {
 								while true; do
 									echo "cloudflare后台右上角我的个人资料，选择左侧API令牌，获取Global API Key"
 									echo "https://dash.cloudflare.com/login"
-									echo -n "请输入你的Global API Key："
+									echo -n "请输入你的Global API Key:"
 									read -r CFKEY
 									if [[ -n "$CFKEY" ]]; then
 										break
@@ -4423,7 +4426,7 @@ linux_ldnmp() {
 								# 获取ZoneID
 								while true;do
 									echo "Cloudflare后台域名概要页面右下方获取区域ID"
-									echo -n "请输入你的ZoneID："
+									echo -n "请输入你的ZoneID:"
 									read -r CFZoneID
 									if [[ -n "$CFZoneID" ]]; then
 										break
@@ -4458,7 +4461,7 @@ linux_ldnmp() {
 								break
 								;;
 							*)
-								_red "无效选项，请重新输入。"
+								_red "无效选项，请重新输入"
 								;;
 						esac
 						end_of
@@ -4480,7 +4483,7 @@ linux_ldnmp() {
 							_yellow "已取消"
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				else
@@ -4510,7 +4513,7 @@ linux_ldnmp() {
 					echo "0. 退出"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -4570,7 +4573,7 @@ linux_ldnmp() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -4590,7 +4593,7 @@ linux_ldnmp() {
 					echo "0. 返回上一级"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -4699,7 +4702,7 @@ linux_ldnmp() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -4738,7 +4741,7 @@ linux_ldnmp() {
 						_yellow "操作已取消"
 						;;
 					*)
-						_red "无效选项，请重新输入。"
+						_red "无效选项，请重新输入"
 						;;
 				esac
 				;;
@@ -4746,7 +4749,7 @@ linux_ldnmp() {
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -4908,7 +4911,7 @@ reinstall_system(){
 	while true; do
 		need_root
 		clear
-		echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用。重装预计花费15分钟，请提前备份数据。"
+		echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据"
 		echo "感谢MollyLau大佬和bin456789大佬的脚本支持！"
 		echo "-------------------------"
 		_yellow "${os_text}"
@@ -4936,7 +4939,7 @@ reinstall_system(){
 		echo "0. 返回上一级菜单"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case "$choice" in
@@ -5118,7 +5121,7 @@ reinstall_system(){
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				break
 				;;
 		esac
@@ -5257,7 +5260,7 @@ set_default_qdisc(){
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -5274,7 +5277,7 @@ set_default_qdisc(){
 		sysctl -p
 		_green "队列规则已设置为:$chosen_qdisc"
 	else
-		_yellow "队列规则已经是$current_value,无需更改。"
+		_yellow "队列规则已经是$current_value,无需更改"
 	fi
 }
 
@@ -5313,7 +5316,7 @@ xanmod_bbr3(){
 			clear
 			local kernel_version=$(uname -r)
 			echo "已安装XanMod的BBRv3内核"
-			echo "当前内核版本：$kernel_version"
+			echo "当前内核版本:$kernel_version"
 
 			echo ""
 			echo "内核管理"
@@ -5323,7 +5326,7 @@ xanmod_bbr3(){
 			echo "0. 返回上一级选单"
 			echo "-------------------------"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 			read -r choice
 
 			case $choice in
@@ -5357,7 +5360,7 @@ xanmod_bbr3(){
 					break  # 跳出循环，退出菜单
 					;;
 				*)
-					_red "无效选项，请重新输入。"
+					_red "无效选项，请重新输入"
 					;;
 			esac
 		done
@@ -5425,7 +5428,7 @@ xanmod_bbr3(){
 				_yellow "已取消"
 				;;
 			*)
-				_red "无效的选择，请输入Y或N。"
+				_red "无效的选择，请输入Y或N"
 				;;
 		esac
 	fi
@@ -5445,7 +5448,7 @@ linux_mirror(){
 		echo "0. 返回上一级"
 		echo "-------------------------"
 	
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 	
 		case $choice in
@@ -5462,7 +5465,7 @@ linux_mirror(){
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -5566,7 +5569,7 @@ cron_manager(){
 		echo "0. 返回上一级选单"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -5578,7 +5581,7 @@ cron_manager(){
 				echo "3. 每天任务                 4. 每小时任务"
 				echo "-------------------------"
 
-				echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+				echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 				read -r dingshi
 
 				case $dingshi in
@@ -5654,7 +5657,7 @@ cron_manager(){
 				break  # 跳出循环,退出菜单
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -5779,7 +5782,7 @@ telegram_bot(){
 			_yellow "已取消"
 			;;
 		*)
-			_red "无效选项，请重新输入。"
+			_red "无效选项，请重新输入"
 			;;
 	esac
 }
@@ -5827,7 +5830,7 @@ update_openssh() {
 				apk add build-base zlib-dev openssl-dev pam-dev wget ntpdate
 				;;
 			*)
-				_red "不支持的操作系统：$OS"
+				_red "不支持的操作系统:$OS"
 				return 1
 				;;
 		esac
@@ -5918,7 +5921,7 @@ update_openssh() {
 				return 1
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				return 1
 				;;
 		esac
@@ -5956,7 +5959,7 @@ redhat_kernel_update() {
 			_yellow "安装ELRepo仓库配置(版本 9)"
 			yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
 		else
-			_red "不支持的系统版本：$os_version"
+			_red "不支持的系统版本:$os_version"
 			end_of
 			linux_system_tools
 		fi
@@ -5985,7 +5988,7 @@ redhat_kernel_update() {
 			echo "0. 返回上一级选单"
 			echo "------------------------"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 			read -r choice
 
 			case "$choice" in
@@ -6005,7 +6008,7 @@ redhat_kernel_update() {
 					break
 					;;
 				0)
-					_red "无效选项，请重新输入。"
+					_red "无效选项，请重新输入"
 					;;
 			esac
 		done
@@ -6030,7 +6033,7 @@ redhat_kernel_update() {
 				echo "已取消"
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	fi
@@ -6214,7 +6217,7 @@ clamav_antivirus() {
 		echo "0. 返回上一级选单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -6278,7 +6281,7 @@ cloudflare_ddns() {
 		echo "0. 返回上一级"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -6402,7 +6405,7 @@ cloudflare_ddns() {
 				break
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -6459,7 +6462,7 @@ linux_system_tools(){
 		echo "0. 返回主菜单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -6607,7 +6610,7 @@ EOF
 					echo "0. 返回上一级"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case "$choice" in
@@ -6622,7 +6625,7 @@ EOF
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -6726,7 +6729,7 @@ EOF
 					echo "1. 分配1024MB     2. 分配2048MB     3. 自定义大小（建议为内存的2倍！）     0. 退出"
 					echo "------------------------"
 					
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case "$choice" in
@@ -6739,7 +6742,7 @@ EOF
 							_green "已设置虚拟内存为2048MB"
 							;;
 						3)
-							echo -n "请输入虚拟内存大小MB："
+							echo -n "请输入虚拟内存大小MB:"
 							read -r new_swap
 							if [[ "$new_swap" =~ ^[0-9]+$ ]] && [ "$new_swap" -gt 0 ]; then
 								add_swap "$new_swap"
@@ -6752,7 +6755,7 @@ EOF
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -6781,7 +6784,7 @@ EOF
 					echo "0. 返回上一级选单"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -6831,7 +6834,7 @@ EOF
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -6895,8 +6898,8 @@ EOF
 					local current_time=$(date +"%Y-%m-%d %H:%M:%S")
 
 					# 显示时区和时间
-					_yellow "当前系统时区：$timezone"
-					_yellow "当前系统时间：$current_time"
+					_yellow "当前系统时区:$timezone"
+					_yellow "当前系统时间:$current_time"
 
 					echo ""
 					echo "时区切换"
@@ -6924,7 +6927,7 @@ EOF
 					echo "----------------------------"
 
 					# 提示用户输入选项
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -6959,7 +6962,7 @@ EOF
 						33) set_timedate Africa/Casablanca ;;
 						34) set_timedate Africa/Lagos ;;
 						0) break ;;  # 退出循环
-						*) _red "无效选项，请重新输入。" ;;
+						*) _red "无效选项，请重新输入" ;;
 					esac
 					end_of
 				done
@@ -7017,7 +7020,7 @@ EOF
 					echo "0. 返回上一级选单"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r host_dns
 
 					case $host_dns in
@@ -7037,7 +7040,7 @@ EOF
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -7057,7 +7060,7 @@ EOF
 						echo "0. 退出"
 						echo "------------------------"
 
-						echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+						echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 						read -r choice
 
 						case $choice in
@@ -7081,7 +7084,7 @@ EOF
 								break
 								;;
 							*)
-								_red "无效选项，请重新输入。"
+								_red "无效选项，请重新输入"
 								;;
 						esac
 					elif [ -x "$(command -v fail2ban-client)" ] ; then
@@ -7107,7 +7110,7 @@ EOF
 						echo "fail2ban是一个SSH防止暴力破解工具"
 						echo "官网介绍: https://github.com/fail2ban/fail2ban"
 						echo "------------------------------------------------"
-						echo "工作原理：研判非法IP恶意高频访问SSH端口，自动进行IP封锁"
+						echo "工作原理:研判非法IP恶意高频访问SSH端口，自动进行IP封锁"
 						echo "------------------------------------------------"
 						echo -n -e "${yellow}确定继续吗?(y/n)${white}"
 						read -r choice
@@ -7246,7 +7249,7 @@ EOF
 					echo "0. 返回上一级"
 					echo "--------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r choice
 
 					case $choice in
@@ -7287,7 +7290,7 @@ EOF
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 					end_of
@@ -7310,7 +7313,7 @@ EOF
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -7375,7 +7378,7 @@ linux_workspace() {
 		echo "0. 返回主菜单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -7453,7 +7456,7 @@ linux_workspace() {
 					echo "0. 返回上一级"
 					echo "------------------------"
 
-					echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+					echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 					read -r gongzuoqu_del
 
 					case "$gongzuoqu_del" in
@@ -7476,7 +7479,7 @@ linux_workspace() {
 							break
 							;;
 						*)
-							_red "无效选项，请重新输入。"
+							_red "无效选项，请重新输入"
 							;;
 					esac
 				done
@@ -7485,7 +7488,7 @@ linux_workspace() {
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -7526,7 +7529,7 @@ servertest_script(){
 		echo "0. 返回菜单"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case "$choice" in
@@ -7622,7 +7625,7 @@ servertest_script(){
 				honeok # 返回主菜单
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -7634,7 +7637,7 @@ servertest_script(){
 node_create(){
 	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
 		clear
-		_red "时刻铭记上网三要素：不评政治、不谈宗教、不碰黄賭毒，龙的传人需自律。"
+		_red "时刻铭记上网三要素:不评政治、不谈宗教、不碰黄賭毒，龙的传人需自律"
 		_red "本功能所提供的内容已触犯你的IP所在地相关法律法规，请绕行！"
 		end_of
 		honeok # 返回主菜单
@@ -7671,7 +7674,7 @@ node_create(){
 		echo "0. 返回主菜单"
 		echo "-------------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -7720,18 +7723,18 @@ node_create(){
 				;;
 			25)
 				clear
-				_yellow "安装Tcp-Brutal-Reality需要内核高于5.8，不符合请手动升级5.8内核以上再安装。"
+				_yellow "安装Tcp-Brutal-Reality需要内核高于5.8，不符合请手动升级5.8内核以上再安装"
 				
 				current_kernel_version=$(uname -r | cut -d'-' -f1 | awk -F'.' '{print $1 * 100 + $2}')
 				target_kernel_version=508
 				
 				# 比较内核版本
 				if [ "$current_kernel_version" -lt "$target_kernel_version" ]; then
-					_red "当前系统内核版本小于 $target_kernel_version，请手动升级内核后重试，正在退出。"
+					_red "当前系统内核版本小于 $target_kernel_version，请手动升级内核后重试，正在退出"
 					sleep 2
 					honeok
 				else
-					_yellow "当前系统内核版本 $current_kernel_version,符合安装要求。"
+					_yellow "当前系统内核版本 $current_kernel_version,符合安装要求"
 					sleep 1
 					bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/tcp-brutal-reality.sh)
 					sleep 1
@@ -7769,7 +7772,7 @@ node_create(){
 				honeok # 返回主菜单
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -7794,7 +7797,7 @@ oracle_script() {
 		echo "0. 返回主菜单"
 		echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -7878,7 +7881,7 @@ oracle_script() {
 									break  # 结束循环
 									;;
 								*)
-									_red "无效选项，请重新输入。"
+									_red "无效选项，请重新输入"
 									;;
 							esac
 						done
@@ -7909,7 +7912,7 @@ oracle_script() {
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
@@ -7938,7 +7941,7 @@ palworld_script(){
 		echo "0. 返回主菜单"
 		echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case $choice in
@@ -7968,7 +7971,7 @@ palworld_script(){
 				honeok
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 	done
@@ -8040,7 +8043,7 @@ honeok(){
 		echo "-------------------------------------------------------"
 		echo ""
 
-		echo -n -e "${yellow}请输入选项并按回车键确认：${white}"
+		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 
 		case "$choice" in
@@ -8106,7 +8109,7 @@ honeok(){
 				exit 0
 				;;
 			*)
-				_red "无效选项，请重新输入。"
+				_red "无效选项，请重新输入"
 				;;
 		esac
 		end_of
