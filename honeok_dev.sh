@@ -5407,7 +5407,7 @@ xanmod_bbr3(){
 					echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
 					# kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-					local kernel_version=$(wget -q ${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+					local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
 					install linux-xanmod-x64v"$kernel_version"
 
@@ -5477,7 +5477,7 @@ xanmod_bbr3(){
 				echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
 				# kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-				local kernel_version=$(wget -q ${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+				local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
 				install linux-xanmod-x64v"$kernel_version"
 
