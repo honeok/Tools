@@ -4838,198 +4838,198 @@ linux_ldnmp() {
 
 #################### 系统工具START ####################
 restart_ssh() {
-	restart sshd ssh > /dev/null 2>&1
+    restart sshd ssh > /dev/null 2>&1
 }
 
 add_sshpasswd() {
-	_yellow "设置你的ROOT密码"
-	passwd
+    _yellow "设置你的ROOT密码"
+    passwd
 
-	# 处理SSH配置文件以允许root登录和密码认证
-	# 修改PermitRootLogin
-	if ! grep -qE '^\s*PermitRootLogin.*' /etc/ssh/sshd_config; then
-		# 如果没有找到PermitRootLogin，则添加新行
-		echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
-	else
-		# 如果存在但被注释，则取消注释并将值改为 yes
-		sed -i 's/^\(\s*#\s*\)\?\(PermitRootLogin\s*.*\)/PermitRootLogin yes/' /etc/ssh/sshd_config
-	fi
+    # 处理SSH配置文件以允许root登录和密码认证
+    # 修改PermitRootLogin
+    if ! grep -qE '^\s*PermitRootLogin.*' /etc/ssh/sshd_config; then
+        # 如果没有找到PermitRootLogin，则添加新行
+        echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+    else
+        # 如果存在但被注释，则取消注释并将值改为 yes
+        sed -i 's/^\(\s*#\s*\)\?\(PermitRootLogin\s*.*\)/PermitRootLogin yes/' /etc/ssh/sshd_config
+    fi
 
-	# 取消注释并启用 PasswordAuthentication
-	if ! grep -qE '^\s*PasswordAuthentication\s+' /etc/ssh/sshd_config; then
-		# 如果没有找到 PasswordAuthentication，则添加新行
-		echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
-	else
-		# 如果存在但被注释，则取消注释并设置为 yes
-		sed -i 's/^\(\s*#\s*\)\?\(PasswordAuthentication\s*.*\)/PasswordAuthentication yes/' /etc/ssh/sshd_config
-	fi
+    # 取消注释并启用 PasswordAuthentication
+    if ! grep -qE '^\s*PasswordAuthentication\s+' /etc/ssh/sshd_config; then
+        # 如果没有找到 PasswordAuthentication，则添加新行
+        echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
+    else
+        # 如果存在但被注释，则取消注释并设置为 yes
+        sed -i 's/^\(\s*#\s*\)\?\(PasswordAuthentication\s*.*\)/PasswordAuthentication yes/' /etc/ssh/sshd_config
+    fi
 
-	# 清理不再使用的SSH配置文件目录
-	rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/* >/dev/null 2>&1
+    # 清理不再使用的SSH配置文件目录
+    rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/* >/dev/null 2>&1
 
-	restart_ssh
+    restart_ssh
 
-	_green "ROOT登录设置完毕！"
+    _green "ROOT登录设置完毕！"
 }
 
 # 备份DNS配置文件
 bak_dns() {
-	# 定义源文件和备份文件的位置
-	local dns_config="/etc/resolv.conf"
-	local backupdns_config="/etc/resolv.conf.bak"
+    # 定义源文件和备份文件的位置
+    local dns_config="/etc/resolv.conf"
+    local backupdns_config="/etc/resolv.conf.bak"
 
-	# 检查源文件是否存在
-	if [[ -f "$dns_config" ]]; then
-		# 备份文件
-		cp "$dns_config" "$backupdns_config"
+    # 检查源文件是否存在
+    if [[ -f "$dns_config" ]]; then
+        # 备份文件
+        cp "$dns_config" "$backupdns_config"
 
-		# 检查备份是否成功
-		if [[ $? -ne 0 ]]; then
+        # 检查备份是否成功
+        if [[ $? -ne 0 ]]; then
             _red "备份DNS配置文件失败"
-		fi
-	else
-		_red "DNS配置文件不存在"
-	fi
+        fi
+    else
+        _red "DNS配置文件不存在"
+    fi
 }
 
-set_dns(){
-	local cloudflare_ipv4="1.1.1.1"
-	local google_ipv4="8.8.8.8"
-	local cloudflare_ipv6="2606:4700:4700::1111"
-	local google_ipv6="2001:4860:4860::8888"
+set_dns() {
+    local cloudflare_ipv4="1.1.1.1"
+    local google_ipv4="8.8.8.8"
+    local cloudflare_ipv6="2606:4700:4700::1111"
+    local google_ipv6="2001:4860:4860::8888"
 
-	local ali_ipv4="223.5.5.5"
-	local tencent_ipv4="183.60.83.19"
-	local ali_ipv6="2400:3200::1"
-	local tencent_ipv6="2400:da00::6666"
+    local ali_ipv4="223.5.5.5"
+    local tencent_ipv4="183.60.83.19"
+    local ali_ipv6="2400:3200::1"
+    local tencent_ipv6="2400:da00::6666"
 
-	local ipv6_addresses
+    local ipv6_addresses
 
-	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-		{
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        {
             echo "nameserver $ali_ipv4"
             echo "nameserver $tencent_ipv4"
             if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
                 echo "nameserver $ali_ipv6"
                 echo "nameserver $tencent_ipv6"
             fi
-		} | tee /etc/resolv.conf > /dev/null
-	else
-		{
+        } | tee /etc/resolv.conf > /dev/null
+    else
+        {
             echo "nameserver $cloudflare_ipv4"
             echo "nameserver $google_ipv4"
             if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
                 echo "nameserver $cloudflare_ipv6"
                 echo "nameserver $google_ipv6"
             fi
-		} | tee /etc/resolv.conf > /dev/null
-	fi
+        } | tee /etc/resolv.conf > /dev/null
+    fi
 }
 
 # 回滚到备份的DNS配置文件
 rollbak_dns() {
-	# 定义源文件和备份文件的位置
-	local dns_config="/etc/resolv.conf"
-	local backupdns_config="/etc/resolv.conf.bak"
-	
-	# 查找备份文件
-	if [[ -f "$backupdns_config" ]]; then
-		# 恢复备份文件
-		cp "$backupdns_config" "$dns_config"
-		
-		if [[ $? -ne 0 ]]; then
+    # 定义源文件和备份文件的位置
+    local dns_config="/etc/resolv.conf"
+    local backupdns_config="/etc/resolv.conf.bak"
+    
+    # 查找备份文件
+    if [[ -f "$backupdns_config" ]]; then
+        # 恢复备份文件
+        cp "$backupdns_config" "$dns_config"
+        
+        if [[ $? -ne 0 ]]; then
             _red "恢复DNS配置文件失败"
-		else
+        else
             # 删除备份文件
             rm "$backupdns_config"
             if [[ $? -ne 0 ]]; then
                 _red "删除备份文件失败"
             fi
-		fi
-	else
-		_red "未找到DNS配置文件备份"
-	fi
+        fi
+    else
+        _red "未找到DNS配置文件备份"
+    fi
 }
 
-reinstall_system(){
-	local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
-	local os_text="当前操作系统: ${os_info}"
+reinstall_system() {
+    local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
+    local os_text="当前操作系统: ${os_info}"
 
-	dd_xitong_MollyLau() {
-		wget --no-check-certificate -qO InstallNET.sh "${github_proxy}https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh" && chmod a+x InstallNET.sh
-	}
+    dd_xitong_MollyLau() {
+        wget --no-check-certificate -qO InstallNET.sh "${github_proxy}https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh" && chmod a+x InstallNET.sh
+    }
 
-	dd_xitong_bin456789() {
-		curl -fsSL -O "${github_proxy}https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh"
-	}
+    dd_xitong_bin456789() {
+        curl -fsSL -O "${github_proxy}https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh"
+    }
 
-	dd_xitong_1() {
-		echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  初始端口: ${yellow}22${white}"
-		_yellow "按任意键继续"
-		read -n 1 -s -r -p ""
-		install wget
-		dd_xitong_MollyLau
-	}
+    dd_xitong_1() {
+        echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  初始端口: ${yellow}22${white}"
+        _yellow "按任意键继续"
+        read -n 1 -s -r -p ""
+        install wget
+        dd_xitong_MollyLau
+    }
 
-	dd_xitong_2() {
-		echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}Teddysun.com${white} 初始端口: ${yellow}3389${white}"
-		_yellow "按任意键继续"
-		read -n 1 -s -r -p ""
-		install wget
-		dd_xitong_MollyLau
-	}
+    dd_xitong_2() {
+        echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}Teddysun.com${white} 初始端口: ${yellow}3389${white}"
+        _yellow "按任意键继续"
+        read -n 1 -s -r -p ""
+        install wget
+        dd_xitong_MollyLau
+    }
 
-	dd_xitong_3() {
-		echo -e "重装后初始用户名: ${yellow}root${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}22${white}"
-		_yellow "按任意键继续"
-		read -n 1 -s -r -p ""
-		dd_xitong_bin456789
-	}
+    dd_xitong_3() {
+        echo -e "重装后初始用户名: ${yellow}root${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}22${white}"
+        _yellow "按任意键继续"
+        read -n 1 -s -r -p ""
+        dd_xitong_bin456789
+    }
 
-	dd_xitong_4() {
-		echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}3389${white}"
-		_yellow "按任意键继续"
-		read -n 1 -s -r -p ""
-		dd_xitong_bin456789
-	}
+    dd_xitong_4() {
+        echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}3389${white}"
+        _yellow "按任意键继续"
+        read -n 1 -s -r -p ""
+        dd_xitong_bin456789
+    }
 
-	# 重装系统
-	local choice
-	while true; do
-		need_root
-		clear
-		echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据"
-		echo "感谢MollyLau大佬和bin456789大佬的脚本支持！"
-		echo "-------------------------"
-		_yellow "${os_text}"
-		echo "-------------------------"
-		echo "1. Debian 12                  2. Debian 11"
-		echo "3. Debian 10                  4. Debian 9"
-		echo "-------------------------"
-		echo "11. Ubuntu 24.04              12. Ubuntu 22.04"
-		echo "13. Ubuntu 20.04              14. Ubuntu 18.04"
-		echo "-------------------------"
-		echo "21. Rocky Linux 9             22. Rocky Linux 8"
-		echo "23. Alma Linux 9              24. Alma Linux 8"
-		echo "25. Oracle Linux 9            26. Oracle Linux 8"
-		echo "27. Fedora Linux 40           28. Fedora Linux 39"
-		echo "29. CentOS 7"
-		echo "-------------------------"
-		echo "31. Alpine Linux              32. Arch Linux"
-		echo "33. Kali Linux                34. openEuler"
-		echo "35. openSUSE Tumbleweed"
-		echo "-------------------------"
-		echo "41. Windows 11                42. Windows 10"
-		echo "43. Windows 7                 44. Windows Server 2022"
-		echo "45. Windows Server 2019       46. Windows Server 2016"
-		echo "-------------------------"
-		echo "0. 返回上一级菜单"
-		echo "-------------------------"
+    # 重装系统
+    local choice
+    while true; do
+        need_root
+        clear
+        echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据"
+        echo "感谢MollyLau大佬和bin456789大佬的脚本支持！"
+        echo "-------------------------"
+        _yellow "${os_text}"
+        echo "-------------------------"
+        echo "1. Debian 12                  2. Debian 11"
+        echo "3. Debian 10                  4. Debian 9"
+        echo "-------------------------"
+        echo "11. Ubuntu 24.04              12. Ubuntu 22.04"
+        echo "13. Ubuntu 20.04              14. Ubuntu 18.04"
+        echo "-------------------------"
+        echo "21. Rocky Linux 9             22. Rocky Linux 8"
+        echo "23. Alma Linux 9              24. Alma Linux 8"
+        echo "25. Oracle Linux 9            26. Oracle Linux 8"
+        echo "27. Fedora Linux 40           28. Fedora Linux 39"
+        echo "29. CentOS 7"
+        echo "-------------------------"
+        echo "31. Alpine Linux              32. Arch Linux"
+        echo "33. Kali Linux                34. openEuler"
+        echo "35. openSUSE Tumbleweed"
+        echo "-------------------------"
+        echo "41. Windows 11                42. Windows 10"
+        echo "43. Windows 7                 44. Windows Server 2022"
+        echo "45. Windows Server 2019       46. Windows Server 2016"
+        echo "-------------------------"
+        echo "0. 返回上一级菜单"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case "$choice" in
+        case "$choice" in
             1)
                 dd_xitong_1
                 bash InstallNET.sh -debian 12
@@ -5211,8 +5211,8 @@ reinstall_system(){
                 _red "无效选项，请重新输入"
                 break
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
 check_swap() {
