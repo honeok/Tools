@@ -5421,7 +5421,7 @@ xanmod_bbr3(){
 
 					_green "XanMod内核已更新，重启后生效"
 					rm -f /etc/apt/sources.list.d/xanmod-release.list
-					rm -f check_x86-64_psabi.sh*
+					rm -f xanmod_check.sh*
 
 					server_reboot
 					;;
@@ -5442,7 +5442,7 @@ xanmod_bbr3(){
 	else
 		# 未安装则安装
 		clear
-		echo "请备份数据,将为你升级Linux内核开启XanMod BBR3"
+		echo "请备份数据，将为你升级Linux内核开启XanMod BBR3"
 		echo "------------------------------------------------"
 		echo "仅支持Debian/Ubuntu并且仅支持x86_64架构"
 		echo "请备份数据，将为你升级Linux内核开启BBR3！"
@@ -5470,7 +5470,7 @@ xanmod_bbr3(){
 				# 检查系统架构
 				local arch=$(dpkg --print-architecture)
 				if [ "$arch" != "amd64" ]; then
-					_red "当前环境不支持,仅支持x86_64架构"
+					_red "当前环境不支持，仅支持x86_64架构"
 					end_of
 					linux_system_tools
 				fi
@@ -5494,7 +5494,7 @@ xanmod_bbr3(){
 
 				_green "XanMod内核安装并启用BBR3成功，重启后生效！"
 				rm -f /etc/apt/sources.list.d/xanmod-release.list
-				rm -f check_x86-64_psabi.sh*
+				rm -f xanmod_check.sh*
 				
 				server_reboot
 				;;
@@ -5548,7 +5548,7 @@ linux_mirror(){
 
 check_crontab_installed() {
 	if command -v crontab >/dev/null 2>&1; then
-		_green "crontab已安装"
+		_green "Crontab已安装"
 		return $?
 	else
 		install_crontab
@@ -5672,7 +5672,7 @@ cron_manager(){
 						fi
 						;;
 					2)
-						echo -n -e "${yellow}选择周几执行任务?(0-6,0代表星期日):${white}"
+						echo -n -e "${yellow}选择周几执行任务?（0-6,0代表星期日）:${white}"
 						read -r weekday
 						if [[ ! $weekday =~ ^[0-6]$ ]]; then
 							_red "无效的星期输入"
@@ -5764,7 +5764,7 @@ add_sshkey() {
 	chmod 600 ~/.ssh/authorized_keys
 
 	ip_address
-	echo -e "私钥信息已生成,务必复制保存,可保存为${yellow}${ipv4_address}_ssh.key${white}文件,用于以后的SSH登录"
+	echo -e "私钥信息已生成务必复制保存，可保存为${yellow}${ipv4_address}_ssh.key${white}文件，用于以后的SSH登录"
 	echo "--------------------------------"
 	cat ~/.ssh/sshkey
 	echo "--------------------------------"
@@ -5774,7 +5774,7 @@ add_sshkey() {
 		-e 's/^\s*#\?\s*PubkeyAuthentication .*/PubkeyAuthentication yes/' \
 		-e 's/^\s*#\?\s*ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
 	rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/*
-	echo -e "${green}root私钥登录已开启,已关闭root密码登录,重连将会生效${white}"
+	echo -e "${green}root私钥登录已开启，已关闭root密码登录重连将会生效${white}"
 }
 
 telegram_bot(){
@@ -5786,8 +5786,8 @@ telegram_bot(){
 
 	echo "TG-bot监控预警功能"
 	echo "----------------------------"
-	echo "您需要配置TG机器人API和接收预警的用户ID,即可实现本机CPU/内存/硬盘/流量/SSH登录的实时监控预警"
-	echo "到达阈值后会向用户发预警消息,流量重启服务器将重新计算"
+	echo "您需要配置TG机器人API和接收预警的用户ID，即可实现本机CPU/内存/硬盘/流量/SSH登录的实时监控预警"
+	echo "到达阈值后会向用户发预警消息，流量重启服务器将重新计算"
 	echo "----------------------------"
 				
 	echo -n -e "${yellow}确定继续吗?(y/n):${white}"
@@ -5809,7 +5809,7 @@ telegram_bot(){
 
 				# 校验哈希值
 				if [ "$TG_check_notify" != "$TG_check_notify_hash" ]; then
-					_red "文件哈希校验失败,脚本可能被篡改"
+					_red "文件哈希校验失败，脚本可能被篡改"
 					sleep 1
 					rm ~/TG-check-notify.sh
 					linux_system_tools # 返回系统工具菜单
@@ -5851,7 +5851,7 @@ telegram_bot(){
 
 			clear
 			_green "TG-bot预警系统已启动"
-			_yellow "你还可以将root目录中的TG-check-notify.sh预警文件放到其他机器上直接使用!"
+			_yellow "你还可以将root目录中的TG-check-notify.sh预警文件放到其他机器上直接使用！"
 			;;
 		[Nn])
 			_yellow "已取消"
