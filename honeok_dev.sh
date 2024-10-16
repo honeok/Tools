@@ -23,6 +23,7 @@ _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 
 honeok_v="v3.0.0"
+honeok_time="2024.10.16"
 ########################################
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
@@ -31,8 +32,8 @@ echo -e "${yellow}   __                      __     💀
  / _ \/ _ \/ _ \/ -_) _ \/  '_/
 /_//_/\___/_//_/\__/\___/_/\_\ 
 "
-    local os_text="当前操作系统：${os_info}"
-    _yellow "${os_text}"
+    local os_text="当前操作系统: ${os_info}"
+    _green "${os_text}"
 }
 #################### 系统信息START ####################
 # 查看系统信息
@@ -8157,7 +8158,7 @@ honeok() {
         clear
         print_logo
         _purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
-        echo -e "${cyan}Author: honeok${white} ${yellow} ${honeok_v}${white}"
+        echo -e "${cyan}Author: honeok${white}  ${yellow}${honeok_v}${white}  ${orange}${honeok_time}${white}"
         echo "------------------------"
         echo "1. 系统信息查询"
         echo "2. 系统更新"
