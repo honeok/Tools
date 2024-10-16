@@ -22,8 +22,8 @@ _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 
-honeok_v="v3.0.0"
-honeok_time="2024.10.16"
+honeok_v="v3.0.1"
+honeok_time="x"
 ########################################
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
@@ -112,7 +112,16 @@ system_info(){
 
     # 内存
     local mem_usage=$(free -b | awk 'NR==2{printf "%.2f/%.2f MB (%.2f%%)", $3/1024/1024, $2/1024/1024, $3*100/$2}')
-    local swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
+
+    # 交换分区
+    local swap_status swap_usage
+    swap_status=$(free -m | awk 'NR==3')
+    # 检查是否存在交换分区
+    if [[ -z "$swap_status" ]]; then
+        swap_usage="No Swap Partition"
+    else
+        swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
+    fi
 
     # 获取并格式化磁盘空间使用情况
     local disk_info=$(df -h --output=source,size,used,pcent | grep -E "^/dev/" | grep -vE "tmpfs|devtmpfs|overlay|swap|loop")
