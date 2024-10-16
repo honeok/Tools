@@ -1463,26 +1463,26 @@ docker_ps() {
 }
 
 docker_image() {
-	while true; do
-		clear
-		echo "Docker镜像列表"
-		docker image ls
-		echo ""
-		echo "镜像操作"
-		echo "------------------------"
-		echo "1. 获取指定镜像             3. 删除指定镜像"
-		echo "2. 更新指定镜像             4. 删除所有镜像"
-		echo "------------------------"
-		echo "0. 返回上一级选单"
-		echo "------------------------"
+    while true; do
+        clear
+        echo "Docker镜像列表"
+        docker image ls
+        echo ""
+        echo "镜像操作"
+        echo "------------------------"
+        echo "1. 获取指定镜像             3. 删除指定镜像"
+        echo "2. 更新指定镜像             4. 删除所有镜像"
+        echo "------------------------"
+        echo "0. 返回上一级选单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
-		case $choice in
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+        case $choice in
             1)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
-                for name in "$imagenames"; do
+                for name in $imagenames; do
                     _yellow "正在获取镜像: " "$name"
                     docker pull "$name"
                 done
@@ -1490,7 +1490,7 @@ docker_image() {
             2)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
-                for name in "$imagenames"; do
+                for name in $imagenames; do
                     _yellow "正在更新镜像: " "$name"
                     docker pull "$name"
                 done
@@ -1498,7 +1498,7 @@ docker_image() {
             3)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
-                for name in "$imagenames"; do
+                for name in $imagenames; do
                     docker rmi -f "$name"
                 done
                 ;;
@@ -1508,13 +1508,13 @@ docker_image() {
 
                 case "$choice" in
                     [Yy])
-                    	docker rmi -f $(docker images -q)
-                    	;;
+                        docker rmi -f $(docker images -q)
+                        ;;
                     [Nn])
-                    	;;
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             0)
@@ -1523,43 +1523,42 @@ docker_image() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
-# Docker管理主面板菜单
 docker_manager(){
-	while true; do
-		clear
-		echo "▶ Docker管理"
-		echo "-------------------------"
-		echo "1. 安装更新Docker环境"
-		echo "-------------------------"
-		echo "2. 查看Docker全局状态"
-		echo "-------------------------"
-		echo "3. Docker容器管理 ▶"
-		echo "4. Docker镜像管理 ▶"
-		echo "5. Docker网络管理 ▶"
-		echo "6. Docker卷管理 ▶"
-		echo "-------------------------"
-		echo "7. 清理无用的docker容器和镜像网络数据卷"
-		echo "------------------------"
-		echo "8. 更换Docker源"
-		echo "9. 编辑Docker配置文件"
-		echo "10. Docker配置文件一键优化（CN提供镜像加速）"
-		echo "------------------------"
-		echo "11. 开启Docker-ipv6访问"
-		echo "12. 关闭Docker-ipv6访问"
-		echo "------------------------"
-		echo "20. 卸载Docker环境"
-		echo "------------------------"
-		echo "0. 返回主菜单"
-		echo "------------------------"
-		
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+    while true; do
+        clear
+        echo "▶ Docker管理"
+        echo "-------------------------"
+        echo "1. 安装更新Docker环境"
+        echo "-------------------------"
+        echo "2. 查看Docker全局状态"
+        echo "-------------------------"
+        echo "3. Docker容器管理 ▶"
+        echo "4. Docker镜像管理 ▶"
+        echo "5. Docker网络管理 ▶"
+        echo "6. Docker卷管理 ▶"
+        echo "-------------------------"
+        echo "7. 清理无用的docker容器和镜像网络数据卷"
+        echo "------------------------"
+        echo "8. 更换Docker源"
+        echo "9. 编辑Docker配置文件"
+        echo "10. Docker配置文件一键优化（CN提供镜像加速）"
+        echo "------------------------"
+        echo "11. 开启Docker-ipv6访问"
+        echo "12. 关闭Docker-ipv6访问"
+        echo "------------------------"
+        echo "20. 卸载Docker环境"
+        echo "------------------------"
+        echo "0. 返回主菜单"
+        echo "------------------------"
+        
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 clear
                 if ! command -v docker >/dev/null 2>&1; then
@@ -1567,21 +1566,21 @@ docker_manager(){
                 else
                     docker_main_version
                     while true; do
-                    	echo -n -e "${yellow}是否升级Docker环境?(y/n)${white}"
-                    	read -r answer
+                        echo -n -e "${yellow}是否升级Docker环境?(y/n)${white}"
+                        read -r answer
 
-                    	case $answer in
-                    		[Y/y])
+                        case $answer in
+                            [Y/y])
                                 install_add_docker
                                 break
                                 ;;
-                    		[N/n])
+                            [N/n])
                                 break
                                 ;;
-                    		*)
+                            *)
                                 _red "无效选项，请重新输入"
                                 ;;
-                    	esac
+                        esac
                     done
                 fi
                 ;;
@@ -1622,16 +1621,16 @@ docker_manager(){
                     printf "%-25s %-25s %-25s\n" "容器名称" "网络名称" "IP地址"
 
                     for container_id in $container_ids; do
-                    	container_info=$(docker inspect --format '{{ .Name }}{{ range $network, $config := .NetworkSettings.Networks }} {{ $network }} {{ $config.IPAddress }}{{ end }}' "$container_id")
-                    	container_name=$(echo "$container_info" | awk '{print $1}')
-                    	network_info=$(echo "$container_info" | cut -d' ' -f2-)
+                        container_info=$(docker inspect --format '{{ .Name }}{{ range $network, $config := .NetworkSettings.Networks }} {{ $network }} {{ $config.IPAddress }}{{ end }}' "$container_id")
+                        container_name=$(echo "$container_info" | awk '{print $1}')
+                        network_info=$(echo "$container_info" | cut -d' ' -f2-)
 
-                    	while IFS= read -r line; do
-                    		network_name=$(echo "$line" | awk '{print $1}')
-                    		ip_address=$(echo "$line" | awk '{print $2}')
+                        while IFS= read -r line; do
+                            network_name=$(echo "$line" | awk '{print $1}')
+                            ip_address=$(echo "$line" | awk '{print $2}')
 
-                    		printf "%-20s %-20s %-15s\n" "$container_name" "$network_name" "$ip_address"
-                    	done <<< "$network_info"
+                            printf "%-20s %-20s %-15s\n" "$container_name" "$network_name" "$ip_address"
+                        done <<< "$network_info"
                     done
 
                     echo ""
@@ -1649,43 +1648,43 @@ docker_manager(){
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		echo -n "设置新网络名:"
-                    		read -r dockernetwork
-                    		docker network create "$dockernetwork"
-                    		;;
-                    	2)
-                    		echo -n "设置新网络名:"
-                    		read -r dockernetwork
-                    		echo -n "设置新网络名:"
-                    		read -r dockernames
+                        1)
+                            echo -n "设置新网络名:"
+                            read -r dockernetwork
+                            docker network create "$dockernetwork"
+                            ;;
+                        2)
+                            echo -n "设置新网络名:"
+                            read -r dockernetwork
+                            echo -n "设置新网络名:"
+                            read -r dockernames
 
-                    		for dockername in "$dockernames"; do
+                            for dockername in "$dockernames"; do
                                 docker network connect "$dockernetwork" "$dockername"
-                    		done                  
-                    		;;
-                    	3)
-                    		echo -n "设置新网络名:"
-                    		read -r dockernetwork
+                            done                  
+                            ;;
+                        3)
+                            echo -n "设置新网络名:"
+                            read -r dockernetwork
 
-                    		echo -n "哪些容器退出该网络（多个容器名请用空格分隔）:"
-                    		read -r dockernames
-                          
-                    		for dockername in "$dockernames"; do
+                            echo -n "哪些容器退出该网络（多个容器名请用空格分隔）:"
+                            read -r dockernames
+                            
+                            for dockername in "$dockernames"; do
                                 docker network disconnect "$dockernetwork" "$dockername"
-                    		done
-                    		;;
-                    	4)
-                    		echo -n "请输入要删除的网络名:"
-                    		read -r dockernetwork
-                    		docker network rm "$dockernetwork"
-                    		;;
-                    	0)
-                    		break  # 跳出循环,退出菜单
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            done
+                            ;;
+                        4)
+                            echo -n "请输入要删除的网络名:"
+                            read -r dockernetwork
+                            docker network rm "$dockernetwork"
+                            ;;
+                        0)
+                            break  # 跳出循环,退出菜单
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -1708,23 +1707,23 @@ docker_manager(){
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		echo -n "设置新卷名:"
-                    		read -r dockerjuan
-                    		docker volume create "$dockerjuan"
-                    		;;
-                    	2)
-                    		echo -n "输入删除卷名（多个卷名请用空格分隔）:"
-                    		read -r dockerjuans
+                        1)
+                            echo -n "设置新卷名:"
+                            read -r dockerjuan
+                            docker volume create "$dockerjuan"
+                            ;;
+                        2)
+                            echo -n "输入删除卷名（多个卷名请用空格分隔）:"
+                            read -r dockerjuans
 
-                    		for dockerjuan in "$dockerjuans"; do
+                            for dockerjuan in $dockerjuans; do
                                 docker volume rm "$dockerjuan"
-                    		done
-                    		;;
-                    	3)
-                    		echo -n "确定删除所有未使用的卷吗:"
-                    		read -r choice
-                    		case "$choice" in
+                            done
+                            ;;
+                        3)
+                            echo -n "确定删除所有未使用的卷吗:"
+                            read -r choice
+                            case "$choice" in
                                 [Yy])
                                     docker volume prune -f
                                     ;;
@@ -1733,14 +1732,14 @@ docker_manager(){
                                 *)
                                     _red "无效选项，请重新输入"
                                     ;;
-                    		esac
-                    		;;
-                    	0)
-                    		break  # 跳出循环,退出菜单
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            esac
+                            ;;
+                        0)
+                            break  # 跳出循环,退出菜单
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -1751,13 +1750,13 @@ docker_manager(){
 
                 case "$choice" in
                     [Yy])
-                    	docker system prune -af --volumes
-                    	;;
+                        docker system prune -af --volumes
+                        ;;
                     [Nn])
-                    	;;
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             8)
@@ -1766,7 +1765,7 @@ docker_manager(){
                 ;;
             9)
                 clear
-                mkdir /etc/docker -p && vim /etc/docker/daemon.json
+                mkdir -p /etc/docker && vim /etc/docker/daemon.json
                 restart docker
                 ;;
             10)
@@ -1787,13 +1786,13 @@ docker_manager(){
 
                 case "$choice" in
                     [Yy])
-                    	uninstall_docker
-                    	;;
+                        uninstall_docker
+                        ;;
                     [Nn])
-                    	;;
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             0)
@@ -1802,9 +1801,9 @@ docker_manager(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 
 check_network_protocols() {
