@@ -5888,108 +5888,109 @@ telegram_bot(){
 }
 
 redhat_kernel_update() {
-	install_elrepo() {
-		# 导入ELRepo GPG公钥
-		_yellow "导入ELRepo GPG 公钥"
-		rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-		# 检测系统版本
-		os_version=$(rpm -q --qf "%{VERSION}" $(rpm -qf /etc/os-release) 2>/dev/null | awk -F '.' '{print $1}')
-		os_name=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
-		# 确保支持的操作系统上运行
-		if [[ "$os_name" != *"Red Hat"* && "$os_name" != *"AlmaLinux"* && "$os_name" != *"Rocky"* && "$os_name" != *"Oracle"* && "$os_name" != *"CentOS"* ]]; then
-			_red "不支持的操作系统: $os_name"
-			end_of
-			linux_system_tools
-		fi
+    install_elrepo() {
+        # 导入ELRepo GPG公钥
+        _yellow "导入ELRepo GPG 公钥"
+        rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+        # 检测系统版本
+        os_version=$(rpm -q --qf "%{VERSION}" $(rpm -qf /etc/os-release) 2>/dev/null | awk -F '.' '{print $1}')
+        os_name=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
+        # 确保支持的操作系统上运行
+        if [[ "$os_name" != *"Red Hat"* && "$os_name" != *"AlmaLinux"* && "$os_name" != *"Rocky"* && "$os_name" != *"Oracle"* && "$os_name" != *"CentOS"* ]]; then
+            _red "不支持的操作系统：$os_name"
+            end_of
+            linux_system_tools
+        fi
 
-		# 打印检测到的操作系统信息
-		_yellow "检测到的操作系统: $os_name $os_version"
-		# 根据系统版本安装对应的 ELRepo 仓库配置
-		if [[ "$os_version" == 8 ]]; then
-			_yellow "安装ELRepo仓库配置(版本 8)"
-			yum install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm -y
-		elif [[ "$os_version" == 9 ]]; then
-			_yellow "安装ELRepo仓库配置(版本 9)"
-			yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
-		else
-			_red "不支持的系统版本:$os_version"
-			end_of
-			linux_system_tools
-		fi
+        # 打印检测到的操作系统信息
+        _yellow "检测到的操作系统: $os_name $os_version"
 
-		# 启用ELRepo内核仓库并安装最新的主线内核
-		_yellow "启用ELRepo内核仓库并安装最新的主线内核"
-		yum -y --enablerepo=elrepo-kernel install kernel-ml
-		_yellow "已安装ELRepo仓库配置并更新到最新主线内核"
-		server_reboot
-	}
+        # 根据系统版本安装对应的 ELRepo 仓库配置
+        if [[ "$os_version" == 8 ]]; then
+            _yellow "安装ELRepo仓库配置（版本 8）"
+            yum install https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm -y
+        elif [[ "$os_version" == 9 ]]; then
+            _yellow "安装ELRepo仓库配置（版本 9）"
+            yum install https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm -y
+        else
+            _red "不支持的系统版本:$os_version"
+            end_of
+            linux_system_tools
+        fi
 
-	need_root
+        # 启用ELRepo内核仓库并安装最新的主线内核
+        _yellow "启用ELRepo内核仓库并安装最新的主线内核"
+        yum -y --enablerepo=elrepo-kernel install kernel-ml
+        _yellow "已安装ELRepo仓库配置并更新到最新主线内核"
+        server_reboot
+    }
 
-	if uname -r | grep -q 'elrepo'; then
-		while true; do
-			clear
-			kernel_version=$(uname -r)
-			echo "您已安装elrepo内核"
-			echo "当前内核版本: $kernel_version"
+    need_root
 
-			echo ""
-			echo "内核管理"
-			echo "------------------------"
-			echo "1. 更新elrepo内核     2. 卸载elrepo内核"
-			echo "------------------------"
-			echo "0. 返回上一级选单"
-			echo "------------------------"
+    if uname -r | grep -q 'elrepo'; then
+        while true; do
+            clear
+            kernel_version=$(uname -r)
+            echo "您已安装elrepo内核"
+            echo "当前内核版本：$kernel_version"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-			read -r choice
+            echo ""
+            echo "内核管理"
+            echo "------------------------"
+            echo "1. 更新elrepo内核     2. 卸载elrepo内核"
+            echo "------------------------"
+            echo "0. 返回上一级选单"
+            echo "------------------------"
 
-			case "$choice" in
-				1)
-					dnf remove -y elrepo-release
-					rpm -qa | grep elrepo | grep kernel | xargs rpm -e --nodeps
-					install_elrepo
-					server_reboot
-					;;
-				2)
-					dnf remove -y elrepo-release
-					rpm -qa | grep elrepo | grep kernel | xargs rpm -e --nodeps
-					_green "elrepo内核已卸载,重启后生效"
-					server_reboot
-					;;
-				3)
-					break
-					;;
-				0)
-					_red "无效选项，请重新输入"
-					;;
-			esac
-		done
-	else
-		clear
-		_yellow "请备份数据,将为你升级Linux内核"
-		echo "------------------------------------------------"
-		echo "仅支持红帽系列发行版CentOS/RedHat/Alma/Rocky/oracle"
-		echo "升级Linux内核可提升系统性能和安全,建议有条件的尝试,生产环境谨慎升级!"
-		echo "------------------------------------------------"
+            echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+            read -r choice
 
-		echo -n -e "${yellow}确定继续吗(y/n):${white}"
-		read -r choice
+            case "$choice" in
+                1)
+                    dnf remove -y elrepo-release
+                    rpm -qa | grep elrepo | grep kernel | xargs rpm -e --nodeps
+                    install_elrepo
+                    server_reboot
+                    ;;
+                2)
+                    dnf remove -y elrepo-release
+                    rpm -qa | grep elrepo | grep kernel | xargs rpm -e --nodeps
+                    _green "elrepo内核已卸载，重启后生效"
+                    server_reboot
+                    ;;
+                3)
+                    break
+                    ;;
+                0)
+                    _red "无效选项，请重新输入"
+                    ;;
+            esac
+        done
+    else
+        clear
+        _yellow "请备份数据，将为你升级Linux内核"
+        echo "------------------------------------------------"
+        echo "仅支持红帽系列发行版CentOS/RedHat/Alma/Rocky/oracle"
+        echo "升级Linux内核可提升系统性能和安全，建议有条件的尝试，生产环境谨慎升级！"
+        echo "------------------------------------------------"
 
-		case "$choice" in
-			[Yy])
-				check_swap
-				install_elrepo
-				server_reboot
-				;;
-			[Nn])
-				echo "已取消"
-				;;
-			*)
-				_red "无效选项，请重新输入"
-				;;
-		esac
-	fi
+        echo -n -e "${yellow}确定继续吗(y/n):${white}"
+        read -r choice
+
+        case "$choice" in
+            [Yy])
+                check_swap
+                install_elrepo
+                server_reboot
+                ;;
+            [Nn])
+                echo "已取消"
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+    fi
 }
 
 # 高性能模式优化函数
