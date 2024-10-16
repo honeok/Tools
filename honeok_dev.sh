@@ -338,13 +338,13 @@ set_region_config
 
 # 安装软件包
 install() {
-	if [ $# -eq 0 ]; then
-		_red "未提供软件包参数"
-		return 1
-	fi
+    if [ $# -eq 0 ]; then
+        _red "未提供软件包参数"
+        return 1
+    fi
 
-	for package in "$@"; do
-		if ! command -v "$package" &>/dev/null; then
+    for package in "$@"; do
+        if ! command -v "$package" &>/dev/null; then
             _yellow "正在安装$package"
             if command -v dnf &>/dev/null; then
                 dnf update -y
@@ -367,12 +367,11 @@ install() {
                 _red "未知的包管理器"
                 return 1
             fi
-		else
+        else
             _green "$package已经安装！"
-		fi
-	done
-
-	return 0
+        fi
+    done
+    return 0
 }
 
 # 卸载软件包
