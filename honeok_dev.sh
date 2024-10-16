@@ -64,14 +64,14 @@ system_info(){
 		# 检查是否存在L3缓存
 		local cpu_cache_l3=""
 		if lscpu | grep -q 'L3 cache'; then
-			cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
+            cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
 		fi
 
 		# 格式化输出
 		if [[ -n "$cpu_cache_l3" ]]; then
-			echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
+            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
 		else
-			echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
+            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
 		fi
 	}
 	# 捕获get_cpu_cache的输出存储变量
@@ -85,9 +85,9 @@ system_info(){
 	else
 		# 如果lscpu未找到，尝试使用 /proc/cpuinfo
 		if grep -iq 'aes' /proc/cpuinfo; then
-			aes_ni="✔ Enabled"
+            aes_ni="✔ Enabled"
 		else
-			aes_ni="❌ Disabled"
+            aes_ni="❌ Disabled"
 		fi
 	fi
 
@@ -140,16 +140,16 @@ system_info(){
 	local cpu_usage=$(awk -v OFMT='%0.2f' '
 		NR==1 {idle1=$5; total1=$2+$3+$4+$5+$6+$7+$8+$9}
 		NR==2 {
-			idle2=$5
-			total2=$2+$3+$4+$5+$6+$7+$8+$9
-			diff_idle = idle2 - idle1
-			diff_total = total2 - total1
-			if (diff_total == 0) {
+            idle2=$5
+            total2=$2+$3+$4+$5+$6+$7+$8+$9
+            diff_idle = idle2 - idle1
+            diff_total = total2 - total1
+            if (diff_total == 0) {
                 cpu_usage=0
-			} else {
+            } else {
                 cpu_usage=100*(1-(diff_idle/diff_total))
-			}
-			printf "%.2f%%\n", cpu_usage
+            }
+            printf "%.2f%%\n", cpu_usage
 		}' <(sleep 1; cat /proc/stat))
 
 
@@ -205,14 +205,14 @@ system_info(){
 		
 		# 过滤掉不需要的行（只处理接口名）
 		if [ -n "$interface" ] && [ "$interface" != "Inter-| Receive | Transmit" ] && [ "$interface" != "face |bytes packets errs drop fifo frame compressed multicast|bytes packets errs drop fifo colls carrier compressed" ]; then
-			# 提取接收和发送字节数
-			local stats=$(echo "$line" | awk -F: '{print $2}' | xargs)
-			local recv_bytes=$(echo "$stats" | awk '{print $1}')
-			local sent_bytes=$(echo "$stats" | awk '{print $9}')
+            # 提取接收和发送字节数
+            local stats=$(echo "$line" | awk -F: '{print $2}' | xargs)
+            local recv_bytes=$(echo "$stats" | awk '{print $1}')
+            local sent_bytes=$(echo "$stats" | awk '{print $9}')
 
-			# 累加接收和发送字节数
-			total_recv_bytes=$((total_recv_bytes + recv_bytes))
-			total_sent_bytes=$((total_sent_bytes + sent_bytes))
+            # 累加接收和发送字节数
+            total_recv_bytes=$((total_recv_bytes + recv_bytes))
+            total_sent_bytes=$((total_sent_bytes + sent_bytes))
 		fi
 	done < /proc/net/dev
 
@@ -307,14 +307,14 @@ set_region_config() {
 		
 		# 对每个代理进行 ping 测试，选出延迟最短的
 		for proxy in "${github_proxies[@]}"; do
-			# 进行两次 ping 测试并提取平均时间，如果 ping 失败则设为9999
-			ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
-			
-			# 使用整数比较
-			if (( $(echo "$ping_time" | awk '{print int($1+0.5)}') < $best_time )); then
+            # 进行两次 ping 测试并提取平均时间，如果 ping 失败则设为9999
+            ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
+            
+            # 使用整数比较
+            if (( $(echo "$ping_time" | awk '{print int($1+0.5)}') < $best_time )); then
                 best_time=$(echo "$ping_time" | awk '{print int($1+0.5)}')
                 best_proxy=$proxy
-			fi
+            fi
 		done
 
 		# 设置找到的最佳代理
@@ -346,30 +346,30 @@ install() {
 
 	for package in "$@"; do
 		if ! command -v "$package" &>/dev/null; then
-			_yellow "正在安装$package"
-			if command -v dnf &>/dev/null; then
+            _yellow "正在安装$package"
+            if command -v dnf &>/dev/null; then
                 dnf update -y
                 dnf install epel-release -y
                 dnf install "$package" -y
-			elif command -v yum &>/dev/null; then
+            elif command -v yum &>/dev/null; then
                 yum update -y
                 yum install epel-release -y
                 yum install "$package" -y
-			elif command -v apt &>/dev/null; then
+            elif command -v apt &>/dev/null; then
                 apt update -y
                 apt install "$package" -y
-			elif command -v apk &>/dev/null; then
+            elif command -v apk &>/dev/null; then
                 apk update
                 apk add "$package"
-			elif command -v opkg &>/dev/null; then
+            elif command -v opkg &>/dev/null; then
                 opkg update
                 opkg install "$package"
-			else
+            else
                 _red "未知的包管理器"
                 return 1
-			fi
+            fi
 		else
-			_green "$package已经安装！"
+            _green "$package已经安装！"
 		fi
 	done
 
@@ -386,18 +386,18 @@ remove() {
 	check_installed() {
 		local package="$1"
 		if command -v dnf &>/dev/null; then
-			rpm -q "$package" &>/dev/null
+            rpm -q "$package" &>/dev/null
 		elif command -v yum &>/dev/null; then
-			rpm -q "$package" &>/dev/null
+            rpm -q "$package" &>/dev/null
 		elif command -v apt &>/dev/null; then
-			dpkg -l | grep -qw "$package"
+            dpkg -l | grep -qw "$package"
 		elif command -v apk &>/dev/null; then
-			apk info | grep -qw "$package"
+            apk info | grep -qw "$package"
 		elif command -v opkg &>/dev/null; then
-			opkg list-installed | grep -qw "$package"
+            opkg list-installed | grep -qw "$package"
 		else
-			_red "未知的包管理器！"
-			return 1
+            _red "未知的包管理器！"
+            return 1
 		fi
 		return 0
     }
@@ -405,19 +405,19 @@ remove() {
 	for package in "$@"; do
 		_yellow "正在卸载$package"
 		if check_installed "$package"; then
-			if command -v dnf &>/dev/null; then
+            if command -v dnf &>/dev/null; then
                 dnf remove "$package"* -y
-			elif command -v yum &>/dev/null; then
+            elif command -v yum &>/dev/null; then
                 yum remove "$package"* -y
-			elif command -v apt &>/dev/null; then
+            elif command -v apt &>/dev/null; then
                 apt purge "$package"* -y
-			elif command -v apk &>/dev/null; then
+            elif command -v apk &>/dev/null; then
                 apk del "$package"* -y
-			elif command -v opkg &>/dev/null; then
+            elif command -v opkg &>/dev/null; then
                 opkg remove --force "$package"
-			fi
+            fi
 		else
-			_red "$package 没有安装，跳过卸载"
+            _red "$package 没有安装，跳过卸载"
 		fi
 	done
 
@@ -440,7 +440,7 @@ systemctl() {
 daemon_reload() {
 	if ! command -v apk &>/dev/null; then
 		if command -v systemctl &>/dev/null; then
-			/bin/systemctl daemon-reload
+            /bin/systemctl daemon-reload
 		fi
 	fi
 }
@@ -570,7 +570,7 @@ ip_address() {
 	for service in "${ipv4_services[@]}"; do
 		ipv4_address=$(curl -s "$service")
 		if [[ "$ipv4_address" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-			break
+            break
 		fi
 	done
 
@@ -578,9 +578,9 @@ ip_address() {
 	for service in "${ipv6_services[@]}"; do
 		ipv6_address=$(curl -s --max-time 1 "$service")
 		if [[ "$ipv6_address" =~ ^[0-9a-fA-F:]+$ ]]; then
-			break
+            break
 		else
-			ipv6_address=""
+            ipv6_address=""
 		fi
 	done
 }
@@ -609,8 +609,8 @@ wait_for_lock(){
 		sleep 1
 		waited=$((waited + 1))
 		if [ $waited -ge $timeout ]; then
-			_red "等待dpkg锁超时"
-			break # 等待dpkg锁超时后退出循环
+            _red "等待dpkg锁超时"
+            break # 等待dpkg锁超时后退出循环
 		fi
 	done
 }
@@ -718,68 +718,68 @@ linux_tools() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 clear
                 install curl
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 curl --help
                 ;;
-			2)
+            2)
                 clear
                 install wget
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 wget --help
                 ;;
-			3)
+            3)
                 clear
                 install sudo
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 sudo --help
                 ;;
-			4)
+            4)
                 clear
                 install socat
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 socat -h
                 ;;
-			5)
+            5)
                 clear
                 install htop
                 clear
                 htop
                 ;;
-			6)
+            6)
                 clear
                 install iftop
                 clear
                 iftop
                 ;;
-			7)
+            7)
                 clear
                 install unzip
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 unzip
                 ;;
-			8)
+            8)
                 clear
                 install tar
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 tar --help
                 ;;
-			9)
+            9)
                 clear
                 install tmux
                 clear
                 _yellow "工具已安装，使用方法如下:"
                 tmux --help
                 ;;
-			10)
+            10)
                 clear
                 install ffmpeg
                 clear
@@ -787,13 +787,13 @@ linux_tools() {
                 ffmpeg --help
                 send_stats "安装ffmpeg"
                 ;;
-			11)
+            11)
                 clear
                 install btop
                 clear
                 btop
                 ;;
-			12)
+            12)
                 clear
                 install ranger
                 cd /
@@ -801,7 +801,7 @@ linux_tools() {
                 ranger
                 cd ~
                 ;;
-			13)
+            13)
                 clear
                 install gdu
                 cd /
@@ -809,7 +809,7 @@ linux_tools() {
                 gdu
                 cd ~
                 ;;
-			14)
+            14)
                 clear
                 install fzf
                 cd /
@@ -817,7 +817,7 @@ linux_tools() {
                 fzf
                 cd ~
                 ;;
-			15)
+            15)
                 clear
                 install vim
                 cd /
@@ -825,7 +825,7 @@ linux_tools() {
                 vim -h
                 cd ~
                 ;;
-			16)
+            16)
                 clear
                 install nano
                 cd /
@@ -833,64 +833,64 @@ linux_tools() {
                 nano -h
                 cd ~
                 ;;
-			21)
+            21)
                 clear
                 install cmatrix
                 clear
                 cmatrix
                 ;;
-			22)
+            22)
                 clear
                 install sl
                 clear
                 sl
                 ;;
-			26)
+            26)
                 clear
                 install bastet
                 clear
                 bastet
                 ;;
-			27)
+            27)
                 clear
                 install nsnake
                 clear
                 nsnake
                 ;;
-			28)
+            28)
                 clear
                 install ninvaders
                 clear
                 ninvaders
                 ;;
-			31)
+            31)
                 clear
                 install curl wget sudo socat htop iftop unzip tar tmux ffmpeg btop ranger gdu fzf cmatrix sl bastet nsnake ninvaders vim nano
                 ;;
-			32)
+            32)
                 clear
                 install curl wget sudo socat htop iftop unzip tar tmux ffmpeg btop ranger gdu fzf vim nano
                 ;;
-			33)
+            33)
                 clear
                 remove htop iftop unzip tmux ffmpeg btop ranger gdu fzf cmatrix sl bastet nsnake ninvaders vim nano
                 ;;
-			41)
+            41)
                 clear
                 echo -n -e "${yellow}请输入安装的工具名（wget curl sudo htop）:${white}"
                 read -r installname
                 install "$installname"
                 ;;
-			42)
+            42)
                 clear
                 echo -n -e "${yellow}请输入卸载的工具名（htop ufw tmux cmatrix）:${white}"
                 read -r removename
                 remove "$removename"
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -904,29 +904,29 @@ linux_bbr() {
 	clear
 	if [ -f "/etc/alpine-release" ]; then
 		while true; do
-			clear
-			# 使用局部变量
-			local congestion_algorithm
-			local queue_algorithm
-			local choice
+            clear
+            # 使用局部变量
+            local congestion_algorithm
+            local queue_algorithm
+            local choice
 
-			congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
-			queue_algorithm=$(sysctl -n net.core.default_qdisc)
+            congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
+            queue_algorithm=$(sysctl -n net.core.default_qdisc)
 
-			_yellow "当前TCP阻塞算法:$congestion_algorithm $queue_algorithm"
+            _yellow "当前TCP阻塞算法:$congestion_algorithm $queue_algorithm"
 
-			echo ""
-			echo "BBR管理"
-			echo "-------------------------"
-			echo "1. 开启BBRv3              2. 关闭BBRv3（会重启）"
-			echo "-------------------------"
-			echo "0. 返回上一级选单"
-			echo "-------------------------"
+            echo ""
+            echo "BBR管理"
+            echo "-------------------------"
+            echo "1. 开启BBRv3              2. 关闭BBRv3（会重启）"
+            echo "-------------------------"
+            echo "0. 返回上一级选单"
+            echo "-------------------------"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-			read -r choice
+            echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+            read -r choice
 
-			case $choice in
+            case $choice in
                 1)
                     bbr_on
                     ;;
@@ -941,7 +941,7 @@ linux_bbr() {
                 *)
                     _red "无效选项，请重新输入"
                     ;;
-			esac
+            esac
 		done
 	else
 		install wget
@@ -1011,16 +1011,16 @@ install_add_docker() {
 		install_common_docker
 	elif command -v dnf &>/dev/null; then
 		if ! dnf config-manager --help >/dev/null 2>&1; then
-			install dnf-plugins-core
+            install dnf-plugins-core
 		fi
 
 		[ -f /etc/yum.repos.d/docker*.repo ] && rm -f /etc/yum.repos.d/docker*.repo > /dev/null
 
 		# 判断地区安装
 		if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-			dnf config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null
+            dnf config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null
 		else
-			dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null
+            dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null
 		fi
 
 		install docker-ce docker-ce-cli containerd.io
@@ -1031,29 +1031,29 @@ install_add_docker() {
 		install apt-transport-https ca-certificates curl gnupg lsb-release
 		rm -f /usr/share/keyrings/docker-archive-keyring.gpg
 		if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-			if [ "$(uname -m)" = "x86_64" ]; then
+            if [ "$(uname -m)" = "x86_64" ]; then
                 sed -i '/^deb \[arch=amd64 signed-by=\/etc\/apt\/keyrings\/docker-archive-keyring.gpg\] https:\/\/mirrors.aliyun.com\/docker-ce\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
                 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-			elif [ "$(uname -m)" = "aarch64" ]; then
+            elif [ "$(uname -m)" = "aarch64" ]; then
                 sed -i '/^deb \[arch=arm64 signed-by=\/etc\/apt\/keyrings\/docker-archive-keyring.gpg\] https:\/\/mirrors.aliyun.com\/docker-ce\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
                 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=arm64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-			fi
+            fi
 		else
-			if [ "$(uname -m)" = "x86_64" ]; then
+            if [ "$(uname -m)" = "x86_64" ]; then
                 sed -i '/^deb \[arch=amd64 signed-by=\/usr\/share\/keyrings\/docker-archive-keyring.gpg\] https:\/\/download.docker.com\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
                 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-			elif [ "$(uname -m)" = "aarch64" ]; then
+            elif [ "$(uname -m)" = "aarch64" ]; then
                 sed -i '/^deb \[arch=arm64 signed-by=\/usr\/share\/keyrings\/docker-archive-keyring.gpg\] https:\/\/download.docker.com\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
                 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=arm64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-			fi
+            fi
 		fi
 		install docker-ce docker-ce-cli containerd.io
 		enable docker
@@ -1087,8 +1087,8 @@ generate_docker_config() {
 	if [ -f "$config_file" ]; then
 		# 如果文件存在，检查是否已经优化过
 		if grep -q '"default-shm-size": "128M"' "$config_file"; then
-			_yellow "Docker配置文件已经优化，无需再次优化"
-			return 0
+            _yellow "Docker配置文件已经优化，无需再次优化"
+            return 0
 		fi
 	fi
 
@@ -1215,11 +1215,11 @@ EOF
 
 		# 根据Python脚本的输出结果进行相应操作
 		if [[ "$RESULT" == *"RELOAD"* ]]; then
-			restart docker
+            restart docker
 		elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-			_yellow "当前已开启IPV6访问"
+            _yellow "当前已开启IPV6访问"
 		else
-			_red "处理配置时发生错误"
+            _red "处理配置时发生错误"
 		fi
 	fi
 }
@@ -1294,13 +1294,13 @@ uninstall_docker() {
 	# 移除Docker文件和仓库文件
 	cleanup_files() {
 		for pattern in "${docker_depend_files[@]}"; do
-			for file in $pattern; do
+            for file in $pattern; do
                 [ -e "$file" ] && rm -fr "$file" >/dev/null 2>&1
-			done
+            done
 		done
 
 		for file in "${docker_data_files[@]}" "${binary_files[@]}"; do
-			[ -e "$file" ] && rm -fr "$file" >/dev/null 2>&1
+            [ -e "$file" ] && rm -fr "$file" >/dev/null 2>&1
 		done
 	}
 
@@ -1322,15 +1322,15 @@ uninstall_docker() {
 
 	case "$os_name" in
 		ubuntu|debian|kali|centos|rhel|almalinux|rocky|fedora)
-			remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
-			;;
+            remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
+            ;;
 		alpine)
-			remove docker docker-compose
-			;;
+            remove docker docker-compose
+            ;;
 		*)
-			_red "此脚本不支持您的Linux发行版"
-			return 1
-			;;
+            _red "此脚本不支持您的Linux发行版"
+            return 1
+            ;;
 	esac
 
 	cleanup_files
@@ -1373,38 +1373,38 @@ docker_ps() {
 		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 		case $choice in
-			1)
+            1)
                 echo -n "请输入创建命令:"
                 read -r dockername
                 "$dockername"
                 ;;
-			2)
+            2)
                 echo -n "请输入容器名（多个容器名请用空格分隔）:"
                 read -r dockername
                 docker start "$dockername"
                 ;;
-			3)
+            3)
                 echo -n "请输入容器名（多个容器名请用空格分隔）:"
                 read -r dockername
                 docker stop "$dockername"
                 ;;
-			4)
+            4)
                 echo -n "请输入容器名（多个容器名请用空格分隔）:"
                 read -r dockername
                 docker rm -f "$dockername"
                 ;;
-			5)
+            5)
                 echo -n "请输入容器名（多个容器名请用空格分隔）:"
                 read -r dockername
                 docker restart "$dockername"
                 ;;
-			6)
+            6)
                 docker start $(docker ps -a -q)
                 ;;
-			7)
+            7)
                 docker stop $(docker ps -q)
                 ;;
-			8)
+            8)
                 echo -n -e "${yellow}确定删除所有容器吗?(y/n):${white}"
                 read -r choice
 
@@ -1419,22 +1419,22 @@ docker_ps() {
                     	;;
                 esac
                 ;;
-			9)
+            9)
                 docker restart $(docker ps -q)
                 ;;
-			11)
+            11)
                 echo -n "请输入容器名:"
                 read -r dockername
                 docker exec -it "$dockername" /bin/sh
                 end_of
                 ;;
-			12)
+            12)
                 echo -n "请输入容器名:"
                 read -r dockername
                 docker logs "$dockername"
                 end_of
                 ;;
-			13)
+            13)
                 echo ""
                 container_ids=$(docker ps -q)
                 echo "------------------------------------------------------------"
@@ -1451,14 +1451,14 @@ docker_ps() {
                 done
                 end_of
                 ;;
-			14)
+            14)
                 docker stats --no-stream
                 end_of
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -1482,7 +1482,7 @@ docker_image() {
 		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
 		read -r choice
 		case $choice in
-			1)
+            1)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in "$imagenames"; do
@@ -1490,7 +1490,7 @@ docker_image() {
                     docker pull "$name"
                 done
                 ;;
-			2)
+            2)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in "$imagenames"; do
@@ -1498,14 +1498,14 @@ docker_image() {
                     docker pull "$name"
                 done
                 ;;
-			3)
+            3)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in "$imagenames"; do
                     docker rmi -f "$name"
                 done
                 ;;
-			4)
+            4)
                 echo -n -e "${red}确定删除所有镜像吗?(y/n):${white}"
                 read -r choice
 
@@ -1520,10 +1520,10 @@ docker_image() {
                     	;;
                 esac
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -1563,7 +1563,7 @@ docker_manager(){
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 clear
                 if ! command -v docker >/dev/null 2>&1; then
                     install_add_docker
@@ -1588,7 +1588,7 @@ docker_manager(){
                     done
                 fi
                 ;;
-			2)
+            2)
                 clear
                 echo "Docker版本"
                 docker -v
@@ -1607,13 +1607,13 @@ docker_manager(){
                 docker network ls
                 echo ""
                 ;;
-			3)
+            3)
                 docker_ps
                 ;;
-			4)
+            4)
                 docker_image
                 ;;
-			5)
+            5)
                 while true; do
                     clear
                     echo "Docker网络列表"
@@ -1692,7 +1692,7 @@ docker_manager(){
                     esac
                 done
                 ;;
-			6)
+            6)
                 while true; do
                     clear
                     echo "Docker卷列表"
@@ -1747,7 +1747,7 @@ docker_manager(){
                     esac
                 done
                 ;;
-			7)
+            7)
                 clear
                 echo -n -e "${yellow}将清理无用的镜像容器网络，包括停止的容器，确定清理吗?(y/n)${white}"
                 read -r choice
@@ -1763,27 +1763,27 @@ docker_manager(){
                     	;;
                 esac
                 ;;
-			8)
+            8)
                 clear
                 bash <(curl -sSL https://linuxmirrors.cn/docker.sh)
                 ;;
-			9)
+            9)
                 clear
                 mkdir /etc/docker -p && vim /etc/docker/daemon.json
                 restart docker
                 ;;
-			10)
+            10)
                 generate_docker_config
                 ;;
-			11)
+            11)
                 clear
                 docker_ipv6_on
                 ;;
-			12)
+            12)
                 clear
                 docker_ipv6_off
                 ;;
-			20)
+            20)
                 clear
                 echo -n -e "${yellow}确定卸载docker环境吗?(y/n)${white}"
                 read -r choice
@@ -1799,10 +1799,10 @@ docker_manager(){
                     	;;
                 esac
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -1874,7 +1874,7 @@ manage_panel_application() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 iptables_open
                 install wget
                 if grep -q 'Alpine' /etc/issue; then
@@ -1893,19 +1893,19 @@ manage_panel_application() {
                     _red "不支持的系统"
                 fi
                 ;;
-			2)
+            2)
                 [ -n "$feature1" ] && $feature1
                 [ -n "$feature1_1" ] && $feature1_1
                 ;;
-			3)
+            3)
                 [ -n "$feature2" ] && $feature2
                 [ -n "$feature2_1" ] && $feature2_1
                 [ -n "$feature2_2" ] && $feature2_2
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -1925,7 +1925,7 @@ manage_docker_application() {
 
 		# 获取并显示当前端口
 		if docker inspect "$docker_name" &>/dev/null; then
-			display_docker_access
+            display_docker_access
 		fi
 		echo "------------------------"
 		echo "1. 安装            2. 更新"
@@ -1938,7 +1938,7 @@ manage_docker_application() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 #install_docker
                 [ ! -d "$docker_workdir" ] && mkdir -p "$docker_workdir"
                 cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
@@ -1970,7 +1970,7 @@ manage_docker_application() {
                 docker_port_2=""
                 docker_port_3=""
                 ;;
-			2)
+            2)
                 cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
                 manage_compose pull && manage_compose start
 
@@ -1981,7 +1981,7 @@ manage_docker_application() {
                 "$docker_exec_command"
                 "$docker_password"
                 ;;
-			3)
+            3)
                 cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
 
                 vim docker-compose.yml
@@ -1993,17 +1993,17 @@ manage_docker_application() {
                     _red "$docker_name重启失败"
                 fi
                 ;;
-			4)
+            4)
                 cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
                 manage_compose down_all
                 [ -d "$docker_workdir" ] && rm -fr "${docker_workdir}"
                 _green "${docker_name}应用已卸载"
                 break
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -2025,8 +2025,8 @@ find_available_port() {
 
 	for port in $(seq $start_port $end_port); do
 		if ! "$check_command" | grep -q ":$port "; then
-			echo "$port"
-			return
+            echo "$port"
+            return
 		fi
 	done
 	_red "在范围$start_port-$end_port内没有找到可用的端口" >&2
@@ -2045,25 +2045,25 @@ check_available_port() {
 	# 检查并设置docker_port_1
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		while true; do
-			if "$check_command" | grep -q ":$default_port_1 "; then
+            if "$check_command" | grep -q ":$default_port_1 "; then
                 # 查找可用的端口
                 docker_port_1=$(find_available_port 30000 50000)
                 _yellow "默认端口$default_port_1被占用,端口跳跃为$docker_port_1"
                 sleep 1
                 break
-			else
+            else
                 docker_port_1="$default_port_1"
                 _yellow "使用默认端口$docker_port_1"
                 sleep 1
                 break
-			fi
+            fi
 		done
 	fi
 
 	# 检查并设置docker_port_2
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		if [ -n "$default_port_2" ]; then
-			while true; do
+            while true; do
                 if "$check_command" | grep -q ":$default_port_2 "; then
                     docker_port_2=$(find_available_port 35000 50000)
                     _yellow "默认端口$default_port_2被占用,端口跳跃为$docker_port_2"
@@ -2075,14 +2075,14 @@ check_available_port() {
                     sleep 1
                     break
                 fi
-			done
+            done
 		fi
 	fi
 
 	# 检查并设置docker_port_3
 	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
 		if [ -n "$default_port_3" ]; then
-			while true; do
+            while true; do
                 if "$check_command" | grep -q ":$default_port_3 "; then
                     docker_port_3=$(find_available_port 40000 50000)
                     _yellow "默认端口$default_port_3被占用,端口跳跃为$docker_port_3"
@@ -2094,7 +2094,7 @@ check_available_port() {
                     sleep 1
                     break
                 fi
-			done
+            done
 		fi
 	fi
 }
@@ -2139,7 +2139,7 @@ linux_panel() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 path="/www/server/panel"
                 panelname="宝塔面板"
 
@@ -2159,7 +2159,7 @@ linux_panel() {
 
                 manage_panel_application
                 ;;
-			2)
+            2)
                 path="/www/server/panel"
                 panelname="aapanel"
 
@@ -2179,7 +2179,7 @@ linux_panel() {
 
                 manage_panel_application
                 ;;
-			3)
+            3)
                 path="command -v 1pctl &> /dev/null"
                 panelname="1Panel"
 
@@ -2199,7 +2199,7 @@ linux_panel() {
 
                 manage_panel_application
                 ;;
-			4)
+            4)
                 docker_name="npm"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="如果您已经安装了其他面板工具或者LDNMP建站环境,建议先卸载,再安装npm!"
@@ -2243,7 +2243,7 @@ linux_panel() {
                 docker_password="echo 初始密码: changeme"
                 manage_docker_application
                 ;;
-			5)
+            5)
                 docker_name="alist"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="一个支持多种存储,支持网页浏览和WebDAV的文件列表程序,由gin和Solidjs驱动"
@@ -2254,7 +2254,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			6)
+            6)
                 docker_name="webtop-ubuntu"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="webtop基于Ubuntu的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
@@ -2265,7 +2265,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			7)
+            7)
                 local choice
                 while true; do
                     clear
@@ -2293,7 +2293,7 @@ linux_panel() {
                     end_of
                 done
                 ;;
-			8)
+            8)
                 docker_name="qbittorrent"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="qbittorrent离线BT磁力下载服务"
@@ -2304,7 +2304,7 @@ linux_panel() {
                 docker_password="docker logs qbittorrent"
                 manage_docker_application
                 ;;
-			9)
+            9)
                 clear
                 install telnet
                 docker_name="poste"
@@ -2397,7 +2397,7 @@ linux_panel() {
                     end_of
                 done
                 ;;
-			11)
+            11)
                 docker_name="zentao-server"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="禅道是通用的项目管理软件"
@@ -2409,7 +2409,7 @@ linux_panel() {
                 docker_password="echo 初始密码: 123456"
                 manage_docker_application
                 ;;
-			12)
+            12)
                 docker_name="qinglong"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="青龙面板是一个定时任务管理平台"
@@ -2420,7 +2420,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			14)
+            14)
                 docker_name="easyimage"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="简单图床是一个简单的图床程序"
@@ -2431,7 +2431,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			15)
+            15)
                 docker_name="emby"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="emby是一个主从式架构的媒体服务器软件,可以用来整理服务器上的视频和音频,并将音频和视频流式传输到客户端设备"
@@ -2443,7 +2443,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			16)
+            16)
                 docker_name="looking-glass"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Speedtest测速面板是一个VPS网速测试工具,多项测试功能,还可以实时监控VPS进出站流量"
@@ -2455,7 +2455,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			17)
+            17)
                 docker_name="adguardhome"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件,未来将不止是一个DNS服务器"
@@ -2466,7 +2466,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			18)
+            18)
                 docker_name="onlyoffice"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="onlyoffice是一款开源的在线office工具,太强大了!"
@@ -2477,7 +2477,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			19)
+            19)
                 check_network_protocols
                 docker_name="safeline-mgt"
                 docker_port_1=9443
@@ -2537,7 +2537,7 @@ linux_panel() {
                     end_of
                 done
                 ;;
-			20)
+            20)
                 docker_name="portainer"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="portainer是一个轻量级的docker容器管理面板"
@@ -2548,7 +2548,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			21)
+            21)
                 docker_name="vscode-web"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="VScode是一款强大的在线代码编写工具"
@@ -2559,7 +2559,7 @@ linux_panel() {
                 docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
                 manage_docker_application
                 ;;
-			22)
+            22)
                 docker_name="uptimekuma"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="uptimekuma易于使用的自托管监控工具"
@@ -2570,7 +2570,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			23)
+            23)
                 docker_name="memeos"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Memos是一款轻量级,自托管的备忘录中心"
@@ -2581,7 +2581,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			24)
+            24)
                 docker_name="webtop"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="webtop基于Alpine,Ubuntu,Fedora和Arch的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
@@ -2592,7 +2592,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			25)
+            25)
                 docker_name="nextcloud"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Nextcloud拥有超过400,000个部署,是您可以下载的最受欢迎的本地内容协作平台"
@@ -2604,7 +2604,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			26)
+            26)
                 docker_name="qd"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="QD-Today是一个HTTP请求定时任务自动执行框架"
@@ -2615,7 +2615,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			27)
+            27)
                 docker_name="dockge"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="dockge是一个可视化的docker-compose容器管理面板"
@@ -2626,7 +2626,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			28)
+            28)
                 docker_name="speedtest"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="speedtest是用Javascript实现的轻量级速度测试工具,即开即用"
@@ -2637,7 +2637,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			29)
+            29)
                 docker_name="searxng"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="searxng是一个私有且隐私的搜索引擎站点"
@@ -2648,7 +2648,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			30)
+            30)
                 docker_name="photoprism"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="photoprism非常强大的私有相册系统"
@@ -2660,7 +2660,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			31)
+            31)
                 docker_name="s-pdf"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker,允许您对PDF文件执行各种操作,例如拆分合并,转换,重新组织,添加图像,旋转,压缩等"
@@ -2671,7 +2671,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			32)
+            32)
                 docker_name="drawio"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="这是一个强大图表绘制软件,思维导图,拓扑图,流程图,都能画"
@@ -2682,7 +2682,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			33)
+            33)
                 docker_name="sun-panel"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Sun-Panel服务器,NAS导航面板,Homepage,浏览器首页"
@@ -2693,7 +2693,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			34)
+            34)
                 docker_name="pingvin-share"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Pingvin Share是一个可自建的文件分享平台,是WeTransfer的一个替代品"
@@ -2704,7 +2704,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			35)
+            35)
                 docker_name="moments"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="极简朋友圈,高仿微信朋友圈,记录你的美好生活"
@@ -2715,7 +2715,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			36)
+            36)
                 docker_name="lobe-chat"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="LobeChat聚合市面上主流的AI大模型,ChatGPT/Claude/Gemini/Groq/Ollama"
@@ -2726,7 +2726,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			37)
+            37)
                 docker_name="myip"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="是一个多功能IP工具箱,可以查看自己IP信息及连通性,用网页面板呈现"
@@ -2737,12 +2737,12 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			38)
+            38)
                 clear
                 install_docker
                 bash -c "$(curl --insecure -fsSL https://ddsrem.com/xiaoya_install.sh)"
                 ;;
-			39)
+            39)
                 docker_name="bililive"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="Bililive-go是一个支持多种直播平台的直播录制工具"
@@ -2759,7 +2759,7 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			41)
+            41)
                 docker_name="it-tools"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="为方便开发人员提供的在线工具"
@@ -2770,14 +2770,14 @@ linux_panel() {
                 docker_password=""
                 manage_docker_application
                 ;;
-			51)
+            51)
                 clear
                 curl -fsSL -o "install_pve.sh" ${github_proxy}https://raw.githubusercontent.com/oneclickvirt/pve/main/scripts/install_pve.sh && chmod +x install_pve.sh && bash install_pve.sh
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -2798,29 +2798,29 @@ manage_compose() {
 
 	case "$1" in
 		start)	# 启动容器
-			$compose_cmd up -d
-			;;
+            $compose_cmd up -d
+            ;;
 		restart)
-			$compose_cmd restart
-			;;
+            $compose_cmd restart
+            ;;
 		stop)	# 停止容器
-			$compose_cmd stop
-			;;
+            $compose_cmd stop
+            ;;
 		recreate)
-			$compose_cmd up -d --force-recreate
-			;;
+            $compose_cmd up -d --force-recreate
+            ;;
 		down)	# 停止并删除容器
-			$compose_cmd down
-			;;
+            $compose_cmd down
+            ;;
 		pull)
-			$compose_cmd pull
-			;;
+            $compose_cmd pull
+            ;;
 		down_all) # 停止并删除容器,镜像,卷,未使用的网络
-			$compose_cmd down --rmi all --volumes --remove-orphans
-			;;
+            $compose_cmd down --rmi all --volumes --remove-orphans
+            ;;
 		version)
-			$compose_cmd version
-			;;
+            $compose_cmd version
+            ;;
 	esac
 }
 
@@ -2869,12 +2869,12 @@ ldnmp_check_port() {
 		result=$(netstat -tulpn | grep ":$port ")
 
 		if [ -n "$result" ]; then
-			clear
-			_red "端口$port已被占用，无法安装环境，卸载以下程序后重试！"
-			_yellow "$result"
-			end_of
-			linux_ldnmp
-			return 1
+            clear
+            _red "端口$port已被占用，无法安装环境，卸载以下程序后重试！"
+            _yellow "$result"
+            end_of
+            linux_ldnmp
+            return 1
 		fi
 	done
 }
@@ -2928,7 +2928,7 @@ ldnmp_uninstall_certbot() {
 
 	if [ -n "$certbot_image_ids" ]; then
 		while IFS= read -r image_id; do
-			docker rmi "$image_id" > /dev/null 2>&1
+            docker rmi "$image_id" > /dev/null 2>&1
 		done <<< "$certbot_image_ids"
 	fi
 
@@ -2984,8 +2984,8 @@ ldnmp_install_ngx_logrotate(){
 	else
 		curl -fsSL -o "$rotate_script" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/nginx/docker_ngx_rotate2.sh"
 		if [[ $? -ne 0 ]]; then
-			_red "脚本下载失败，请检查网络连接或脚本URL"
-			return 1
+            _red "脚本下载失败，请检查网络连接或脚本URL"
+            return 1
 		fi
 		chmod +x "$rotate_script"
 	fi
@@ -3010,10 +3010,10 @@ ldnmp_uninstall_ngx_logrotate() {
 
 	if [[ -d $nginx_dir ]]; then
 		if [[ -f $rotate_script ]]; then
-			rm -f "$rotate_script"
-			_green "日志截断脚本已删除"
+            rm -f "$rotate_script"
+            _green "日志截断脚本已删除"
 		else
-			_yellow "日志截断脚本不存在"
+            _yellow "日志截断脚本不存在"
 		fi
 	fi
 
@@ -3062,17 +3062,17 @@ install_ldnmp() {
 
 		# php安装扩展
 		"docker exec php sh -c '\
-			apk add --no-cache imagemagick imagemagick-dev \
-			&& apk add --no-cache git autoconf gcc g++ make pkgconfig \
-			&& rm -fr /tmp/imagick \
-			&& git clone ${github_proxy}https://github.com/Imagick/imagick /tmp/imagick \
-			&& cd /tmp/imagick \
-			&& phpize \
-			&& ./configure \
-			&& make \
-			&& make install \
-			&& echo 'extension=imagick.so' > /usr/local/etc/php/conf.d/imagick.ini \
-			&& rm -fr /tmp/imagick' > /dev/null 2>&1"
+            apk add --no-cache imagemagick imagemagick-dev \
+            && apk add --no-cache git autoconf gcc g++ make pkgconfig \
+            && rm -fr /tmp/imagick \
+            && git clone ${github_proxy}https://github.com/Imagick/imagick /tmp/imagick \
+            && cd /tmp/imagick \
+            && phpize \
+            && ./configure \
+            && make \
+            && make install \
+            && echo 'extension=imagick.so' > /usr/local/etc/php/conf.d/imagick.ini \
+            && rm -fr /tmp/imagick' > /dev/null 2>&1"
 
 		"docker exec php install-php-extensions imagick > /dev/null 2>&1"
 		"docker exec php install-php-extensions mysqli > /dev/null 2>&1"
@@ -3139,14 +3139,14 @@ install_ldnmp() {
 		completed=$(( percentage / 2 ))
 		remaining=$(( 50 - completed ))
 		progressBar="["
-			for ((j = 0; j < completed; j++)); do
+            for ((j = 0; j < completed; j++)); do
                 progressBar+="#"
-			done
-			for ((j = 0; j < remaining; j++)); do
+            done
+            for ((j = 0; j < remaining; j++)); do
                 progressBar+="."
-			done
-			progressBar+="]"
-			echo -ne "\r[${yellow}$percentage%${white}] $progressBar"
+            done
+            progressBar+="]"
+            echo -ne "\r[${yellow}$percentage%${white}] $progressBar"
 	done
 
 	echo # 打印换行，以便输出不被覆盖
@@ -3172,10 +3172,10 @@ ldnmp_install_nginx(){
 
 	if docker inspect "nginx" &>/dev/null; then
 		if curl -sL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/nginx/ldnmp-nginx-docker-compose.yml" | head -n 19 | diff - "/data/docker_data/web/docker-compose.yml" &>/dev/null; then
-			_yellow "检测到通过本脚本已安装Nginx"
-			return 0
+            _yellow "检测到通过本脚本已安装Nginx"
+            return 0
 		else
-			docker rm -f nginx >/dev/null 2>&1
+            docker rm -f nginx >/dev/null 2>&1
 		fi
 	else
 		ldnmp_check_port
@@ -3260,11 +3260,11 @@ add_domain() {
 	if [[ $domain =~ $domain_regex ]]; then
 		# 检查域名是否已存在
 		if [ -e $nginx_dir/conf.d/$domain.conf ]; then
-			_red "当前域名${domain}已被使用，请前往31站点管理,删除站点后再部署！${webname}"
-			end_of
-			linux_ldnmp
+            _red "当前域名${domain}已被使用，请前往31站点管理,删除站点后再部署！${webname}"
+            end_of
+            linux_ldnmp
 		else
-			_green "域名${domain}格式校验正确！"
+            _green "域名${domain}格式校验正确！"
 		fi
 	else
 		_red "域名格式不正确，请重新输入！"
@@ -3318,16 +3318,16 @@ ldnmp_install_ssltls() {
 
 	if version_ge "$certbot_version" "1.17.0"; then
 		docker run --rm --name certbot \
-			-p 80:80 -p 443:443 \
-			-v "$certbot_dir/cert:/etc/letsencrypt" \
-			-v "$certbot_dir/data:/var/lib/letsencrypt" \
-			certbot/certbot certonly --standalone -d $domain --email your@email.com --agree-tos --no-eff-email --force-renewal --key-type ecdsa
+            -p 80:80 -p 443:443 \
+            -v "$certbot_dir/cert:/etc/letsencrypt" \
+            -v "$certbot_dir/data:/var/lib/letsencrypt" \
+            certbot/certbot certonly --standalone -d $domain --email your@email.com --agree-tos --no-eff-email --force-renewal --key-type ecdsa
 	else
 		docker run --rm --name certbot \
-			-p 80:80 -p 443:443 \
-			-v "$certbot_dir/cert:/etc/letsencrypt" \
-			-v "$certbot_dir/data:/var/lib/letsencrypt" \
-			certbot/certbot certonly --standalone -d $domain --email your@email.com --agree-tos --no-eff-email --force-renewal
+            -p 80:80 -p 443:443 \
+            -v "$certbot_dir/cert:/etc/letsencrypt" \
+            -v "$certbot_dir/data:/var/lib/letsencrypt" \
+            certbot/certbot certonly --standalone -d $domain --email your@email.com --agree-tos --no-eff-email --force-renewal
 	fi
 
 	cp "$certbot_dir/cert/live/$domain/fullchain.pem" "$nginx_dir/certs/${domain}_cert.pem" > /dev/null 2>&1
@@ -3419,16 +3419,16 @@ fail2ban_status() {
 	while [ $count -lt $retries ]; do
 		# 捕获结果
 		if docker exec fail2ban fail2ban-client status > /dev/null 2>&1; then
-			# 如果命令成功执行，显示fail2ban状态并退出循环
-			docker exec fail2ban fail2ban-client status
-			return 0
+            # 如果命令成功执行，显示fail2ban状态并退出循环
+            docker exec fail2ban fail2ban-client status
+            return 0
 		else
-			# 如果失败输出提示信息并等待
-			_yellow "Fail2Ban 服务尚未完全启动，重试中($((count+1))/$retries)"
+            # 如果失败输出提示信息并等待
+            _yellow "Fail2Ban 服务尚未完全启动，重试中($((count+1))/$retries)"
 		fi
 
-			sleep $interval
-			count=$((count + 1))
+            sleep $interval
+            count=$((count + 1))
 	done
 
 	# 如果多次检测后仍未成功,输出错误信息
@@ -3525,7 +3525,7 @@ linux_ldnmp() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 need_root
                 ldnmp_check_status
 
@@ -3563,7 +3563,7 @@ linux_ldnmp() {
                 install_ldnmp
                 ldnmp_install_ngx_logrotate
                 ;;
-			2)
+            2)
                 clear
                 webname="WordPress"
 
@@ -3600,7 +3600,7 @@ linux_ldnmp() {
                 #echo "数据库地址: mysql"
                 #echo "表前缀: wp_"
                 ;;
-			3)
+            3)
                 clear
                 webname="Discuz论坛"
 
@@ -3627,7 +3627,7 @@ linux_ldnmp() {
                 echo "数据库地址: mysql"
                 echo "表前缀: discuz_"
                 ;;
-			4)
+            4)
                 clear
                 webname="可道云桌面"
 
@@ -3655,7 +3655,7 @@ linux_ldnmp() {
                 echo "数据库地址: mysql"
                 echo "Redis地址: redis"
                 ;;
-			5)
+            5)
                 clear
                 webname="苹果CMS"
 
@@ -3692,7 +3692,7 @@ linux_ldnmp() {
                 echo "安装成功后登录后台地址"
                 echo "https://$domain/vip.php"
                 ;;
-			6)
+            6)
                 clear
                 webname="独角数卡"
 
@@ -3733,7 +3733,7 @@ linux_ldnmp() {
                 echo "后台登录出现0err或者其他登录异常问题"
                 echo "使用命令: sed -i 's/ADMIN_HTTPS=false/ADMIN_HTTPS=true/g' $djsk_dir/dujiaoka/.env"
                 ;;
-			7)
+            7)
                 clear
                 webname="Flarum论坛"
 
@@ -3769,7 +3769,7 @@ linux_ldnmp() {
                 echo "表前缀: flarum_"
                 echo "管理员信息自行设置"
                 ;;
-			8)
+            8)
                 clear
                 webname="Typecho"
 
@@ -3797,7 +3797,7 @@ linux_ldnmp() {
                 echo "数据库端口: 3306"
                 echo "表前缀: typecho_"
                 ;;
-			20)
+            20)
                 clear
                 webname="PHP动态站点"
 
@@ -3924,11 +3924,11 @@ linux_ldnmp() {
                 echo "表前缀: $prefix"
                 echo "管理员登录信息自行设置"
                 ;;
-			21)
+            21)
                 ldnmp_install_nginx
                 ldnmp_install_ngx_logrotate
                 ;;
-			22)
+            22)
                 clear
                 webname="站点重定向"
 
@@ -3954,7 +3954,7 @@ linux_ldnmp() {
 
                 nginx_display_success
                 ;;
-			23)
+            23)
                 clear
                 webname="反向代理-IP+端口"
 
@@ -3983,7 +3983,7 @@ linux_ldnmp() {
 
                 nginx_display_success
                 ;;
-			24)
+            24)
                 clear
                 webname="反向代理-域名"
 
@@ -4010,7 +4010,7 @@ linux_ldnmp() {
 
                 nginx_display_success
                 ;;
-			25)
+            25)
                 clear
                 webname="静态站点"
 
@@ -4062,7 +4062,7 @@ linux_ldnmp() {
 
                 nginx_display_success
                 ;;
-			31)
+            31)
                 need_root
                 while true; do
                     clear
@@ -4232,7 +4232,7 @@ linux_ldnmp() {
                     esac
                 done
                 ;;
-			32)
+            32)
                 clear
 
                 if docker ps --format '{{.Names}}' | grep -q '^ldnmp$'; then
@@ -4276,7 +4276,7 @@ linux_ldnmp() {
                     _red "未检测到LDNMP环境"
                 fi
                 ;;
-			33)
+            33)
                 clear
 
                 echo -n "输入远程服务器IP:"
@@ -4318,7 +4318,7 @@ linux_ldnmp() {
 
                 install sshpass
                 ;;
-			34)
+            34)
                 need_root
 
                 ldnmp_restore_check
@@ -4341,7 +4341,7 @@ linux_ldnmp() {
                 ldnmp_install_certbot
                 install_ldnmp
                 ;;
-			35)
+            35)
                 if docker inspect fail2ban &>/dev/null ; then
                     while true; do
                     	clear
@@ -4586,7 +4586,7 @@ linux_ldnmp() {
                     _green "防御程序已开启！"
                 fi
                 ;;
-			36)
+            36)
                 while true; do
                     clear
                     echo "优化LDNMP环境"
@@ -4662,7 +4662,7 @@ linux_ldnmp() {
                     end_of
                 done
                 ;;
-			37)
+            37)
                 need_root
                 while true; do
                     clear
@@ -4791,7 +4791,7 @@ linux_ldnmp() {
                     end_of
                 done
                 ;;
-			38)
+            38)
                 need_root
                 echo "建议先备份全部网站数据再卸载LDNMP环境"
                 echo "同时会移除由LDNMP建站安装的依赖"
@@ -4828,10 +4828,10 @@ linux_ldnmp() {
                     	;;
                 esac
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -4889,7 +4889,7 @@ bak_dns() {
 
 		# 检查备份是否成功
 		if [[ $? -ne 0 ]]; then
-			_red "备份DNS配置文件失败"
+            _red "备份DNS配置文件失败"
 		fi
 	else
 		_red "DNS配置文件不存在"
@@ -4911,21 +4911,21 @@ set_dns(){
 
 	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
 		{
-			echo "nameserver $ali_ipv4"
-			echo "nameserver $tencent_ipv4"
-			if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
+            echo "nameserver $ali_ipv4"
+            echo "nameserver $tencent_ipv4"
+            if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
                 echo "nameserver $ali_ipv6"
                 echo "nameserver $tencent_ipv6"
-			fi
+            fi
 		} | tee /etc/resolv.conf > /dev/null
 	else
 		{
-			echo "nameserver $cloudflare_ipv4"
-			echo "nameserver $google_ipv4"
-			if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
+            echo "nameserver $cloudflare_ipv4"
+            echo "nameserver $google_ipv4"
+            if [[ $(ip -6 addr | grep -c "inet6") -gt 0 ]]; then
                 echo "nameserver $cloudflare_ipv6"
                 echo "nameserver $google_ipv6"
-			fi
+            fi
 		} | tee /etc/resolv.conf > /dev/null
 	fi
 }
@@ -4942,13 +4942,13 @@ rollbak_dns() {
 		cp "$backupdns_config" "$dns_config"
 		
 		if [[ $? -ne 0 ]]; then
-			_red "恢复DNS配置文件失败"
+            _red "恢复DNS配置文件失败"
 		else
-			# 删除备份文件
-			rm "$backupdns_config"
-			if [[ $? -ne 0 ]]; then
+            # 删除备份文件
+            rm "$backupdns_config"
+            if [[ $? -ne 0 ]]; then
                 _red "删除备份文件失败"
-			fi
+            fi
 		fi
 	else
 		_red "未找到DNS配置文件备份"
@@ -5034,151 +5034,151 @@ reinstall_system(){
 		read -r choice
 
 		case "$choice" in
-			1)
+            1)
                 dd_xitong_1
                 bash InstallNET.sh -debian 12
                 reboot
                 exit
                 ;;
-			2)
+            2)
                 dd_xitong_1
                 bash InstallNET.sh -debian 11
                 reboot
                 exit
                 ;;
-			3)
+            3)
                 dd_xitong_1
                 bash InstallNET.sh -debian 10
                 reboot
                 exit
                 ;;
-			4)
+            4)
                 dd_xitong_1
                 bash InstallNET.sh -debian 9
                 reboot
                 exit
                 ;;
-			11)
+            11)
                 dd_xitong_1
                 bash InstallNET.sh -ubuntu 24.04
                 reboot
                 exit
                 ;;
-			12)
+            12)
                 dd_xitong_1
                 bash InstallNET.sh -ubuntu 22.04
                 reboot
                 exit
                 ;;
-			13)
+            13)
                 dd_xitong_1
                 bash InstallNET.sh -ubuntu 20.04
                 reboot
                 exit
                 ;;
-			14)
+            14)
                 dd_xitong_1
                 bash InstallNET.sh -ubuntu 18.04
                 reboot
                 exit
                 ;;
-			21)
+            21)
                 dd_xitong_3
                 bash reinstall.sh rocky
                 reboot
                 exit
                 ;;
-			22)
+            22)
                 dd_xitong_3
                 bash reinstall.sh rocky 8
                 reboot
                 exit
                 ;;
-			23)
+            23)
                 dd_xitong_3
                 bash reinstall.sh alma
                 reboot
                 exit
                 ;;
-			24)
+            24)
                 dd_xitong_3
                 bash reinstall.sh alma 8
                 reboot
                 exit
                 ;;
-			25)
+            25)
                 dd_xitong_3
                 bash reinstall.sh oracle
                 reboot
                 exit
                 ;;
-			26)
+            26)
                 dd_xitong_3
                 bash reinstall.sh oracle 8
                 reboot
                 exit
                 ;;
-			27)
+            27)
                 dd_xitong_3
                 bash reinstall.sh fedora
                 reboot
                 exit
                 ;;
-			28)
+            28)
                 dd_xitong_3
                 bash reinstall.sh fedora 39
                 reboot
                 exit
                 ;;
-			29)
+            29)
                 dd_xitong_1
                 bash InstallNET.sh -centos 7
                 reboot
                 exit
                 ;;
-			31)
+            31)
                 dd_xitong_1
                 bash InstallNET.sh -alpine
                 reboot
                 exit
                 ;;
-			32)
+            32)
                 dd_xitong_3
                 bash reinstall.sh arch
                 reboot
                 exit
                 ;;
-			33)
+            33)
                 dd_xitong_3
                 bash reinstall.sh kali
                 reboot
                 exit
                 ;;
-			34)
+            34)
                 dd_xitong_3
                 bash reinstall.sh openeuler
                 reboot
                 exit
                 ;;
-			35)
+            35)
                 dd_xitong_3
                 bash reinstall.sh opensuse
                 reboot
                 exit
                 ;;
-			41)
+            41)
                 dd_xitong_2
                 bash InstallNET.sh -windows 11 -lang "cn"
                 reboot
                 exit
                 ;;
-			42)
+            42)
                 dd_xitong_2
                 bash InstallNET.sh -windows 10 -lang "cn"
                 reboot
                 exit
                 ;;
-			43)
+            43)
                 dd_xitong_4
                 URL="https://massgrave.dev/windows_7_links"
                 web_content=$(wget -q -O - "$URL")
@@ -5187,7 +5187,7 @@ reinstall_system(){
                 reboot
                 exit
                 ;;
-			44)
+            44)
                 dd_xitong_4
                 URL="https://massgrave.dev/windows_server_links"
                 web_content=$(wget -q -O - "$URL")
@@ -5196,22 +5196,22 @@ reinstall_system(){
                 reboot
                 exit
                 ;;
-			45)
+            45)
                 dd_xitong_2
                 bash InstallNET.sh -windows 2019 -lang "cn"
                 reboot
                 exit
                 ;;
-			46)
+            46)
                 dd_xitong_2
                 bash InstallNET.sh -windows 2016 -lang "cn"
                 reboot
                 exit
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 break
                 ;;
@@ -5231,11 +5231,11 @@ check_swap() {
 	# 判断是否需要创建虚拟内存
 	if [ "$swap_total" -le 0 ]; then
 		if [ "$mem_total" -le 900 ]; then
-			# 系统没有交换空间且物理内存小于等于900MB，设置默认的1024MB交换空间
-			local new_swap=1024
-			add_swap $new_swap
+            # 系统没有交换空间且物理内存小于等于900MB，设置默认的1024MB交换空间
+            local new_swap=1024
+            add_swap $new_swap
 		else
-			_green "物理内存大于900MB,不需要添加交换空间"
+            _green "物理内存大于900MB,不需要添加交换空间"
 		fi
 	else
 		_green "系统已经有交换空间,总大小为 ${swap_total}MB"
@@ -5342,15 +5342,15 @@ set_default_qdisc(){
 		read -r choice
 
 		case "$choice" in
-			1|"")
+            1|"")
                 chosen_qdisc="fq"
                 break
                 ;;
-			2)
+            2)
                 chosen_qdisc="fq_pie"
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -5359,11 +5359,11 @@ set_default_qdisc(){
 	# 如果当前值不等于选择的值，进行更新
 	if [ "$current_value" != "$chosen_qdisc" ]; then
 		if [ -z "$current_value" ]; then
-			# 如果没有设置项，则新增
-			echo "${qdisc_control}=${chosen_qdisc}" >> "${config_file}"
+            # 如果没有设置项，则新增
+            echo "${qdisc_control}=${chosen_qdisc}" >> "${config_file}"
 		else
-			# 如果设置项存在但值不匹配，进行替换
-			sed -i -E "s|^[^#]*${qdisc_control}\s*=\s*.*|${qdisc_control}=${chosen_qdisc}|" "${config_file}"
+            # 如果设置项存在但值不匹配，进行替换
+            sed -i -E "s|^[^#]*${qdisc_control}\s*=\s*.*|${qdisc_control}=${chosen_qdisc}|" "${config_file}"
 		fi
 		sysctl -p
 		_green "队列规则已设置为:$chosen_qdisc"
@@ -5383,12 +5383,12 @@ bbr_on(){
 		# 存在该设置项，检查其值
 		current_value=$(grep "^[^#]*${congestion_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${congestion_control}\s*=\s*(.*)/\1/")
 		if [ "$current_value" = "$congestion_bbr" ]; then
-			# 如果当前值已经是bbr，则跳过
-			return
+            # 如果当前值已经是bbr，则跳过
+            return
 		else
-			# 如果当前值不是bbr，则替换为bbr
-			sed -i -E "s|^[^#]*${congestion_control}\s*=\s*.*|${congestion_control}=${congestion_bbr}|" "${config_file}"
-			sysctl -p
+            # 如果当前值不是bbr，则替换为bbr
+            sed -i -E "s|^[^#]*${congestion_control}\s*=\s*.*|${congestion_control}=${congestion_bbr}|" "${config_file}"
+            sysctl -p
 		fi
 	else
 		# 如果没有找到该设置项，则新增
@@ -5404,23 +5404,23 @@ xanmod_bbr3(){
 	echo "XanMod BBR3管理"
 	if dpkg -l | grep -q 'linux-xanmod'; then
 		while true; do
-			clear
-			local kernel_version=$(uname -r)
-			echo "已安装XanMod的BBRv3内核"
-			echo "当前内核版本:$kernel_version"
+            clear
+            local kernel_version=$(uname -r)
+            echo "已安装XanMod的BBRv3内核"
+            echo "当前内核版本:$kernel_version"
 
-			echo ""
-			echo "内核管理"
-			echo "-------------------------"
-			echo "1. 更新BBRv3内核              2. 卸载BBRv3内核"
-			echo "-------------------------"
-			echo "0. 返回上一级选单"
-			echo "-------------------------"
+            echo ""
+            echo "内核管理"
+            echo "-------------------------"
+            echo "1. 更新BBRv3内核              2. 卸载BBRv3内核"
+            echo "-------------------------"
+            echo "0. 返回上一级选单"
+            echo "-------------------------"
 
-			echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-			read -r choice
+            echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+            read -r choice
 
-			case $choice in
+            case $choice in
                 1)
                     remove 'linux-*xanmod1*'
                     update-grub
@@ -5453,7 +5453,7 @@ xanmod_bbr3(){
                 *)
                     _red "无效选项，请重新输入"
                     ;;
-			esac
+            esac
 		done
 	else
 		# 未安装则安装
@@ -5469,7 +5469,7 @@ xanmod_bbr3(){
 		read -r choice
 
 		case "$choice" in
-			[Yy])
+            [Yy])
                 if [ -r /etc/os-release ]; then
                     . /etc/os-release
                     if [ "$ID" != "debian" ] && [ "$ID" != "ubuntu" ]; then
@@ -5514,11 +5514,11 @@ xanmod_bbr3(){
                 
                 server_reboot
                 ;;
-			[Nn])
+            [Nn])
                 :
                 _yellow "已取消"
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -5543,19 +5543,19 @@ linux_mirror(){
 		read -r choice
 	
 		case $choice in
-			1)
+            1)
                 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
                 ;;
-			2)
+            2)
                 bash <(curl -sSL https://linuxmirrors.cn/main.sh) --edu
                 ;;
-			3)
+            3)
                 bash <(curl -sSL https://linuxmirrors.cn/main.sh) --abroad
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -5575,7 +5575,7 @@ check_crontab_installed() {
 install_crontab() {
 	if [ -f /etc/os-release ]; then
 		. /etc/os-release
-			case "$ID" in
+            case "$ID" in
                 ubuntu|debian)
                     install cron
                     enable cron
@@ -5595,7 +5595,7 @@ install_crontab() {
                     _red "不支持的发行版:$ID"
                     return 1
                     ;;
-			esac
+            esac
 	else
 		_red "无法确定操作系统"
 		return 1
@@ -5664,7 +5664,7 @@ cron_manager(){
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 echo -n -e "${yellow}请输入新任务的执行命令:${white}"
                 read -r newquest
                 echo "-------------------------"
@@ -5725,7 +5725,7 @@ cron_manager(){
                     	;;
                 esac
                 ;;
-			2)
+            2)
                 echo -n -e "${yellow}请输入需要删除任务的关键字:${white}"
                 read -r kquest
                 if crontab -l | grep -v "$kquest" | crontab -; then
@@ -5734,20 +5734,20 @@ cron_manager(){
                     _red "删除定时任务失败"
                 fi
                 ;;
-			3)
+            3)
                 crontab -e
                 ;;
-			4)
+            4)
                 if crontab -r >/dev/null; then
                     _green "所有定时任务已删除"
                 else
                     _red "删除所有定时任务失败"
                 fi
                 ;;
-			0)
+            0)
                 break  # 跳出循环,退出菜单
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -6175,7 +6175,7 @@ clamav_antivirus() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 install_docker
                 docker volume create clam_db > /dev/null 2>&1
                 clamav_freshclam
@@ -6183,7 +6183,7 @@ clamav_antivirus() {
                 docker volume rm clam_db > /dev/null 2>&1
                 end_of
                 ;;
-			2)
+            2)
                 install_docker
                 docker volume create clam_db > /dev/null 2>&1
                 clamav_freshclam
@@ -6191,7 +6191,7 @@ clamav_antivirus() {
                 docker volume rm clam_db > /dev/null 2>&1
                 end_of
                 ;;
-			3)
+            3)
                 echo -n "请输入要扫描的目录 用空格分隔(例如: /etc /var /usr /home /root)"
                 read -r directories
 
@@ -6201,7 +6201,7 @@ clamav_antivirus() {
                 docker volume rm clam_db > /dev/null 2>&1
                 end_of
                 ;;
-			*)
+            *)
                 break
                 ;;
 		esac
@@ -6221,11 +6221,11 @@ cloudflare_ddns() {
 		echo "Cloudflare ddns解析"
 		echo "-------------------------"
 		if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ~/cf-v4-ddns.sh ];then
-			echo -e "${white}Cloudflare ddns: ${green}已安装${white}"
-			crontab -l | grep "/usr/local/bin/cf-ddns.sh"
+            echo -e "${white}Cloudflare ddns: ${green}已安装${white}"
+            crontab -l | grep "/usr/local/bin/cf-ddns.sh"
 		else
-			echo -e "${white}Cloudflare ddns: ${yellow}未安装${white}"
-			echo "使用动态解析之前请解析一个域名,如ddns.honeok.com到你的当前公网IP"
+            echo -e "${white}Cloudflare ddns: ${yellow}未安装${white}"
+            echo "使用动态解析之前请解析一个域名,如ddns.honeok.com到你的当前公网IP"
 		fi
 		echo "公网IPV4地址: ${ipv4_address}"
 		echo "公网IPV6地址: ${ipv6_address}"
@@ -6239,7 +6239,7 @@ cloudflare_ddns() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 # 获取CFKEY
                 while true; do
                     echo "cloudflare后台右上角我的个人资料,选择左侧API令牌,获取Global API Key"
@@ -6329,7 +6329,7 @@ cloudflare_ddns() {
 
                 _green "Cloudflare ddns安装完成"
                 ;;
-			2)
+            2)
                 if [ -f /usr/local/bin/cf-ddns.sh ]; then
                     sudo rm /usr/local/bin/cf-ddns.sh
                 else
@@ -6355,10 +6355,10 @@ cloudflare_ddns() {
 
                 _green "Cloudflare ddns卸载完成"
                 ;;
-			0)
+            0)
                 break
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -6373,12 +6373,12 @@ server_reboot(){
 
 	case "$choice" in
 		[Yy])
-			_green "已执行"
-			reboot
-			;;
+            _green "已执行"
+            reboot
+            ;;
 		*)
-			_yellow "已取消"
-			;;
+            _yellow "已取消"
+            ;;
 	esac
 }
 
@@ -6423,15 +6423,15 @@ linux_system_tools(){
 		read -r choice
 
 		case $choice in
-			2)
+            2)
                 _yellow "设置你的登录密码"
                 passwd
                 ;;
-			3)
+            3)
                 need_root
                 add_sshpasswd
                 ;;
-			4)
+            4)
                 need_root
                 echo "python版本管理"
                 echo "------------------------"
@@ -6507,12 +6507,12 @@ EOF
                 VERSION=$(python -V 2>&1 | awk '{print $2}')
                 echo -e "当前Python版本号：${yellow}$VERSION${white}"
                 ;;
-			5)
+            5)
                 iptables_open
                 remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
                 _green "端口已全部开放"
                 ;;
-			6)
+            6)
                 need_root
 
                 while true; do
@@ -6548,7 +6548,7 @@ EOF
                     fi
                 done
                 ;;
-			7)
+            7)
                 need_root
                 while true; do
                     clear
@@ -6598,10 +6598,10 @@ EOF
                     esac
                 done
                 ;;
-			8)
+            8)
                 reinstall_system
                 ;;
-			9)
+            9)
                 need_root
                 echo -n "请输入新用户名（0退出）:"
                 read -r new_username
@@ -6643,7 +6643,7 @@ EOF
 
                 _green "操作完成"
                 ;;
-			10)
+            10)
                 while true; do
                     clear
                     echo "设置v4/v6优先级"
@@ -6681,11 +6681,11 @@ EOF
                     esac
                 done
                 ;;
-			11)
+            11)
                 clear
                 ss -tulnape
                 ;;
-			12)
+            12)
                 need_root
                  while true; do
                     clear
@@ -6731,7 +6731,7 @@ EOF
                     esac
                 done
                 ;;
-			13)
+            13)
                 while true; do
                     need_root
                     echo "用户列表"
@@ -6810,7 +6810,7 @@ EOF
                     esac
                 done
                 ;;
-			14)
+            14)
                 clear
                 echo "随机用户名"
                 echo "------------------------"
@@ -6858,7 +6858,7 @@ EOF
                 done
                 echo ""
                 ;;
-			15)
+            15)
                 need_root
                 while true; do
                     clear
@@ -6938,10 +6938,10 @@ EOF
                     end_of
                 done
                 ;;
-			16)
+            16)
                 xanmod_bbr3
                 ;;
-			17)
+            17)
                 need_root
                 while true; do
                     if dpkg -l | grep -q iptables-persistent; then
@@ -7093,7 +7093,7 @@ EOF
                     fi
                 done
                 ;;
-			18)
+            18)
                 need_root
                 while true; do
                     clear
@@ -7135,13 +7135,13 @@ EOF
                     fi
                 done
                 ;;
-			19)
+            19)
                 linux_mirror
                 ;;
-			20)
+            20)
                 cron_manager
                 ;;
-			21)
+            21)
                 need_root
                 while true; do
                     clear
@@ -7181,7 +7181,7 @@ EOF
                     esac
                 done
                 ;;
-			22)
+            22)
                 need_root
                 while true; do
                     if docker inspect fail2ban &>/dev/null ; then
@@ -7270,7 +7270,7 @@ EOF
                     fi
                 done
                 ;;
-			23)
+            23)
                 need_root
                 while true; do
                     clear
@@ -7334,7 +7334,7 @@ EOF
                     esac
                 done
                 ;;
-			24)
+            24)
                 need_root
                 echo "root私钥登录模式"
                 echo "------------------------------------------------"
@@ -7355,7 +7355,7 @@ EOF
                     	;;
                 esac
                 ;;
-			25)
+            25)
                 telegram_bot
                 ;;
             26)
@@ -7435,23 +7435,23 @@ EOF
                     end_of
                 done
                 ;;
-			29)
+            29)
                 clamav_antivirus
                 ;;
-			50)
+            50)
                 cloudflare_ddns
                 ;;
-			99)
+            99)
                 clear
                 server_reboot
                 ;;
-			101)
+            101)
                 echo "NEW"
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -7521,67 +7521,67 @@ linux_workspace() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 clear
                 install tmux
                 session_name="work1"
                 tmux_run
                 ;;
-			2)
+            2)
                 clear
                 install tmux
                 session_name="work2"
                 tmux_run
                 ;;
-			3)
+            3)
                 clear
                 install tmux
                 session_name="work3"
                 tmux_run
                 ;;
-			4)
+            4)
                 clear
                 install tmux
                 session_name="work4"
                 tmux_run
                 ;;
-			5)
+            5)
                 clear
                 install tmux
                 session_name="work5"
                 tmux_run
                 ;;
-			6)
+            6)
                 clear
                 install tmux
                 session_name="work6"
                 tmux_run
                 ;;
-			7)
+            7)
                 clear
                 install tmux
                 session_name="work7"
                 tmux_run
                 ;;
-			8)
+            8)
                 clear
                 install tmux
                 session_name="work8"
                 tmux_run
                 ;;
-			9)
+            9)
                 clear
                 install tmux
                 session_name="work9"
                 tmux_run
                 ;;
-			10)
+            10)
                 clear
                 install tmux
                 session_name="work10"
                 tmux_run
                 ;;
-			99)
+            99)
                 while true; do
                     clear
                     echo "当前已存在的工作区列表"
@@ -7623,10 +7623,10 @@ linux_workspace() {
                     esac
                 done
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -7672,42 +7672,42 @@ servertest_script(){
 		read -r choice
 
 		case "$choice" in
-			1)
+            1)
                 clear
                 bash <(curl -Ls https://cdn.jsdelivr.net/gh/missuo/OpenAI-Checker/openai.sh)
                 ;;
-			2)
+            2)
                 clear
                 bash <(curl -L -s check.unlock.media)
                 ;;
-			3)
+            3)
                 clear
                 install wget >/dev/null 2>&1
                 wget -qO- "${github_proxy}https://github.com/yeahwu/check/raw/main/check.sh" | bash
                 ;;
-			4)
+            4)
                 clear
                 bash <(curl -Ls IP.Check.Place)
                 ;;
-			12)
+            12)
                 clear
                 install wget >/dev/null 2>&1
                 wget -qO- git.io/besttrace | bash
                 ;;
-			13)
+            13)
                 clear
                 curl -sL "${github_proxy}https://raw.githubusercontent.com/zhucaidan/mtr_trace/main/mtr_trace.sh" | bash
                 ;;
-			14)
+            14)
                 clear
                 bash <(curl -Lso- https://git.io/superspeed_uxh)
                 ;;
-			15)
+            15)
                 clear
                 curl nxtrace.org/nt | bash
                 nexttrace --fast-trace --tcp
                 ;;
-			16)
+            16)
                 clear
                 echo "Nxtrace指定IP回程测试脚本"
                 echo "可参考的IP列表"
@@ -7734,36 +7734,36 @@ servertest_script(){
                 curl nxtrace.org/nt | bash
                 nexttrace "$testip"
                 ;;
-			17)
+            17)
                 clear
                 curl ${github_proxy}https://raw.githubusercontent.com/ludashi2020/backtrace/main/install.sh -sSf | sh
                 ;;
-			18)
+            18)
                 clear
                 bash <(curl -sL ${github_proxy}https://raw.githubusercontent.com/i-abc/Speedtest/main/speedtest.sh)
                 ;;
-			20)
+            20)
                 clear
                 check_swap
                 curl -sL yabs.sh | bash -s -- -i -5
                 ;;
-			21)
+            21)
                 clear
                 check_swap
                 bash <(curl -sL bash.icu/gb5)
                 ;;
-			30)
+            30)
                 clear
                 curl -Lso- bench.sh | bash
                 ;;
-			31)
+            31)
                 clear
                 curl -L https://gitlab.com/spiritysdx/za/-/raw/main/ecs.sh -o ecs.sh && chmod +x ecs.sh && bash ecs.sh
                 ;;
-			0)
+            0)
                 honeok # 返回主菜单
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -7818,49 +7818,49 @@ node_create(){
 
 		case $choice in
 
-			1)
+            1)
                 clear
                 install wget >/dev/null 2>&1
                 bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/sing-box/main/sing-box.sh)
                 ;;
-			3)
+            3)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/sing-box-yes/master/install.sh)
                 ;;
-			5)
+            5)
                 clear
                 install wget >/dev/null 2>&1
                 bash <(wget -qO- -o- https://github.com/233boy/sing-box/raw/main/install.sh)
                 ;;
-			6)
+            6)
                 clear
                 install wget >/dev/null 2>&1
                 bash <(wget -qO- -o- https://git.io/v2ray.sh)
                 ;;
-			7)
+            7)
                 clear
                 install wget >/dev/null 2>&1
                 bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/argox/main/argox.sh)
                 ;;
-			8)
+            8)
                 clear
                 bash <(curl -sL https://raw.githubusercontent.com/dsadsadsss/vps-argo/main/install.sh)
                 ;;
-			9)
+            9)
                 clear
                 install wget >/dev/null 2>&1
                 bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/sba/main/sba.sh)
                 ;;
-			10)
+            10)
                 clear
                 bash <(curl -Ls https://gitlab.com/rwkgyg/sing-box-yg/raw/main/sb.sh)
                 ;;
-			11)
+            11)
                 clear
                 install wget >/dev/null 2>&1
                 wget --no-check-certificate -O gost.sh https://raw.githubusercontent.com/KANIKIG/Multi-EasyGost/master/gost.sh && chmod +x gost.sh && ./gost.sh
                 ;;
-			25)
+            25)
                 clear
                 _yellow "安装Tcp-Brutal-Reality需要内核高于5.8，不符合请手动升级5.8内核以上再安装"
                 
@@ -7879,38 +7879,38 @@ node_create(){
                     sleep 1
                 fi
                 ;;
-			26)
+            26)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
                 ;;
-			27)
+            27)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/FranzKafkaYu/x-ui/master/install.sh)
                 ;;
-			28)
+            28)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/alireza0/x-ui/master/install.sh)
                 ;;
-			29)
+            29)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
                 ;;
-			40)
+            40)
                 clear
                 install wget >/dev/null 2>&1
                 wget https://git.io/vpn -O openvpn-install.sh && bash openvpn-install.sh
                 ;;
-			41)
+            41)
                 clear
                 rm -fr /home/mtproxy >/dev/null 2>&1
                 mkdir /home/mtproxy && cd /home/mtproxy
                 curl -fsSL -o mtproxy.sh https://github.com/ellermister/mtproxy/raw/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
                 sleep 1
                 ;;
-			0)
+            0)
                 honeok # 返回主菜单
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -7941,7 +7941,7 @@ oracle_script() {
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 clear
                 _yellow "活跃脚本：CPU占用10-20% 内存占用20%"
                 echo -n -e "${yellow}确定安装吗?(y/n/):${white}"
@@ -7991,13 +7991,13 @@ oracle_script() {
                     	;;
                 esac
                 ;;
-			2)
+            2)
                 clear
                 docker rm -f lookbusy
                 docker rmi fogforest/lookbusy
                 _green "成功卸载甲骨文活跃脚本"
                 ;;
-			3)
+            3)
                 clear
                 _yellow "重装系统"
                 echo "-------------------------"
@@ -8041,22 +8041,22 @@ oracle_script() {
                     	;;
                 esac
                 ;;
-			4)
+            4)
                 clear
                 _yellow "该功能处于开发阶段，敬请期待！"
                 ;;
-			5)
+            5)
                 clear
                 add_sshpasswd
                 ;;
-			6)
+            6)
                 echo "该功能由jhb提供，感谢！"
                 bash <(curl -L -s jhb.ovh/jb/v6.sh)
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -8072,9 +8072,9 @@ palworld_script(){
 		clear
 
 		if [ -f ~/palworld.sh ]; then
-			echo -e "${white}幻兽帕鲁脚本: ${green}已安装${white}"
+            echo -e "${white}幻兽帕鲁脚本: ${green}已安装${white}"
 		else
-			echo -e "${white}幻兽帕鲁脚本: ${yellow}未安装${white}"
+            echo -e "${white}幻兽帕鲁脚本: ${yellow}未安装${white}"
 		fi
 
 		echo ""
@@ -8090,12 +8090,12 @@ palworld_script(){
 		read -r choice
 
 		case $choice in
-			1)
+            1)
                 cd ~
                 curl -fsSL -o ./palworld.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/palworld.sh
                 chmod a+x ./palworld.sh
                 ;;
-			2)
+            2)
                 [ -f ~/palworld.sh ] && rm ~/palworld.sh
                 [ -L /usr/local/bin/p ] && rm /usr/local/bin/p
 
@@ -8103,7 +8103,7 @@ palworld_script(){
                     _red "幻兽帕鲁开服脚本未安装"
                 fi
                 ;;
-			3)
+            3)
                 if [ -f ~/palworld.sh ]; then
                     bash ~/palworld.sh
                 else
@@ -8112,10 +8112,10 @@ palworld_script(){
                     bash palworld.sh
                 fi
                 ;;
-			0)
+            0)
                 honeok
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
@@ -8190,68 +8190,68 @@ honeok(){
 		read -r choice
 
 		case "$choice" in
-			1)
+            1)
                 clear
                 system_info
                 ;;
-			2)
+            2)
                 clear
                 linux_update
                 ;;
-			3)
+            3)
                 clear
                 linux_clean
                 ;;
-			4)
+            4)
                 linux_tools
                 ;;
-			5)
+            5)
                 linux_bbr
                 ;;
-			6)
+            6)
                 docker_manager
                 ;;
-			7)
+            7)
                 clear
                 install wget
                 wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [lisence/url/token]
                 ;;
-			8)
+            8)
                 linux_ldnmp
                 ;;
-			12)
+            12)
                 linux_panel
                 ;;
-			13)
+            13)
                 linux_system_tools
                 ;;
-			14)
+            14)
                 linux_workspace
                 ;;
-			15)
+            15)
                 servertest_script
                 ;;
-			16)
+            16)
                 node_create
                 ;;
-			17)
+            17)
                 oracle_script
                 ;;
-			18)
+            18)
                 echo "敬请期待"
                 ;;
-			99)
+            99)
                 palworld_script
                 ;;
-			00)
+            00)
                 honeok_update
                 ;;
-			0)
+            0)
                 _orange "Bye!" && sleep 1
                 clear
                 exit 0
                 ;;
-			*)
+            *)
                 _red "无效选项，请重新输入"
                 ;;
 		esac
