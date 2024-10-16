@@ -1156,7 +1156,8 @@ EOF
     _green "Docker配置文件已重新加载并重启Docker服务"
     daemon_reload
     restart docker
-    _yellow "Docker配置文件已根据服务器IP归属做相关优化，如需调整自行修改$config_file"
+    _yellow "Docker配置文件已根据服务器IP归属做相关优化"
+    _yellow "配置文件默认关闭IPV6，如需调整自行修改$config_file"
 }
 
 docker_ipv6_on() {
