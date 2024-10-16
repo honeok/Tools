@@ -1910,30 +1910,30 @@ manage_panel_application() {
 }
 
 manage_docker_application() {
-	local choice
-	check_network_protocols
-	while true; do
-		clear
-		check_docker_status
-		echo -e "$docker_name $check_docker"
-		echo "$docker_describe"
-		echo "$docker_url"
+    local choice
+    check_network_protocols
+    while true; do
+        clear
+        check_docker_status
+        echo -e "$docker_name $check_docker"
+        echo "$docker_describe"
+        echo "$docker_url"
 
-		# 获取并显示当前端口
-		if docker inspect "$docker_name" &>/dev/null; then
+        # 获取并显示当前端口
+        if docker inspect "$docker_name" &>/dev/null; then
             display_docker_access
-		fi
-		echo "------------------------"
-		echo "1. 安装            2. 更新"
-		echo "3. 编辑            4. 卸载"
-		echo "------------------------"
-		echo "0. 返回上一级"
-		echo "------------------------"
+        fi
+        echo "------------------------"
+        echo "1. 安装            2. 更新"
+        echo "3. 编辑            4. 卸载"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 #install_docker
                 [ ! -d "$docker_workdir" ] && mkdir -p "$docker_workdir"
@@ -2002,9 +2002,9 @@ manage_docker_application() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 
 find_available_port() {
