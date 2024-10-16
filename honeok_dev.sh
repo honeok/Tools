@@ -272,7 +272,7 @@ system_info(){
 	echo "启动盘路径        : ${boot_partition}"
 	echo "系统在线时间      : ${uptime_str}"
 	echo "负载/CPU占用率    : ${load_average} / ${cpu_usage}"
-	echo "系统              : ${os_release} ${cpu_architecture}"
+	echo "系统              : ${os_release} (${cpu_architecture})"
 	echo "架构              : ${cpu_architecture} $(getconf LONG_BIT)Bit"
 	echo "内核              : ${kernel_version}"
 	echo "网络拥塞控制算法  : ${congestion_algorithm} ${queue_algorithm}"
