@@ -1070,53 +1070,53 @@ install_add_docker() {
 
 # Docker调优
 generate_docker_config() {
-	local config_file="/etc/docker/daemon.json"
-	local config_dir="$(dirname "$config_file")"
-	local is_china_server='false'
-	local cgroup_driver
+    local config_file="/etc/docker/daemon.json"
+    local config_dir="$(dirname "$config_file")"
+    local is_china_server='false'
+    local cgroup_driver
 
-	if ! command -v docker &> /dev/null; then
-		_red "Docker未安装在系统上，无法优化"
-		return 1
-	fi
+    if ! command -v docker &> /dev/null; then
+        _red "Docker未安装在系统上，无法优化"
+        return 1
+    fi
 
-	if [ -f "$config_file" ]; then
-		# 如果文件存在，检查是否已经优化过
-		if grep -q '"default-shm-size": "128M"' "$config_file"; then
+    if [ -f "$config_file" ]; then
+        # 如果文件存在，检查是否已经优化过
+        if grep -q '"default-shm-size": "128M"' "$config_file"; then
             _yellow "Docker配置文件已经优化，无需再次优化"
             return 0
-		fi
-	fi
+        fi
+    fi
 
-	# 创建配置目录（如果不存在）
-	if [ ! -d "$config_dir" ]; then
-		mkdir -p "$config_dir"
-	fi
+    # 创建配置目录（如果不存在）
+    if [ ! -d "$config_dir" ]; then
+        mkdir -p "$config_dir"
+    fi
 
-	# 创建配置文件的基础配置（如果文件不存在）
-	if [ ! -f "$config_file" ]; then
-		echo "{}" > "$config_file"
-	fi
+    # 创建配置文件的基础配置（如果文件不存在）
+    if [ ! -f "$config_file" ]; then
+        echo "{}" > "$config_file"
+    fi
 
-	install python3
+    install python3
 
-	# 检查服务器是否在中国
-	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-		is_china_server='true'
-	fi
+    # 检查服务器是否在中国
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        is_china_server='true'
+    fi
 
-	# 获取 registry mirrors 内容
-	registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
+    # 获取 registry mirrors 内容
+    registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
 
-	# 判断操作系统是否为 Alpine
-	if grep -q 'Alpine' /etc/issue; then
-		cgroup_driver="native.cgroupdriver=cgroupfs"
-	else
-		cgroup_driver="native.cgroupdriver=systemd"
-	fi
+    # 判断操作系统是否为 Alpine
+    if grep -q 'Alpine' /etc/issue; then
+        cgroup_driver="native.cgroupdriver=cgroupfs"
+    else
+        cgroup_driver="native.cgroupdriver=systemd"
+    fi
 
-	# Python脚本
-	python3 - <<EOF
+    # Python脚本
+    python3 - <<EOF
 import json
 
 registry_mirrors = """$registry_mirrors""".splitlines()
@@ -1152,30 +1152,30 @@ with open("/etc/docker/daemon.json", "w") as f:
     json.dump(config, f, indent=4)
 EOF
 
-	# 校验和重新加载Docker守护进程
-	_green "Docker配置文件已重新加载并重启Docker服务"
-	daemon_reload
-	restart docker
-	_yellow "Docker配置文件已根据服务器IP归属做相关优化，如需调整自行修改$config_file"
+    # 校验和重新加载Docker守护进程
+    _green "Docker配置文件已重新加载并重启Docker服务"
+    daemon_reload
+    restart docker
+    _yellow "Docker配置文件已根据服务器IP归属做相关优化，如需调整自行修改$config_file"
 }
 
 docker_ipv6_on() {
-	need_root
-	install python3
+    need_root
+    install python3
 
-	local CONFIG_FILE="/etc/docker/daemon.json"
-	local REQUIRED_IPV6_CONFIG='{
-		"ipv6": true,
-		"fixed-cidr-v6": "2001:db8:1::/64"
-	}'
+    local CONFIG_FILE="/etc/docker/daemon.json"
+    local REQUIRED_IPV6_CONFIG='{
+        "ipv6": true,
+        "fixed-cidr-v6": "2001:db8:1::/64"
+    }'
 
-	# 检查配置文件是否存在，如果不存在则创建文件并写入默认设置
-	if [ ! -f "$CONFIG_FILE" ]; then
-		echo "$REQUIRED_IPV6_CONFIG" > "$CONFIG_FILE"
-		restart docker
-	else
-		# Python代码用于处理配置文件的更新
-		local PYTHON_CODE=$(cat <<EOF
+    # 检查配置文件是否存在，如果不存在则创建文件并写入默认设置
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "$REQUIRED_IPV6_CONFIG" > "$CONFIG_FILE"
+        restart docker
+    else
+        # Python代码用于处理配置文件的更新
+        local PYTHON_CODE=$(cat <<EOF
 import json
 import sys
 
@@ -1206,18 +1206,18 @@ else:
     print("RELOAD")
 EOF
 		)
-		# 执行Python脚本并获取结果
-		local RESULT=$(python3 -c "$PYTHON_CODE" "$CONFIG_FILE")
+        # 执行Python脚本并获取结果
+        local RESULT=$(python3 -c "$PYTHON_CODE" "$CONFIG_FILE")
 
-		# 根据Python脚本的输出结果进行相应操作
-		if [[ "$RESULT" == *"RELOAD"* ]]; then
+        # 根据Python脚本的输出结果进行相应操作
+        if [[ "$RESULT" == *"RELOAD"* ]]; then
             restart docker
-		elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
+        elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
             _yellow "当前已开启IPV6访问"
-		else
+        else
             _red "处理配置时发生错误"
-		fi
-	fi
+        fi
+    fi
 }
 
 docker_ipv6_off() {
