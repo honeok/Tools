@@ -5216,128 +5216,128 @@ reinstall_system() {
 }
 
 check_swap() {
-	# 获取当前总交换空间大小（以MB为单位）
-	local swap_total
-	swap_total=$(free -m | awk 'NR==3{print $2}')
+    # 获取当前总交换空间大小（以MB为单位）
+    local swap_total
+    swap_total=$(free -m | awk 'NR==3{print $2}')
 
-	# 获取当前物理内存大小（以MB为单位）
-	local mem_total
-	mem_total=$(free -m | awk 'NR==2{print $2}')
+    # 获取当前物理内存大小（以MB为单位）
+    local mem_total
+    mem_total=$(free -m | awk 'NR==2{print $2}')
 
-	# 判断是否需要创建虚拟内存
-	if [ "$swap_total" -le 0 ]; then
-		if [ "$mem_total" -le 900 ]; then
+    # 判断是否需要创建虚拟内存
+    if [ "$swap_total" -le 0 ]; then
+        if [ "$mem_total" -le 900 ]; then
             # 系统没有交换空间且物理内存小于等于900MB，设置默认的1024MB交换空间
             local new_swap=1024
-            add_swap $new_swap
-		else
+            add_swap "$new_swap"
+        else
             _green "物理内存大于900MB,不需要添加交换空间"
-		fi
-	else
-		_green "系统已经有交换空间,总大小为 ${swap_total}MB"
-	fi
+        fi
+    else
+        _green "系统已经有交换空间,总大小为 ${swap_total}MB"
+    fi
 }
 
 add_swap() {
-	local new_swap=$1
+    local new_swap=$1
 
-	if [[ -d "/proc/vz" ]]; then
-		_red "您的VPS基于OpenVZ，不受支持！"
-		return 1
-	fi
+    if [[ -d "/proc/vz" ]]; then
+        _red "您的VPS基于OpenVZ，不受支持！"
+        return 1
+    fi
 
-	# 获取当前系统中所有的swap分区
-	local swap_partitions
-	swap_partitions=$(grep -E '^/dev/' /proc/swaps | awk '{print $1}')
+    # 获取当前系统中所有的swap分区
+    local swap_partitions
+    swap_partitions=$(grep -E '^/dev/' /proc/swaps | awk '{print $1}')
 
-	# 遍历并删除所有的swap分区
-	for partition in "$swap_partitions"; do
-		swapoff "$partition"
-		wipefs -a "$partition"  # 清除文件系统标识符
-		mkswap -f "$partition"
-	done
+    # 遍历并删除所有的swap分区
+    for partition in $swap_partitions; do
+        swapoff "$partition"
+        wipefs -a "$partition"  # 清除文件系统标识符
+        mkswap -f "$partition"
+    done
 
-	# 确保/swapfile不再被使用
-	swapoff /swapfile 2>/dev/null
+    # 确保/swapfile不再被使用
+    swapoff /swapfile 2>/dev/null
 
-	# 删除旧的/swapfile
-	if [ -f /swapfile ]; then
-		rm -f /swapfile
-	fi
+    # 删除旧的/swapfile
+    if [ -f /swapfile ]; then
+        rm -f /swapfile
+    fi
 
-	# 创建新的swap文件
-	dd if=/dev/zero of=/swapfile bs=1M count="$new_swap" status=progress
-	chmod 600 /swapfile
-	mkswap /swapfile
-	swapon /swapfile
+    # 创建新的swap文件
+    dd if=/dev/zero of=/swapfile bs=1M count="$new_swap" status=progress
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
 
-	# 更新fstab
-	if ! grep -q '/swapfile' /etc/fstab; then
-		echo "/swapfile swap swap defaults 0 0" | tee -a /etc/fstab
-	fi
+    # 更新fstab
+    if ! grep -q '/swapfile' /etc/fstab; then
+        echo "/swapfile swap swap defaults 0 0" | tee -a /etc/fstab
+    fi
 
-	# 针对Alpine Linux的额外设置
-	if [ -f /etc/alpine-release ]; then
-		echo "nohup swapon /swapfile" > /etc/local.d/swap.start
-		chmod +x /etc/local.d/swap.start
-		rc-update add local
-	fi
+    # 针对Alpine Linux的额外设置
+    if [ -f /etc/alpine-release ]; then
+        echo "nohup swapon /swapfile" > /etc/local.d/swap.start
+        chmod +x /etc/local.d/swap.start
+        rc-update add local
+    fi
 
-	_green "虚拟内存大小已调整为 ${new_swap}MB"
+    _green "虚拟内存大小已调整为 ${new_swap}MB"
 }
 
 # 查看当前服务器时区
-current_timezone(){
-	if grep -q 'Alpine' /etc/issue; then
-		date +"%Z %z"
-	else
-		timedatectl | grep "Time zone" | awk '{print $3}'
-	fi
+current_timezone() {
+    if grep -q 'Alpine' /etc/issue; then
+        date +"%Z %z"
+    else
+        timedatectl | grep "Time zone" | awk '{print $3}'
+    fi
 }
 
 # 设置时区
-set_timedate(){
-	local timezone="$1"
-	if grep -q 'Alpine' /etc/issue; then
-		install tzdata
-		cp /usr/share/zoneinfo/${timezone} /etc/localtime
-		hwclock --systohc
-	else
-		timedatectl set-timezone ${timezone}
-	fi
+set_timedate() {
+    local timezone="$1"
+    if grep -q 'Alpine' /etc/issue; then
+        install tzdata
+        cp /usr/share/zoneinfo/${timezone} /etc/localtime
+        hwclock --systohc
+    else
+        timedatectl set-timezone ${timezone}
+    fi
 }
 
 # 用于检查并设置net.core.default_qdisc参数
-set_default_qdisc(){
-	local qdisc_control="net.core.default_qdisc"
-	local default_qdisc="fq"
-	local config_file="/etc/sysctl.conf"
-	local current_value
-	local choice
-	local chosen_qdisc
+set_default_qdisc() {
+    local qdisc_control="net.core.default_qdisc"
+    local default_qdisc="fq"
+    local config_file="/etc/sysctl.conf"
+    local current_value
+    local choice
+    local chosen_qdisc
 
-	# 使用grep查找现有配置,忽略等号周围的空格,排除注释行
-	if grep -q "^[^#]*${qdisc_control}\s*=" "${config_file}"; then
-		# 存在该设置项，检查其值
-		current_value=$(grep "^[^#]*${qdisc_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${qdisc_control}\s*=\s*(.*)/\1/")
-		_yellow "当前队列规则为:$current_value"
-	else
-		# 没有找到该设置项
-		current_value=""
-	fi
+    # 使用grep查找现有配置, 忽略等号周围的空格, 排除注释行
+    if grep -q "^[^#]*${qdisc_control}\s*=" "${config_file}"; then
+        # 存在该设置项，检查其值
+        current_value=$(grep "^[^#]*${qdisc_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${qdisc_control}\s*=\s*(.*)/\1/")
+        _yellow "当前队列规则为: $current_value"
+    else
+        # 没有找到该设置项
+        current_value=""
+    fi
 
-	# 提供用户选择菜单
-	while true; do
-		echo "请选择要设置的队列规则"
-		echo "-------------------------"
-		echo "1. fq （默认）"
-		echo "2 .fq_pie"
-		echo "-------------------------"
+    # 提供用户选择菜单
+    while true; do
+        echo "请选择要设置的队列规则"
+        echo "-------------------------"
+        echo "1. fq （默认）"
+        echo "2. fq_pie"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值:fq）:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值:fq）:${white}"
+        read -r choice
 
-		case "$choice" in
+        case "$choice" in
             1|"")
                 chosen_qdisc="fq"
                 break
@@ -5349,57 +5349,58 @@ set_default_qdisc(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 
-	# 如果当前值不等于选择的值，进行更新
-	if [ "$current_value" != "$chosen_qdisc" ]; then
-		if [ -z "$current_value" ]; then
+    # 如果当前值不等于选择的值，进行更新
+    if [ "$current_value" != "$chosen_qdisc" ]; then
+        if [ -z "$current_value" ]; then
             # 如果没有设置项，则新增
             echo "${qdisc_control}=${chosen_qdisc}" >> "${config_file}"
-		else
+        else
             # 如果设置项存在但值不匹配，进行替换
             sed -i -E "s|^[^#]*${qdisc_control}\s*=\s*.*|${qdisc_control}=${chosen_qdisc}|" "${config_file}"
-		fi
-		sysctl -p
-		_green "队列规则已设置为:$chosen_qdisc"
-	else
-		_yellow "队列规则已经是$current_value，无需更改"
-	fi
+        fi
+        sysctl -p
+        _green "队列规则已设置为: $chosen_qdisc"
+    else
+        _yellow "队列规则已经是 $current_value，无需更改"
+    fi
 }
 
-bbr_on(){
-	local congestion_control="net.ipv4.tcp_congestion_control"
-	local congestion_bbr="bbr"
-	local config_file="/etc/sysctl.conf"
-	local current_value
+bbr_on() {
+    local congestion_control="net.ipv4.tcp_congestion_control"
+    local congestion_bbr="bbr"
+    local config_file="/etc/sysctl.conf"
+    local current_value
 
-	# 使用grep查找现有配置，忽略等号周围的空格，排除注释行
-	if grep -q "^[^#]*${congestion_control}\s*=" "${config_file}"; then
-		# 存在该设置项，检查其值
-		current_value=$(grep "^[^#]*${congestion_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${congestion_control}\s*=\s*(.*)/\1/")
-		if [ "$current_value" = "$congestion_bbr" ]; then
+    # 使用grep查找现有配置，忽略等号周围的空格，排除注释行
+    if grep -q "^[^#]*${congestion_control}\s*=" "${config_file}"; then
+        # 存在该设置项，检查其值
+        current_value=$(grep "^[^#]*${congestion_control}\s*=" "${config_file}" | sed -E "s/^[^#]*${congestion_control}\s*=\s*(.*)/\1/")
+        
+        if [ "$current_value" = "$congestion_bbr" ]; then
             # 如果当前值已经是bbr，则跳过
             return
-		else
+        else
             # 如果当前值不是bbr，则替换为bbr
             sed -i -E "s|^[^#]*${congestion_control}\s*=\s*.*|${congestion_control}=${congestion_bbr}|" "${config_file}"
             sysctl -p
-		fi
-	else
-		# 如果没有找到该设置项，则新增
-		echo "${congestion_control}=${congestion_bbr}" >> "${config_file}"
-		sysctl -p
-	fi
+        fi
+    else
+        # 如果没有找到该设置项，则新增
+        echo "${congestion_control}=${congestion_bbr}" >> "${config_file}"
+        sysctl -p
+    fi
 }
 
-xanmod_bbr3(){
-	local choice
-	need_root
+xanmod_bbr3() {
+    local choice
+    need_root
 
-	echo "XanMod BBR3管理"
-	if dpkg -l | grep -q 'linux-xanmod'; then
-		while true; do
+    echo "XanMod BBR3管理"
+    if dpkg -l | grep -q 'linux-xanmod'; then
+        while true; do
             clear
             local kernel_version=$(uname -r)
             echo "已安装XanMod的BBRv3内核"
@@ -5450,28 +5451,28 @@ xanmod_bbr3(){
                     _red "无效选项，请重新输入"
                     ;;
             esac
-		done
-	else
-		# 未安装则安装
-		clear
-		echo "请备份数据，将为你升级Linux内核开启XanMod BBR3"
-		echo "------------------------------------------------"
-		echo "仅支持Debian/Ubuntu并且仅支持x86_64架构"
-		echo "请备份数据，将为你升级Linux内核开启BBR3！"
-		echo "VPS是512M内存的，请提前添加1G虚拟内存，防止因内存不足失联！"
-		echo "------------------------------------------------"
+        done
+    else
+        # 未安装则安装
+        clear
+        echo "请备份数据，将为你升级Linux内核开启XanMod BBR3"
+        echo "------------------------------------------------"
+        echo "仅支持Debian/Ubuntu并且仅支持x86_64架构"
+        echo "请备份数据，将为你升级Linux内核开启BBR3！"
+        echo "VPS是512M内存的，请提前添加1G虚拟内存，防止因内存不足失联！"
+        echo "------------------------------------------------"
 
-		echo -n -e "${yellow}确定继续吗?(y/n)${white}"
-		read -r choice
+        echo -n -e "${yellow}确定继续吗?(y/n)${white}"
+        read -r choice
 
-		case "$choice" in
+        case "$choice" in
             [Yy])
                 if [ -r /etc/os-release ]; then
                     . /etc/os-release
                     if [ "$ID" != "debian" ] && [ "$ID" != "ubuntu" ]; then
-                    	_red "当前环境不支持，仅支持Debian和Ubuntu系统"
-                    	end_of
-                    	linux_system_tools
+                        _red "当前环境不支持，仅支持Debian和Ubuntu系统"
+                        end_of
+                        linux_system_tools
                     fi
                 else
                     _red "无法确定操作系统类型"
@@ -5517,28 +5518,28 @@ xanmod_bbr3(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	fi
+        esac
+    fi
 }
 
 linux_mirror(){
-	local choice
-	need_root
+    local choice
+    need_root
 
-	while true; do
-		clear
-		echo "选择更新源区域"
-		echo "接入LinuxMirrors切换系统更新源"
-		echo "-------------------------"
-		echo "1. 中国大陆【默认】          2. 中国大陆【教育网】          3. 海外地区"
-		echo "-------------------------"
-		echo "0. 返回上一级"
-		echo "-------------------------"
-	
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
-	
-		case $choice in
+    while true; do
+        clear
+        echo "选择更新源区域"
+        echo "接入LinuxMirrors切换系统更新源"
+        echo "-------------------------"
+        echo "1. 中国大陆【默认】          2. 中国大陆【教育网】          3. 海外地区"
+        echo "-------------------------"
+        echo "0. 返回上一级"
+        echo "-------------------------"
+    
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+    
+        case $choice in
             1)
                 bash <(curl -sSL https://linuxmirrors.cn/main.sh)
                 ;;
@@ -5554,112 +5555,112 @@ linux_mirror(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
 check_crontab_installed() {
-	if command -v crontab >/dev/null 2>&1; then
-		_green "Crontab已安装"
-		return $?
-	else
-		install_crontab
-		return 0
-	fi
+    if command -v crontab >/dev/null 2>&1; then
+        _green "Crontab已安装"
+        return $?
+    else
+        install_crontab
+        return 0
+    fi
 }
 
 install_crontab() {
-	if [ -f /etc/os-release ]; then
-		. /etc/os-release
-            case "$ID" in
-                ubuntu|debian)
-                    install cron
-                    enable cron
-                    start cron
-                    ;;
-                centos|rhel|almalinux|rocky|fedora)
-                    install cronie
-                    enable crond
-                    start crond
-                    ;;
-                alpine)
-                    apk add --no-cache cronie
-                    rc-update add crond
-                    rc-service crond start
-                    ;;
-                *)
-                    _red "不支持的发行版:$ID"
-                    return 1
-                    ;;
-            esac
-	else
-		_red "无法确定操作系统"
-		return 1
-	fi
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+            ubuntu|debian)
+                install cron
+                enable cron
+                start cron
+                ;;
+            centos|rhel|almalinux|rocky|fedora)
+                install cronie
+                enable crond
+                start crond
+                ;;
+            alpine)
+                apk add --no-cache cronie
+                rc-update add crond
+                rc-service crond start
+                ;;
+            *)
+                _red "不支持的发行版:$ID"
+                return 1
+                ;;
+        esac
+    else
+        _red "无法确定操作系统"
+        return 1
+    fi
 
-	_yellow "Crontab已安装且Cron服务正在运行"
+    _yellow "Crontab已安装且Cron服务正在运行"
 }
 
 new_ssh_port() {
-	# 备份SSH配置文件,如果备份文件不存在,只取原始配置文件
-	backup_file="/etc/ssh/sshd_config.bak"
-	if [[ ! -f $backup_file ]]; then
-		cp /etc/ssh/sshd_config $backup_file
-	fi
+    # 备份SSH配置文件,如果备份文件不存在,只取原始配置文件
+    backup_file="/etc/ssh/sshd_config.bak"
+    if [[ ! -f $backup_file ]]; then
+        cp /etc/ssh/sshd_config $backup_file
+    fi
 
-	# 检查是否有未被注释的Port行
-	existing_port=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
+    # 检查是否有未被注释的Port行
+    existing_port=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
 
-	if [[ -z $existing_port ]]; then
-		# 如果没有启用的Port行,则取消注释并设置新端口
-		sed -i 's/^\s*#\s*Port/Port/' /etc/ssh/sshd_config
-		sed -i "s/^\s*Port [0-9]\+/Port $new_port/" /etc/ssh/sshd_config
-	else
-		# 如果已经有启用的Port行,则只更新端口号
-		sed -i "s/^\s*Port [0-9]\+/Port $new_port/" /etc/ssh/sshd_config
-	fi
+    if [[ -z $existing_port ]]; then
+        # 如果没有启用的Port行,则取消注释并设置新端口
+        sed -i 's/^\s*#\s*Port/Port/' /etc/ssh/sshd_config
+        sed -i "s/^\s*Port [0-9]\+/Port $new_port/" /etc/ssh/sshd_config
+    else
+        # 如果已经有启用的Port行,则只更新端口号
+        sed -i "s/^\s*Port [0-9]\+/Port $new_port/" /etc/ssh/sshd_config
+    fi
 
-	# 清理不再使用的配置文件
-	if [[ -d /etc/ssh/sshd_config.d ]]; then
-		rm -f /etc/ssh/sshd_config.d/*
-	fi
-	if [[ -d /etc/ssh/ssh_config.d ]]; then
-		rm -f /etc/ssh/ssh_config.d/*
-	fi
+    # 清理不再使用的配置文件
+    if [[ -d /etc/ssh/sshd_config.d ]]; then
+        rm -f /etc/ssh/sshd_config.d/*
+    fi
+    if [[ -d /etc/ssh/ssh_config.d ]]; then
+        rm -f /etc/ssh/ssh_config.d/*
+    fi
 
-	# 重启SSH服务
-	restart_ssh
+    # 重启SSH服务
+    restart_ssh
 
-	iptables_open
-	remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
+    iptables_open
+    remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
 
-	_green "SSH端口已修改为:$new_port"
-	sleep 1
+    _green "SSH端口已修改为:$new_port"
+    sleep 1
 }
 
-cron_manager(){
-	local choice newquest dingshi day weekday hour minute kquest
+cron_manager() {
+    local choice newquest dingshi day weekday hour minute kquest
 
-	while true; do
-		clear
-		check_crontab_installed
-		clear
-		echo "定时任务列表"
-		echo "-------------------------"
-		crontab -l
-		echo "-------------------------"
-		echo "操作"
-		echo "-------------------------"
-		echo "1. 添加定时任务              2. 删除定时任务"
-		echo "3. 编辑定时任务              4. 删除所有定时任务"
-		echo "-------------------------"
-		echo "0. 返回上一级选单"
-		echo "-------------------------"
+    while true; do
+        clear
+        check_crontab_installed
+        clear
+        echo "定时任务列表"
+        echo "-------------------------"
+        crontab -l
+        echo "-------------------------"
+        echo "操作"
+        echo "-------------------------"
+        echo "1. 添加定时任务              2. 删除定时任务"
+        echo "3. 编辑定时任务              4. 删除所有定时任务"
+        echo "-------------------------"
+        echo "0. 返回上一级选单"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 echo -n -e "${yellow}请输入新任务的执行命令:${white}"
                 read -r newquest
@@ -5673,52 +5674,52 @@ cron_manager(){
 
                 case $dingshi in
                     1)
-                    	echo -n -e "${yellow}选择每月的几号执行任务?（1-30）:${white}"
-                    	read -r day
-                    	if [[ ! $day =~ ^[1-9]$|^[12][0-9]$|^30$ ]]; then
-                    		_red "无效的日期输入"
-                    		continue
-                    	fi
-                    	if ! (crontab -l ; echo "0 0 $day * * $newquest") | crontab - > /dev/null 2>&1; then
-                    		_red "添加定时任务失败"
-                    	fi
-                    	;;
+                        echo -n -e "${yellow}选择每月的几号执行任务?（1-30）:${white}"
+                        read -r day
+                        if [[ ! $day =~ ^[1-9]$|^[12][0-9]$|^30$ ]]; then
+                            _red "无效的日期输入"
+                            continue
+                        fi
+                        if ! (crontab -l ; echo "0 0 $day * * $newquest") | crontab - > /dev/null 2>&1; then
+                            _red "添加定时任务失败"
+                        fi
+                        ;;
                     2)
-                    	echo -n -e "${yellow}选择周几执行任务?（0-6，0代表星期日）:${white}"
-                    	read -r weekday
-                    	if [[ ! $weekday =~ ^[0-6]$ ]]; then
-                    		_red "无效的星期输入"
-                    		continue
-                    	fi
-                    	if ! (crontab -l ; echo "0 0 * * $weekday $newquest") | crontab - > /dev/null 2>&1; then
-                    		_red "添加定时任务失败"
-                    	fi
-                    	;;
+                        echo -n -e "${yellow}选择周几执行任务?（0-6，0代表星期日）:${white}"
+                        read -r weekday
+                        if [[ ! $weekday =~ ^[0-6]$ ]]; then
+                            _red "无效的星期输入"
+                            continue
+                        fi
+                        if ! (crontab -l ; echo "0 0 * * $weekday $newquest") | crontab - > /dev/null 2>&1; then
+                            _red "添加定时任务失败"
+                        fi
+                        ;;
                     3)
-                    	echo -n -e "${yellow}选择每天几点执行任务?（小时，0-23）:${white}"
-                    	read -r hour
-                    	if [[ ! $hour =~ ^[0-9]$|^[1][0-9]$|^[2][0-3]$ ]]; then
-                    		_red "无效的小时输入"
-                    		continue
-                    	fi
-                    	if ! (crontab -l ; echo "0 $hour * * * $newquest") | crontab - > /dev/null 2>&1; then
-                    		_red "添加定时任务失败"
-                    	fi
-                    	;;
+                        echo -n -e "${yellow}选择每天几点执行任务?（小时，0-23）:${white}"
+                        read -r hour
+                        if [[ ! $hour =~ ^[0-9]$|^[1][0-9]$|^[2][0-3]$ ]]; then
+                            _red "无效的小时输入"
+                            continue
+                        fi
+                        if ! (crontab -l ; echo "0 $hour * * * $newquest") | crontab - > /dev/null 2>&1; then
+                            _red "添加定时任务失败"
+                        fi
+                        ;;
                     4)
-                    	echo -n -e "${yellow}输入每小时的第几分钟执行任务?(分钟,0-60):${white}"
-                    	read -r minute
-                    	if [[ ! $minute =~ ^[0-5][0-9]$ ]]; then
-                    		_red "无效的分钟输入"
-                    		continue
-                    	fi
-                    	if ! (crontab -l ; echo "$minute * * * * $newquest") | crontab - > /dev/null 2>&1; then
-                    		_red "添加定时任务失败"
-                    	fi
-                    	;;
+                        echo -n -e "${yellow}输入每小时的第几分钟执行任务?(分钟,0-60):${white}"
+                        read -r minute
+                        if [[ ! $minute =~ ^[0-5][0-9]$ ]]; then
+                            _red "无效的分钟输入"
+                            continue
+                        fi
+                        if ! (crontab -l ; echo "$minute * * * * $newquest") | crontab - > /dev/null 2>&1; then
+                            _red "添加定时任务失败"
+                        fi
+                        ;;
                     *)
-                    	break  # 跳出
-                    	;;
+                        break  # 跳出
+                        ;;
                 esac
                 ;;
             2)
@@ -5746,8 +5747,8 @@ cron_manager(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
 output_status() {
