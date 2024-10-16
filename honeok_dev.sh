@@ -7265,7 +7265,7 @@ EOF
 				while true; do
 					clear
 					echo "本机host解析列表"
-					echo "如果你在这里添加解析匹配,将不再使用动态解析了"
+					echo "如果你在这里添加解析匹配，将不再使用动态解析了"
 					cat /etc/hosts
 					echo ""
 					echo "操作"
@@ -7280,7 +7280,7 @@ EOF
 
 					case $host_dns in
 						1)
-							echo -n "请输入新的解析记录,格式:110.25.5.33 honeok.com:"
+							echo -n "请输入新的解析记录，格式:110.25.5.33 honeok.com:"
 							read -r addhost
 
 							echo "$addhost" >> /etc/hosts
@@ -7330,7 +7330,7 @@ EOF
 								break
 								;;
 							9)
-								cd /data/docker_data/fail2ban || { _red "无法进入目录/data/docker_data/fail2ban"; return 1; }
+								cd /data/docker_data/fail2ban
 								manage_compose down_all
 
 								[ -d /data/docker_data/fail2ban ] && rm -fr /data/docker_data/fail2ban
