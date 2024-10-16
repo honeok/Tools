@@ -26,7 +26,7 @@ honeok_v="v3.0.0"
 ########################################
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
-echo -e "${yellow}   __                      __ 
+echo -e "${yellow}   __                      __     💀
   / /  ___  ___  ___ ___  / /__
  / _ \/ _ \/ _ \/ -_) _ \/  '_/
 /_//_/\___/_//_/\__/\___/_/\_\ 
