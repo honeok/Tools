@@ -7461,64 +7461,64 @@ EOF
 
 #################### 工作区START ####################
 tmux_run() {
-	# 检查会话是否已经存在
-	tmux has-session -t $session_name 2>/dev/null
-	# $?是一个特殊变量,保存上一个命令的退出状态
-	if [ $? != 0 ]; then
-		# 会话不存在,创建一个新的会话
-		tmux new -s $session_name
-	else
-		# 会话存在附加到这个会话
-		tmux attach-session -t $session_name
-	fi
+    # 检查会话是否已经存在
+    tmux has-session -t $session_name 2>/dev/null
+    # $?是一个特殊变量,保存上一个命令的退出状态
+    if [ $? != 0 ]; then
+        # 会话不存在,创建一个新的会话
+        tmux new -s $session_name
+    else
+        # 会话存在附加到这个会话
+        tmux attach-session -t $session_name
+    fi
 }
 
 tmux_run_d() {
-	base_name="tmuxd"
-	tmuxd_ID=1
+    base_name="tmuxd"
+    tmuxd_ID=1
 
-	# 检查会话是否存在的函数
-	session_exists() {
-		tmux has-session -t $1 2>/dev/null
-	}
+    # 检查会话是否存在的函数
+    session_exists() {
+        tmux has-session -t $1 2>/dev/null
+    }
 
-	# 循环直到找到一个不存在的会话名称
-	while session_exists "$base_name-$tmuxd_ID"; do
-		tmuxd_ID=$((tmuxd_ID + 1))
-	done
+    # 循环直到找到一个不存在的会话名称
+    while session_exists "$base_name-$tmuxd_ID"; do
+        tmuxd_ID=$((tmuxd_ID + 1))
+    done
 
-	# 创建新的tmux会话
-	tmux new -d -s "$base_name-$tmuxd_ID" "$tmuxd"
+    # 创建新的tmux会话
+    tmux new -d -s "$base_name-$tmuxd_ID" "$tmuxd"
 }
 
 linux_workspace() {
-	while true; do
-		clear
-		echo "▶ 我的工作区"
-		echo "系统将为你提供可以后台常驻运行的工作区,你可以用来执行长时间的任务"
-		echo "即使你断开SSH,工作区中的任务也不会中断,后台常驻任务"
-		echo "提示: 进入工作区后使用Ctrl+b再单独按d,退出工作区!"
-		echo "------------------------"
-		echo "1. 1号工作区"
-		echo "2. 2号工作区"
-		echo "3. 3号工作区"
-		echo "4. 4号工作区"
-		echo "5. 5号工作区"
-		echo "6. 6号工作区"
-		echo "7. 7号工作区"
-		echo "8. 8号工作区"
-		echo "9. 9号工作区"
-		echo "10. 10号工作区"
-		echo "------------------------"
-		echo "99. 工作区管理"
-		echo "------------------------"
-		echo "0. 返回主菜单"
-		echo "------------------------"
+    while true; do
+        clear
+        echo "▶ 我的工作区"
+        echo "系统将为你提供可以后台常驻运行的工作区,你可以用来执行长时间的任务"
+        echo "即使你断开SSH,工作区中的任务也不会中断,后台常驻任务"
+        echo "提示: 进入工作区后使用Ctrl+b再单独按d,退出工作区!"
+        echo "------------------------"
+        echo "1. 1号工作区"
+        echo "2. 2号工作区"
+        echo "3. 3号工作区"
+        echo "4. 4号工作区"
+        echo "5. 5号工作区"
+        echo "6. 6号工作区"
+        echo "7. 7号工作区"
+        echo "8. 8号工作区"
+        echo "9. 9号工作区"
+        echo "10. 10号工作区"
+        echo "------------------------"
+        echo "99. 工作区管理"
+        echo "------------------------"
+        echo "0. 返回主菜单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 clear
                 install tmux
@@ -7597,27 +7597,27 @@ linux_workspace() {
                     read -r gongzuoqu_del
 
                     case "$gongzuoqu_del" in
-                    	1)
-                    		echo -n "请输入你创建或进入的工作区名称,如1001 honeok work1:"
-                    		read -r session_name
-                    		tmux_run
-                    		;;
-                    	2)
-                    		echo -n "请输入你要后台执行的命令,如:curl -fsSL https://get.docker.com | sh:"
-                    		read -r tmuxd
-                    		tmux_run_d
-                    		;;
-                    	3)
-                    		echo -n "请输入要删除的工作区名称:"
-                    		read -r workspace_name
-                    		tmux kill-window -t "$workspace_name"
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                        1)
+                            echo -n "请输入你创建或进入的工作区名称,如1001 honeok work1:"
+                            read -r session_name
+                            tmux_run
+                            ;;
+                        2)
+                            echo -n "请输入你要后台执行的命令,如:curl -fsSL https://get.docker.com | sh:"
+                            read -r tmuxd
+                            tmux_run_d
+                            ;;
+                        3)
+                            echo -n "请输入要删除的工作区名称:"
+                            read -r workspace_name
+                            tmux kill-window -t "$workspace_name"
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -7627,49 +7627,49 @@ linux_workspace() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 #################### 工作区END ####################
 
 #################### VPS测试脚本START ####################
-servertest_script(){
-	local choice
-	while true; do
-		clear
-		echo "▶ 测试脚本合集"
-		echo "------------------------"
-		_yellow "IP及解锁状态检测"
-		echo "1. ChatGPT 解锁状态检测"
-		echo "2. Region 流媒体解锁测试"
-		echo "3. Yeahwu 流媒体解锁检测"
-		echo "4. Xykt IP 质量体检脚本"
-		echo "------------------------"
-		_yellow "网络线路测速"
-		echo "12. Besttrace 三网回程延迟路由测试"
-		echo "13. Mtr trace 三网回程线路测试"
-		echo "14. Superspeed 三网测速"
-		echo "15. Nxtrace 快速回程测试脚本"
-		echo "16. Nxtrace 指定IP回程测试脚本"
-		echo "17. Ludashi2020 三网线路测试"
-		echo "18. i-abc 多功能测速脚本"
-		echo "------------------------"
-		_yellow "硬件性能测试"
-		echo "20. Yabs 性能测试"
-		echo "21. Icu/gb5 CPU性能测试脚本"
-		echo "------------------------"
-		_yellow "综合性测试"
-		echo "30. Bench 性能测试"
-		echo "31. Spiritysdx 融合怪测评"
-		echo "-------------------------"
-		echo "0. 返回菜单"
-		echo "-------------------------"
+servertest_script() {
+    local choice
+    while true; do
+        clear
+        echo "▶ 测试脚本合集"
+        echo "------------------------"
+        _yellow "IP及解锁状态检测"
+        echo "1. ChatGPT 解锁状态检测"
+        echo "2. Region 流媒体解锁测试"
+        echo "3. Yeahwu 流媒体解锁检测"
+        echo "4. Xykt IP 质量体检脚本"
+        echo "------------------------"
+        _yellow "网络线路测速"
+        echo "12. Besttrace 三网回程延迟路由测试"
+        echo "13. Mtr trace 三网回程线路测试"
+        echo "14. Superspeed 三网测速"
+        echo "15. Nxtrace 快速回程测试脚本"
+        echo "16. Nxtrace 指定IP回程测试脚本"
+        echo "17. Ludashi2020 三网线路测试"
+        echo "18. i-abc 多功能测速脚本"
+        echo "------------------------"
+        _yellow "硬件性能测试"
+        echo "20. Yabs 性能测试"
+        echo "21. Icu/gb5 CPU性能测试脚本"
+        echo "------------------------"
+        _yellow "综合性测试"
+        echo "30. Bench 性能测试"
+        echo "31. Spiritysdx 融合怪测评"
+        echo "-------------------------"
+        echo "0. 返回菜单"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case "$choice" in
+        case "$choice" in
             1)
                 clear
                 bash <(curl -Ls https://cdn.jsdelivr.net/gh/missuo/OpenAI-Checker/openai.sh)
@@ -7764,9 +7764,9 @@ servertest_script(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 #################### VPS测试脚本 END ####################
 
