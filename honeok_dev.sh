@@ -6709,6 +6709,7 @@ EOF
 							else
 								vi /etc/resolv.conf
 							fi
+							;;
 						0)
 							break
 							;;
