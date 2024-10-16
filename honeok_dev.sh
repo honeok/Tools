@@ -25,14 +25,14 @@ _orange() { echo -e ${orange}$@${white}; }
 honeok_v="v3.0.0"
 ########################################
 print_logo(){
-	local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
+    local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
 echo -e "${yellow}   __                      __ 
   / /  ___  ___  ___ ___  / /__
  / _ \/ _ \/ _ \/ -_) _ \/  '_/
 /_//_/\___/_//_/\__/\___/_/\_\ 
 "
-	local os_text="当前操作系统:${os_info}"
-	_yellow "${os_text}"
+    local os_text="当前操作系统:${os_info}"
+    _yellow "${os_text}"
 }
 #################### 系统信息START ####################
 # 查看系统信息
