@@ -5518,7 +5518,7 @@ linux_mirror(){
 		echo "选择更新源区域"
 		echo "接入LinuxMirrors切换系统更新源"
 		echo "-------------------------"
-		echo "1. 中国大陆[默认]          2. 中国大陆[教育网]          3. 海外地区"
+		echo "1. 中国大陆【默认】          2. 中国大陆【教育网】          3. 海外地区"
 		echo "-------------------------"
 		echo "0. 返回上一级"
 		echo "-------------------------"
@@ -5661,7 +5661,7 @@ cron_manager(){
 
 				case $dingshi in
 					1)
-						echo -n -e "${yellow}选择每月的几号执行任务?(1-30):${white}"
+						echo -n -e "${yellow}选择每月的几号执行任务?（1-30）:${white}"
 						read -r day
 						if [[ ! $day =~ ^[1-9]$|^[12][0-9]$|^30$ ]]; then
 							_red "无效的日期输入"
@@ -5672,7 +5672,7 @@ cron_manager(){
 						fi
 						;;
 					2)
-						echo -n -e "${yellow}选择周几执行任务?（0-6,0代表星期日）:${white}"
+						echo -n -e "${yellow}选择周几执行任务?（0-6，0代表星期日）:${white}"
 						read -r weekday
 						if [[ ! $weekday =~ ^[0-6]$ ]]; then
 							_red "无效的星期输入"
@@ -5683,7 +5683,7 @@ cron_manager(){
 						fi
 						;;
 					3)
-						echo -n -e "${yellow}选择每天几点执行任务?(小时,0-23):${white}"
+						echo -n -e "${yellow}选择每天几点执行任务?（小时，0-23）:${white}"
 						read -r hour
 						if [[ ! $hour =~ ^[0-9]$|^[1][0-9]$|^[2][0-3]$ ]]; then
 							_red "无效的小时输入"
@@ -6511,24 +6511,27 @@ linux_system_tools(){
 		echo "▶ 系统工具"
 		echo "------------------------"
 		echo "2. 修改登录密码"
-		echo "3. root密码登录模式                    4. 安装Python指定版本"
+		echo "3. ROOT密码登录模式                    4. 安装Python指定版本"
 		echo "5. 开放所有端口                        6. 修改SSH连接端口"
 		echo "7. 优化DNS地址                         8. 一键重装系统"
-		echo "9. 禁用root账户创建新账户              10. 切换IPV4/IPV6优先"
+		echo "9. 禁用ROOT账户创建新账户              10. 切换IPV4/IPV6优先"
 		echo "------------------------"
 		echo "11. 查看端口占用状态                   12. 修改虚拟内存大小"
-		echo "13. 用户管理                           14. 用户/密码生成器"
+		echo "13. 用户管理                           14. 用户/密码随机生成器"
 		echo "15. 系统时区调整                       16. 设置XanMod BBR3"
-		echo "18. 修改主机名"
+		echo "17.防火墙高级管理器                    18. 修改主机名"
 		echo "19. 切换系统更新源                     20. 定时任务管理"
 		echo "------------------------"
 		echo "21. 本机host解析                       22. Fail2banSSH防御程序"
-		echo "23. 限流自动关机                       24. root私钥登录模式"
-		echo "25. TG-bot系统监控预警                 26. 修复OpenSSH高危漏洞"
+		echo "23. 限流自动关机                       24. ROOT私钥登录模式"
+		echo "25. TG-bot系统监控预警                 26. 修复OpenSSH高危漏洞（岫源）"
 		echo "27. 红帽系Linux内核升级                28. Linux系统内核参数优化"
-		echo "29. Clamav病毒扫描工具"
+		echo "29. 病毒扫描工具                       30. 文件管理器"
 		echo "------------------------"
-		echo "50. Cloudflare ddns解析"
+		echo "31. 切换系统语言                       32. 命令行美化工具"
+		echo "33. 设置系统回收站"
+		echo "------------------------"
+		echo "50. Cloudflare ddns解析                51. 一条龙系统调优"
 		echo "------------------------"
 		echo "99. 重启服务器"
 		echo "------------------------"
@@ -6553,12 +6556,12 @@ linux_system_tools(){
 				need_root
 				echo "python版本管理"
 				echo "------------------------"
-				echo "该功能可无缝安装python官方支持的任何版本!"
+				echo "该功能可无缝安装python官方支持的任何版本！"
 				VERSION=$(python3 -V 2>&1 | awk '{print $2}')
-				echo -e "当前python版本号:${yellow}$VERSION${white}"
+				echo -e "当前python版本号：${yellow}$VERSION${white}"
 				echo "------------------------"
-				echo "推荐版本: 3.12   3.11   3.10   3.9   3.8   2.7"
-				echo "查询更多版本: https://www.python.org/downloads/"
+				echo "推荐版本:  3.12    3.11    3.10    3.9    3.8    2.7"
+				echo "查询更多版本：https://www.python.org/downloads/"
 				echo "------------------------"
 
 				echo -n -e "${yellow}请输入选项并按回车键确认(0退出):${white}"
@@ -6595,7 +6598,7 @@ linux_system_tools(){
 						install git
 						apk add --no-cache bash gcc musl-dev libffi-dev openssl-dev bzip2-dev zlib-dev readline-dev sqlite-dev libc6-compat linux-headers make xz-dev build-base ncurses-dev
 					else
-						_red "未知的包管理器!"
+						_red "未知的包管理器！"
 						return 1
 					fi
 
@@ -6623,7 +6626,7 @@ EOF
 				rm -fr $(pyenv root)/cache/*
 
 				VERSION=$(python -V 2>&1 | awk '{print $2}')
-				echo -e "当前python版本号: ${yellow}$VERSION${white}"
+				echo -e "当前Python版本号：${yellow}$VERSION${white}"
 				;;
 			5)
 				iptables_open
@@ -6635,16 +6638,19 @@ EOF
 
 				while true; do
 					clear
+
+					sed -i 's/#Port/Port/' /etc/ssh/sshd_config
+
 					# 读取当前的SSH端口号
 					current_port=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
 
 					# 打印当前的SSH端口号
-					echo -e "当前的SSH端口号是:${yellow}$current_port${white}"
+					echo -e "当前的SSH端口号是：${yellow}$current_port${white}"
 					echo "------------------------"
-					echo "端口号范围10000到65535之间的数字(按0退出)"
+					echo "端口号范围10000到65535之间的数字（按0退出）"
 
 					# 提示用户输入新的SSH端口号
-					echo -n "请输入新的SSH端口号:"
+					echo -n "请输入新的SSH端口号："
 					read -r new_port
 
 					# 判断端口号是否在有效范围内
@@ -6654,11 +6660,11 @@ EOF
 						elif [[ $new_port -eq 0 ]]; then
 							break
 						else
-							_red "端口号无效,请输入10000到65535之间的数字"
+							_red "端口号无效，请输入10000到65535之间的数字"
 							end_of
 						fi
 					else
-						_red "输入无效,请输入数字"
+						_red "输入无效，请输入数字"
 						end_of
 					fi
 				done
@@ -6681,6 +6687,7 @@ EOF
 					echo "------------------------"
 					echo "1. 设置DNS优化"
 					echo "2. 恢复DNS原有配置"
+					echo "3. 手动编辑DNS配置"
 					echo "------------------------"
 					echo "0. 返回上一级"
 					echo "------------------------"
@@ -6696,6 +6703,12 @@ EOF
 						2)
 							rollbak_dns
 							;;
+						3)
+							if command -v vim >/dev/null 2>&1
+								vim /etc/resolv.conf
+							else
+								vi /etc/resolv.conf
+							fi
 						0)
 							break
 							;;
@@ -6710,7 +6723,7 @@ EOF
 				;;
 			9)
 				need_root
-				echo -n "请输入新用户名(0退出):"
+				echo -n "请输入新用户名（0退出）:"
 				read -r new_username
 
 				if [ "$new_username" == "0" ]; then
@@ -6764,7 +6777,7 @@ EOF
 					fi
 					echo ""
 					echo "------------------------"
-					echo "1. IPv4 优先     2. IPv6 优先     0. 退出"
+					echo "1. IPv4 优先          2. IPv6 优先          3. IPv6 修复工具          0. 退出"
 					echo "------------------------"
 					echo -n "选择优先的网络:"
 					read -r choice
@@ -6778,6 +6791,9 @@ EOF
 							sysctl -w net.ipv6.conf.all.disable_ipv6=0 > /dev/null 2>&1
 							_green "已切换为IPv6优先"
 							;;
+						3)
+							echo "该功能由jhb提供，感谢！"
+							bash <(curl -L -s jhb.ovh/jb/v6.sh)
 						*)
 							break
 							;;
@@ -6790,16 +6806,15 @@ EOF
 				;;
 			12)
 				need_root
-				echo "设置虚拟内存"
 				 while true; do
 					clear
-
+					echo "设置虚拟内存"
 					# 获取当前虚拟内存使用情况
 					swap_used=$(free -m | awk 'NR==3{print $3}')
 					swap_total=$(free -m | awk 'NR==3{print $2}')
 					swap_info=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
 
-					_yellow "当前虚拟内存: ${swap_info}"
+					_yellow "当前虚拟内存：${swap_info}"
 					echo "------------------------"
 					echo "1. 分配1024MB     2. 分配2048MB     3. 自定义大小（建议为内存的2倍！）     0. 退出"
 					echo "------------------------"
@@ -6864,7 +6879,7 @@ EOF
 
 					case $choice in
 						1)
-							echo -n "请输入新用户名:"
+							echo -n "请输入新用户名："
 							read -r new_username
 
 							useradd -m -s /bin/bash "$new_username" && \
@@ -6872,7 +6887,7 @@ EOF
 							_green "普通账户创建完成"
 							;;
 						2)
-							echo -n "请输入新用户名:"
+							echo -n "请输入新用户名："
 							read -r new_username
 
 							useradd -m -s /bin/bash "$new_username" && \
@@ -6881,7 +6896,7 @@ EOF
 							_green "高级账户创建完成"
 							;;
 						3)
-							echo -n "请输入新用户名:"
+							echo -n "请输入新用户名："
 							read -r username
 
 							echo "$username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
@@ -6898,7 +6913,7 @@ EOF
 							fi
 							;;
 						5)
-							echo -n "请输入要删除的用户名:"
+							echo -n "请输入要删除的用户名："
 							read -r username
 
 							# 删除用户及其主目录
@@ -7045,14 +7060,166 @@ EOF
 			16)
 				xanmod_bbr3
 				;;
+			17)
+				need_root
+				while true; do
+					if dpkg -l | grep -q iptables-persistent; then
+						clear
+						echo "高级防火墙管理"
+						echo "------------------------"
+						iptables -L INPUT
+						echo ""
+						echo "防火墙管理"
+						echo "------------------------"
+						echo "1. 开放指定端口              2. 关闭指定端口"
+						echo "3. 开放所有端口              4. 关闭所有端口"
+						echo "------------------------"
+						echo "5. IP白名单                  6. IP黑名单"
+						echo "7. 清除指定IP"
+						echo "------------------------"
+						echo "9. 卸载防火墙"
+						echo "------------------------"
+						echo "0. 返回上一级选单"
+						echo "------------------------"
+						echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+						read -r choice
+
+						case $choice in
+							1)
+								echo -n -e "${yellow}请输入开放的端口号:${white}"
+								read -r o_port
+								sed -i "/COMMIT/i -A INPUT -p tcp --dport $o_port -j ACCEPT" /etc/iptables/rules.v4
+								sed -i "/COMMIT/i -A INPUT -p udp --dport $o_port -j ACCEPT" /etc/iptables/rules.v4
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							2)
+								echo -n -e "${yellow}请输入关闭的端口号:${white}"
+								read -r c_port
+								sed -i "/--dport $c_port/d" /etc/iptables/rules.v4
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							3)
+								current_port=$(grep -E '^ *Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
+								cat > /etc/iptables/rules.v4 << EOF
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A FORWARD -i lo -j ACCEPT
+-A INPUT -p tcp --dport $current_port -j ACCEPT
+COMMIT
+EOF
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							4)
+								current_port=$(grep -E '^ *Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
+								cat > /etc/iptables/rules.v4 << EOF
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A FORWARD -i lo -j ACCEPT
+-A INPUT -p tcp --dport $current_port -j ACCEPT
+COMMIT
+EOF
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							5)
+								echo -n -e "${yellow}请输入放行的IP:${white}"
+								read -r o_ip
+								sed -i "/COMMIT/i -A INPUT -s $o_ip -j ACCEPT" /etc/iptables/rules.v4
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							6)
+								echo -n -e "${yellow}请输入封锁的IP:${white}"
+								sed -i "/COMMIT/i -A INPUT -s $c_ip -j DROP" /etc/iptables/rules.v4
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							7)
+								echo -n -e "${yellow}请输入清除的IP:${white}"
+								sed -i "/-A INPUT -s $d_ip/d" /etc/iptables/rules.v4
+								iptables-restore < /etc/iptables/rules.v4
+								;;
+							9)
+								remove iptables-persistent
+								rm /etc/iptables/rules.v4
+								break
+								;;
+							0)
+								break # 跳出循环，退出菜单
+								;;
+							*)
+								_red "无效选项，请重新输入"
+								;;
+						esac
+					else
+						clear
+						echo "将为你安装防火墙，该防火墙仅支持Debian/Ubuntu"
+						echo "---------------------------------------------"
+						echo -n -e "${yellow}确定继续吗?(y/n)${white}"
+						read -r choice
+
+						case "$choice" in
+							[Yy])
+								if [ -r /etc/os-release ]; then
+									. /etc/os-release
+									if [ "$ID" != "debian" ] && [ "$ID" != "ubuntu" ]; then
+										echo "当前环境不支持，仅支持Debian和Ubuntu系统"
+										end_of
+										linux_system_tools
+									fi
+								else
+									echo "无法确定操作系统类型"
+									break
+								fi
+
+								clear
+								iptables_open
+								remove iptables-persistent ufw
+								rm /etc/iptables/rules.v4
+
+								apt update -y && apt install -y iptables-persistent
+
+								current_port=$(grep -E '^ *Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
+								cat > /etc/iptables/rules.v4 << EOF
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A FORWARD -i lo -j ACCEPT
+-A INPUT -p tcp --dport $current_port -j ACCEPT
+COMMIT
+EOF
+								iptables-restore < /etc/iptables/rules.v4
+								systemctl enable netfilter-persistent
+								_green "防火墙安装完成"
+								end_of
+								;;
+							*)
+								_yellow "已取消"
+								break
+								;;
+						esac
+					fi
+				done
+				;;
 			18)
 				need_root
 				while true; do
 					clear
 					current_hostname=$(hostname)
-					echo -e "当前主机名:$current_hostname"
+					echo -e "当前主机名：$current_hostname"
 					echo "------------------------"
-					echo -n "请输入新的主机名(输入0退出):"
+					echo -n "请输入新的主机名（输入0退出）:"
 					read -r new_hostname
 
 					if [ -n "$new_hostname" ] && [ "$new_hostname" != "0" ]; then
@@ -7061,15 +7228,28 @@ EOF
 							echo "$new_hostname" > /etc/hostname
 							hostname "$new_hostname"
 						else
-							# 其他系统如Debian,Ubuntu,CentOS等
+							# 其他系统，如 Debian, Ubuntu, CentOS 等
 							hostnamectl set-hostname "$new_hostname"
 							sed -i "s/$current_hostname/$new_hostname/g" /etc/hostname
 							systemctl restart systemd-hostnamed
 						fi
-						echo "主机名已更改为:$new_hostname"
+
+						if grep -q "127.0.0.1" /etc/hosts; then
+							sed -i "s/127.0.0.1 .*/127.0.0.1       $new_hostname localhost localhost.localdomain/g" /etc/hosts
+						else
+							echo "127.0.0.1       $new_hostname localhost localhost.localdomain" >> /etc/hosts
+						fi
+
+						if grep -q "^::1" /etc/hosts; then
+							sed -i "s/^::1 .*/::1             "$new_hostname" localhost localhost.localdomain ipv6-localhost ipv6-loopback/g" /etc/hosts
+						else
+							echo "::1             "$new_hostname" localhost localhost.localdomain ipv6-localhost ipv6-loopback" >> /etc/hosts
+						fi
+
+						echo "主机名已更改为：$new_hostname"
 						sleep 1
 					else
-						_yellow "未更改主机名已退出"
+						_yellow "已退出，未更改主机名"
 						break
 					fi
 				done
