@@ -2008,39 +2008,39 @@ manage_docker_application() {
 }
 
 find_available_port() {
-	local start_port=$1
-	local end_port=$2
-	local port
-	local check_command
+    local start_port=$1
+    local end_port=$2
+    local port
+    local check_command
 
-	if command -v ss >/dev/null 2>&1; then
-		check_command="ss -tuln"
-	else
-		check_command="netstat -tuln"
-	fi
+    if command -v ss >/dev/null 2>&1; then
+        check_command="ss -tuln"
+    else
+        check_command="netstat -tuln"
+    fi
 
-	for port in $(seq $start_port $end_port); do
-		if ! "$check_command" | grep -q ":$port "; then
+    for port in $(seq $start_port $end_port); do
+        if ! "$check_command" | grep -q ":$port "; then
             echo "$port"
             return
-		fi
-	done
-	_red "在范围$start_port-$end_port内没有找到可用的端口" >&2
-	return 1
+        fi
+    done
+    _red "在范围$start_port-$end_port内没有找到可用的端口" >&2
+    return 1
 }
 
 check_available_port() {
-	local check_command
+    local check_command
 
-	if command -v ss >/dev/null 2>&1; then
-		check_command="ss -tuln"
-	else
-		check_command="netstat -tuln"
-	fi
+    if command -v ss >/dev/null 2>&1; then
+        check_command="ss -tuln"
+    else
+        check_command="netstat -tuln"
+    fi
 
-	# 检查并设置docker_port_1
-	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
-		while true; do
+    # 检查并设置docker_port_1
+    if ! docker inspect "$docker_name" >/dev/null 2>&1; then
+        while true; do
             if "$check_command" | grep -q ":$default_port_1 "; then
                 # 查找可用的端口
                 docker_port_1=$(find_available_port 30000 50000)
@@ -2053,12 +2053,12 @@ check_available_port() {
                 sleep 1
                 break
             fi
-		done
-	fi
+        done
+    fi
 
-	# 检查并设置docker_port_2
-	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
-		if [ -n "$default_port_2" ]; then
+    # 检查并设置docker_port_2
+    if ! docker inspect "$docker_name" >/dev/null 2>&1; then
+        if [ -n "$default_port_2" ]; then
             while true; do
                 if "$check_command" | grep -q ":$default_port_2 "; then
                     docker_port_2=$(find_available_port 35000 50000)
@@ -2072,12 +2072,12 @@ check_available_port() {
                     break
                 fi
             done
-		fi
-	fi
+        fi
+    fi
 
-	# 检查并设置docker_port_3
-	if ! docker inspect "$docker_name" >/dev/null 2>&1; then
-		if [ -n "$default_port_3" ]; then
+    # 检查并设置docker_port_3
+    if ! docker inspect "$docker_name" >/dev/null 2>&1; then
+        if [ -n "$default_port_3" ]; then
             while true; do
                 if "$check_command" | grep -q ":$default_port_3 "; then
                     docker_port_3=$(find_available_port 40000 50000)
@@ -2091,8 +2091,8 @@ check_available_port() {
                     break
                 fi
             done
-		fi
-	fi
+        fi
+    fi
 }
 
 linux_panel() {
