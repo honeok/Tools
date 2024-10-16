@@ -376,33 +376,33 @@ install() {
 
 # 卸载软件包
 remove() {
-	if [ $# -eq 0 ]; then
-		_red "未提供软件包参数"
-		return 1
-	fi
+    if [ $# -eq 0 ]; then
+        _red "未提供软件包参数"
+        return 1
+    fi
 
-	check_installed() {
-		local package="$1"
-		if command -v dnf &>/dev/null; then
+    check_installed() {
+        local package="$1"
+        if command -v dnf &>/dev/null; then
             rpm -q "$package" &>/dev/null
-		elif command -v yum &>/dev/null; then
+        elif command -v yum &>/dev/null; then
             rpm -q "$package" &>/dev/null
-		elif command -v apt &>/dev/null; then
+        elif command -v apt &>/dev/null; then
             dpkg -l | grep -qw "$package"
-		elif command -v apk &>/dev/null; then
+        elif command -v apk &>/dev/null; then
             apk info | grep -qw "$package"
-		elif command -v opkg &>/dev/null; then
+        elif command -v opkg &>/dev/null; then
             opkg list-installed | grep -qw "$package"
-		else
+        else
             _red "未知的包管理器！"
             return 1
-		fi
-		return 0
+        fi
+        return 0
     }
 
-	for package in "$@"; do
-		_yellow "正在卸载$package"
-		if check_installed "$package"; then
+    for package in "$@"; do
+        _yellow "正在卸载$package"
+        if check_installed "$package"; then
             if command -v dnf &>/dev/null; then
                 dnf remove "$package"* -y
             elif command -v yum &>/dev/null; then
@@ -414,308 +414,307 @@ remove() {
             elif command -v opkg &>/dev/null; then
                 opkg remove --force "$package"
             fi
-		else
+        else
             _red "$package 没有安装，跳过卸载"
-		fi
-	done
-
-	return 0
+        fi
+    done
+    return 0
 }
 
 # 通用systemctl函数,适用于各种发行版
 systemctl() {
-	local cmd="$1"
-	local service_name="$2"
+    local cmd="$1"
+    local service_name="$2"
 
-	if command -v apk &>/dev/null; then
-		service "$service_name" "$cmd"
-	else
-		/bin/systemctl "$cmd" "$service_name"
-	fi
+    if command -v apk &>/dev/null; then
+        service "$service_name" "$cmd"
+    else
+        /bin/systemctl "$cmd" "$service_name"
+    fi
 }
 
 # 重载systemd管理的服务
 daemon_reload() {
-	if ! command -v apk &>/dev/null; then
-		if command -v systemctl &>/dev/null; then
+    if ! command -v apk &>/dev/null; then
+        if command -v systemctl &>/dev/null; then
             /bin/systemctl daemon-reload
-		fi
-	fi
+        fi
+    fi
 }
 
 disable() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		# Alpine使用OpenRC
-		rc-update del "$service_name"
-	else
-		/bin/systemctl disable "$service_name"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        # Alpine使用OpenRC
+        rc-update del "$service_name"
+    else
+        /bin/systemctl disable "$service_name"
+    fi
 }
 
 # 设置服务为开机自启
 enable() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		rc-update add "$service_name" default
-	else
-		systemctl enable "$service_name"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        rc-update add "$service_name" default
+    else
+        systemctl enable "$service_name"
+    fi
 
-	if [ $? -eq 0 ]; then
-		_green "$service_name已设置为开机自启"
-	else
-		_red "$service_name设置开机自启失败"
-	fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name已设置为开机自启"
+    else
+        _red "$service_name设置开机自启失败"
+    fi
 }
 
 # 启动服务
 start() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		service "$service_name" start
-	else
-		systemctl start "$service_name"
-	fi
-	if [ $? -eq 0 ]; then
-		_green "$service_name已启动"
-	else
-		_red "$service_name启动失败"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        service "$service_name" start
+    else
+        systemctl start "$service_name"
+    fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name已启动"
+    else
+        _red "$service_name启动失败"
+    fi
 }
 
 # 停止服务
 stop() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		service "$service_name" stop
-	else
-		systemctl stop "$service_name"
-	fi
-	if [ $? -eq 0 ]; then
-		_green "$service_name已停止"
-	else
-		_red "$service_name停止失败"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        service "$service_name" stop
+    else
+        systemctl stop "$service_name"
+    fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name已停止"
+    else
+        _red "$service_name停止失败"
+    fi
 }
 
 # 重启服务
 restart() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		service "$service_name" restart
-	else
-		systemctl restart "$service_name"
-	fi
-	if [ $? -eq 0 ]; then
-		_green "$service_name已重启"
-	else
-		_red "$service_name重启失败"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        service "$service_name" restart
+    else
+        systemctl restart "$service_name"
+    fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name已重启"
+    else
+        _red "$service_name重启失败"
+    fi
 }
 
 # 重载服务
 reload() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		service "$service_name" reload
-	else
-		systemctl reload "$service_name"
-	fi
-	if [ $? -eq 0 ]; then
-		_green "$service_name已重载"
-	else
-		_red "$service_name重载失败"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        service "$service_name" reload
+    else
+        systemctl reload "$service_name"
+    fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name已重载"
+    else
+        _red "$service_name重载失败"
+    fi
 }
 
 # 查看服务状态
 status() {
-	local service_name="$1"
-	if command -v apk &>/dev/null; then
-		service "$service_name" status
-	else
-		systemctl status "$service_name"
-	fi
-	if [ $? -eq 0 ]; then
-		_green "$service_name状态已显示"
-	else
-		_red "$service_name状态显示失败"
-	fi
+    local service_name="$1"
+    if command -v apk &>/dev/null; then
+        service "$service_name" status
+    else
+        systemctl status "$service_name"
+    fi
+    if [ $? -eq 0 ]; then
+        _green "$service_name状态已显示"
+    else
+        _red "$service_name状态显示失败"
+    fi
 }
 
 # 结尾任意键结束
-end_of(){
-	_green "操作完成"
-	_yellow "按任意键继续"
-	read -n 1 -s -r -p ""
-	echo ""
-	clear
+end_of() {
+    _green "操作完成"
+    _yellow "按任意键继续"
+    read -n 1 -s -r -p ""
+    echo ""
+    clear
 }
 
 # 检查用户是否为root
-need_root(){
-	clear
-	[ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
+need_root() {
+    clear
+    [ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
 }
 
 # 获取公网IP地址
 ip_address() {
-	local ipv4_services=("ipv4.ip.sb" "api.ipify.org" "checkip.amazonaws.com" "ipinfo.io/ip")
-	local ipv6_services=("ipv6.ip.sb" "api6.ipify.org" "v6.ident.me" "ipv6.icanhazip.com")
+    local ipv4_services=("ipv4.ip.sb" "api.ipify.org" "checkip.amazonaws.com" "ipinfo.io/ip")
+    local ipv6_services=("ipv6.ip.sb" "api6.ipify.org" "v6.ident.me" "ipv6.icanhazip.com")
 
-	# 获取IPv4地址
-	for service in "${ipv4_services[@]}"; do
-		ipv4_address=$(curl -s "$service")
-		if [[ "$ipv4_address" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    # 获取IPv4地址
+    for service in "${ipv4_services[@]}"; do
+        ipv4_address=$(curl -s "$service")
+        if [[ "$ipv4_address" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             break
-		fi
-	done
+        fi
+    done
 
-	# 获取IPv6地址
-	for service in "${ipv6_services[@]}"; do
-		ipv6_address=$(curl -s --max-time 1 "$service")
-		if [[ "$ipv6_address" =~ ^[0-9a-fA-F:]+$ ]]; then
+    # 获取IPv6地址
+    for service in "${ipv6_services[@]}"; do
+        ipv6_address=$(curl -s --max-time 1 "$service")
+        if [[ "$ipv6_address" =~ ^[0-9a-fA-F:]+$ ]]; then
             break
-		else
+        else
             ipv6_address=""
-		fi
-	done
+        fi
+    done
 }
 
 # 定义全局脚本下载路径
 set_script_dir() {
-	local script_dir="/data/script"
+    local script_dir="/data/script"
 
-	# 判断路径是否存在
-	if [ ! -d "$script_dir" ]; then
-		mkdir -p "$script_dir"
-		globle_script_dir="$script_dir"
-	else
-		globle_script_dir="$script_dir"
-	fi
+    # 判断路径是否存在
+    if [ ! -d "$script_dir" ]; then
+        mkdir -p "$script_dir"
+        globle_script_dir="$script_dir"
+    else
+        globle_script_dir="$script_dir"
+    fi
 }
 #################### 通用函数END ####################
 
 #################### 系统更新START ####################
-wait_for_lock(){
-	local timeout=300  # 设置超时时间为300秒(5分钟)
-	local waited=0
+wait_for_lock() {
+    local timeout=300  # 设置超时时间为300秒(5分钟)
+    local waited=0
 
-	while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-		_yellow "等待dpkg锁释放"
-		sleep 1
-		waited=$((waited + 1))
-		if [ $waited -ge $timeout ]; then
+    while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+        _yellow "等待dpkg锁释放"
+        sleep 1
+        waited=$((waited + 1))
+        if [ $waited -ge $timeout ]; then
             _red "等待dpkg锁超时"
             break # 等待dpkg锁超时后退出循环
-		fi
-	done
+        fi
+    done
 }
 
 # 修复dpkg中断问题
 fix_dpkg(){
-	DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+    DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 }
 
-linux_update(){
-	_yellow "正在系统更新"
-	if command -v dnf &>/dev/null; then
-		dnf -y update
-	elif command -v yum &>/dev/null; then
-		yum -y update
-	elif command -v apt &>/dev/null; then
-		wait_for_lock
-		fix_dpkg
-		DEBIAN_FRONTEND=noninteractive apt update -y
-		DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
-	elif command -v apk &>/dev/null; then
-		apk update && apk upgrade
-	elif command -v opkg &>/dev/null; then
-		opkg update
-	else
-		_red "未知的包管理器"
-		return 1
-	fi
-	return 0
+linux_update() {
+    _yellow "正在系统更新"
+    if command -v dnf &>/dev/null; then
+        dnf -y update
+    elif command -v yum &>/dev/null; then
+        yum -y update
+    elif command -v apt &>/dev/null; then
+        wait_for_lock
+        fix_dpkg
+        DEBIAN_FRONTEND=noninteractive apt update -y
+        DEBIAN_FRONTEND=noninteractive apt full-upgrade -y
+    elif command -v apk &>/dev/null; then
+        apk update && apk upgrade
+    elif command -v opkg &>/dev/null; then
+        opkg update
+    else
+        _red "未知的包管理器"
+        return 1
+    fi
+    return 0
 }
 #################### 系统更新END ####################
 
 #################### 系统清理START ####################
 linux_clean() {
-	_yellow "正在系统清理"
+    _yellow "正在系统清理"
 
-	if command -v dnf &>/dev/null; then
-		dnf autoremove -y
-		dnf clean all
-		dnf makecache
-		journalctl --rotate
-		journalctl --vacuum-time=7d # 删除所有早于7天前的日志
-		journalctl --vacuum-size=500M
-	elif command -v yum &>/dev/null; then
-		yum autoremove -y
-		yum clean all
-		yum makecache
-		journalctl --rotate
-		journalctl --vacuum-time=7d # 删除所有早于7天前的日志
-		journalctl --vacuum-size=500M
-	elif command -v apt &>/dev/null; then
-		wait_for_lock
-		fix_dpkg
-		apt autoremove --purge -y
-		apt clean -y
-		apt autoclean -y
-		journalctl --rotate
-		journalctl --vacuum-time=7d # 删除所有早于7天前的日志
-		journalctl --vacuum-size=500M
-	elif command -v apk &>/dev/null; then
-		apk cache clean
-		rm -fr /var/log/*
-		rm -fr /var/cache/apk/*
-		rm -fr /tmp/*
-	elif command -v opkg &>/dev/null; then
-		rm -rf /var/log/*
-		rm -rf /tmp/*
-	else
-		_red "未知的包管理器"
-		return 1
-	fi
-	return 0
+    if command -v dnf &>/dev/null; then
+        dnf autoremove -y
+        dnf clean all
+        dnf makecache
+        journalctl --rotate
+        journalctl --vacuum-time=7d # 删除所有早于7天前的日志
+        journalctl --vacuum-size=500M
+    elif command -v yum &>/dev/null; then
+        yum autoremove -y
+        yum clean all
+        yum makecache
+        journalctl --rotate
+        journalctl --vacuum-time=7d # 删除所有早于7天前的日志
+        journalctl --vacuum-size=500M
+    elif command -v apt &>/dev/null; then
+        wait_for_lock
+        fix_dpkg
+        apt autoremove --purge -y
+        apt clean -y
+        apt autoclean -y
+        journalctl --rotate
+        journalctl --vacuum-time=7d # 删除所有早于7天前的日志
+        journalctl --vacuum-size=500M
+    elif command -v apk &>/dev/null; then
+        apk cache clean
+        rm -fr /var/log/*
+        rm -fr /var/cache/apk/*
+        rm -fr /tmp/*
+    elif command -v opkg &>/dev/null; then
+        rm -rf /var/log/*
+        rm -rf /tmp/*
+    else
+        _red "未知的包管理器"
+        return 1
+    fi
+    return 0
 }
 #################### 系统清理END ####################
 
 #################### 常用工具START ####################
 linux_tools() {
-	while true; do
-		clear
-		echo "▶ 常用工具"
-		echo "-------------------------"
-		echo "1. curl 下载工具                      2. wget下载工具"
-		echo "3. sudo 超级管理权限工具              4. socat 通信连接工具"
-		echo "5. htop 系统监控工具                  6. iftop 网络流量监控工具"
-		echo "7. unzip ZIP压缩解压工具              8. tar GZ压缩解压工具"
-		echo "9. tmux 多路后台运行工具              10. ffmpeg 视频编码直播推流工具"
-		echo "-------------------------"
-		echo "11. btop 现代化监控工具               12. ranger 文件管理工具"
-		echo "13. Gdu 磁盘占用查看工具              14. fzf 全局搜索工具"
-		echo "15. Vim文本编辑器                     16. nano文本编辑器"
-		echo "-------------------------"
-		echo "21. 黑客帝国屏保                      22. 跑火车屏保"
-		echo "26. 俄罗斯方块小游戏                  27. 贪吃蛇小游戏"
-		echo "28. 太空入侵者小游戏"
-		echo "-------------------------"
-		echo "31. 全部安装                          32. 全部安装（不含屏保和游戏）"
-		echo "33. 全部卸载"
-		echo "-------------------------"
-		echo "41. 安装指定工具                      42. 卸载指定工具"
-		echo "-------------------------"
-		echo "0. 返回主菜单"
-		echo "-------------------------"
-		
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+    while true; do
+        clear
+        echo "▶ 常用工具"
+        echo "-------------------------"
+        echo "1. curl 下载工具                      2. wget下载工具"
+        echo "3. sudo 超级管理权限工具              4. socat 通信连接工具"
+        echo "5. htop 系统监控工具                  6. iftop 网络流量监控工具"
+        echo "7. unzip ZIP压缩解压工具              8. tar GZ压缩解压工具"
+        echo "9. tmux 多路后台运行工具              10. ffmpeg 视频编码直播推流工具"
+        echo "-------------------------"
+        echo "11. btop 现代化监控工具               12. ranger 文件管理工具"
+        echo "13. Gdu 磁盘占用查看工具              14. fzf 全局搜索工具"
+        echo "15. Vim文本编辑器                     16. nano文本编辑器"
+        echo "-------------------------"
+        echo "21. 黑客帝国屏保                      22. 跑火车屏保"
+        echo "26. 俄罗斯方块小游戏                  27. 贪吃蛇小游戏"
+        echo "28. 太空入侵者小游戏"
+        echo "-------------------------"
+        echo "31. 全部安装                          32. 全部安装（不含屏保和游戏）"
+        echo "33. 全部卸载"
+        echo "-------------------------"
+        echo "41. 安装指定工具                      42. 卸载指定工具"
+        echo "-------------------------"
+        echo "0. 返回主菜单"
+        echo "-------------------------"
+        
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 clear
                 install curl
@@ -891,9 +890,9 @@ linux_tools() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 #################### 常用工具END ####################
 
