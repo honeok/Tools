@@ -31,7 +31,7 @@ echo -e "${yellow}   __                      __     💀
  / _ \/ _ \/ _ \/ -_) _ \/  '_/
 /_//_/\___/_//_/\__/\___/_/\_\ 
 "
-    local os_text="当前操作系统:${os_info}"
+    local os_text="当前操作系统：${os_info}"
     _yellow "${os_text}"
 }
 #################### 系统信息START ####################
@@ -8122,31 +8122,31 @@ palworld_script() {
 
 #################### 脚本更新START ####################
 honeok_update() {
-    local remote_script_url="https://raw.githubusercontent.com/honeok/shell/main/honeok.sh"
+    local remote_script_url="${github_proxy}raw.githubusercontent.com/honeok/shell/main/honeok.sh"
     local local_script_path="$HOME/honeok.sh"
 
     # 检查本地脚本是否存在
     if [[ ! -f "$local_script_path" ]]; then
         _yellow "本地脚本不存在，正在下载"
-        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
+        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
         return 0
     fi
 
     # 从远程脚本中提取第25行的版本号
     local remote_version
-    remote_version=$(curl -s "$remote_script_url" | sed -n '25p' | awk -F'=' '{print $2}' | tr -d '"')
+    remote_version=$(curl -sL "$remote_script_url" | sed -n '25p' | awk -F'=' '{print $2}' | tr -d '"')
 
-    # 从本地脚本中提取第29行的版本号
+    # 从本地脚本中提取第25行的版本号
     local local_version
-    local_version=$(sed -n '29p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"')
+    local_version=$(sed -n '25p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"')
 
     # 检查版本号并更新脚本
     if [[ "$remote_version" != "$local_version" ]]; then
-        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
-        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
-        echo -e "${white}脚本已更新到最新版本: ${yellow}$remote_version${white}"
+        echo -e "${white}远程版本：${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+        echo -e "${white}脚本已更新到最新版本：${yellow}$remote_version${white}"
     else
-        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
+        echo -e "${white}脚本已是最新版本：${yellow}$local_version${white}"
     fi
 }
 #################### 脚本更新END ####################
