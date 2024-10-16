@@ -950,84 +950,84 @@ linux_bbr() {
 
 #################### Docker START ####################
 install_docker() {
-	if ! command -v docker >/dev/null 2>&1; then
-		install_add_docker
-	else
-		_green "Docker环境已经安装"
-	fi
+    if ! command -v docker >/dev/null 2>&1; then
+        install_add_docker
+    else
+        _green "Docker环境已经安装"
+    fi
 }
 
 docker_main_version() {
-	local docker_version=""
-	local docker_compose_version=""
+    local docker_version=""
+    local docker_compose_version=""
 
-	# 获取 Docker 版本
-	if command -v docker >/dev/null 2>&1; then
-		docker_version=$(docker --version | awk -F '[ ,]' '{print $3}')
-	elif command -v docker.io >/dev/null 2>&1; then
-		docker_version=$(docker.io --version | awk -F '[ ,]' '{print $3}')
-	fi
+    # 获取 Docker 版本
+    if command -v docker >/dev/null 2>&1; then
+        docker_version=$(docker --version | awk -F '[ ,]' '{print $3}')
+    elif command -v docker.io >/dev/null 2>&1; then
+        docker_version=$(docker.io --version | awk -F '[ ,]' '{print $3}')
+    fi
 
-	# 获取 Docker Compose 版本
-	if command -v docker-compose >/dev/null 2>&1; then
-		docker_compose_version=$(docker-compose version --short)
-	elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
-		docker_compose_version=$(docker compose version --short)
-	fi
+    # 获取 Docker Compose 版本
+    if command -v docker-compose >/dev/null 2>&1; then
+        docker_compose_version=$(docker-compose version --short)
+    elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+        docker_compose_version=$(docker compose version --short)
+    fi
 
-	echo -e "${white}已安装Docker版本:${yellow}v$docker_version${white}"
-	echo -e "${white}已安装Docker Compose版本:${yellow}v$docker_compose_version${white}"
+    echo -e "${white}已安装Docker版本:${yellow}v$docker_version${white}"
+    echo -e "${white}已安装Docker Compose版本:${yellow}v$docker_compose_version${white}"
 }
 
 install_docker_official() {
-	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-		cd ~
-		curl -fsSL -o "get-docker.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/docker/get-docker-official.sh" && chmod +x get-docker.sh
-		sh get-docker.sh --mirror Aliyun
-		rm -f get-docker.sh
-	else
-		curl -fsSL https://get.docker.com | sh
-	fi
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        cd ~
+        curl -fsSL -o "get-docker.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/docker/get-docker-official.sh" && chmod +x get-docker.sh
+        sh get-docker.sh --mirror Aliyun
+        rm -f get-docker.sh
+    else
+        curl -fsSL https://get.docker.com | sh
+    fi
 
-	enable docker && start docker
+    enable docker && start docker
 }
 
 install_add_docker() {
-	if [ ! -f "/etc/alpine-release" ]; then
-		_yellow "正在安装docker环境"
-	fi
+    if [ ! -f "/etc/alpine-release" ]; then
+        _yellow "正在安装docker环境"
+    fi
 
-	# Docker调优
-	install_common_docker() {
-		generate_docker_config
-		docker_main_version
-	}
+    # Docker调优
+    install_common_docker() {
+        generate_docker_config
+        docker_main_version
+    }
 
-	if [ -f /etc/os-release ] && grep -q "Fedora" /etc/os-release; then
-		install_docker_official
-		install_common_docker
-	elif command -v dnf &>/dev/null; then
-		if ! dnf config-manager --help >/dev/null 2>&1; then
+    if [ -f /etc/os-release ] && grep -q "Fedora" /etc/os-release; then
+        install_docker_official
+        install_common_docker
+    elif command -v dnf &>/dev/null; then
+        if ! dnf config-manager --help >/dev/null 2>&1; then
             install dnf-plugins-core
-		fi
+        fi
 
-		[ -f /etc/yum.repos.d/docker*.repo ] && rm -f /etc/yum.repos.d/docker*.repo > /dev/null
+        [ -f /etc/yum.repos.d/docker*.repo ] && rm -f /etc/yum.repos.d/docker*.repo > /dev/null
 
-		# 判断地区安装
-		if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        # 判断地区安装
+        if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
             dnf config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null
-		else
+        else
             dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo > /dev/null
-		fi
+        fi
 
-		install docker-ce docker-ce-cli containerd.io
-		enable docker
-		start docker
-		install_common_docker
-	elif [ -f /etc/os-release ] && grep -q "Kali" /etc/os-release; then
-		install apt-transport-https ca-certificates curl gnupg lsb-release
-		rm -f /usr/share/keyrings/docker-archive-keyring.gpg
-		if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        install docker-ce docker-ce-cli containerd.io
+        enable docker
+        start docker
+        install_common_docker
+    elif [ -f /etc/os-release ] && grep -q "Kali" /etc/os-release; then
+        install apt-transport-https ca-certificates curl gnupg lsb-release
+        rm -f /usr/share/keyrings/docker-archive-keyring.gpg
+        if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
             if [ "$(uname -m)" = "x86_64" ]; then
                 sed -i '/^deb \[arch=amd64 signed-by=\/etc\/apt\/keyrings\/docker-archive-keyring.gpg\] https:\/\/mirrors.aliyun.com\/docker-ce\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
@@ -1039,7 +1039,7 @@ install_add_docker() {
                 curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=arm64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://mirrors.aliyun.com/docker-ce/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
             fi
-		else
+        else
             if [ "$(uname -m)" = "x86_64" ]; then
                 sed -i '/^deb \[arch=amd64 signed-by=\/usr\/share\/keyrings\/docker-archive-keyring.gpg\] https:\/\/download.docker.com\/linux\/debian bullseye stable/d' /etc/apt/sources.list.d/docker.list > /dev/null
                 mkdir -p /etc/apt/keyrings
@@ -1051,22 +1051,21 @@ install_add_docker() {
                 curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker-archive-keyring.gpg > /dev/null
                 echo "deb [arch=arm64 signed-by=/etc/apt/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
             fi
-		fi
-		install docker-ce docker-ce-cli containerd.io
-		enable docker
-		start docker
-		install_common_docker
-	elif command -v apt &>/dev/null || command -v yum &>/dev/null; then
-		install_docker_official
-		install_common_docker
-	else
-		install docker docker-compose
-		enable docker
-		start docker
-		install_common_docker
-	fi
-
-	sleep 2
+        fi
+        install docker-ce docker-ce-cli containerd.io
+        enable docker
+        start docker
+        install_common_docker
+    elif command -v apt &>/dev/null || command -v yum &>/dev/null; then
+        install_docker_official
+        install_common_docker
+    else
+        install docker docker-compose
+        enable docker
+        start docker
+        install_common_docker
+    fi
+    sleep 2
 }
 
 # Docker调优
