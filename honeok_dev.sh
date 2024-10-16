@@ -5992,186 +5992,186 @@ redhat_kernel_update() {
 
 # 高性能模式优化函数
 optimize_high_performance() {
-	echo -e "${yellow}切换到${optimization_mode}${white}"
+    echo -e "${yellow}切换到${optimization_mode}${white}"
 
-	echo -e "${yellow}优化文件描述符${white}"
-	ulimit -n 65535
+    echo -e "${yellow}优化文件描述符${white}"
+    ulimit -n 65535
 
-	echo -e "${yellow}优化虚拟内存${white}"
-	sysctl -w vm.swappiness=10 2>/dev/null
-	sysctl -w vm.dirty_ratio=15 2>/dev/null
-	sysctl -w vm.dirty_background_ratio=5 2>/dev/null
-	sysctl -w vm.overcommit_memory=1 2>/dev/null
-	sysctl -w vm.min_free_kbytes=65536 2>/dev/null
+    echo -e "${yellow}优化虚拟内存${white}"
+    sysctl -w vm.swappiness=10 2>/dev/null
+    sysctl -w vm.dirty_ratio=15 2>/dev/null
+    sysctl -w vm.dirty_background_ratio=5 2>/dev/null
+    sysctl -w vm.overcommit_memory=1 2>/dev/null
+    sysctl -w vm.min_free_kbytes=65536 2>/dev/null
 
-	echo -e "${yellow}优化网络设置${white}"
-	sysctl -w net.core.rmem_max=16777216 2>/dev/null
-	sysctl -w net.core.wmem_max=16777216 2>/dev/null
-	sysctl -w net.core.netdev_max_backlog=250000 2>/dev/null
-	sysctl -w net.core.somaxconn=4096 2>/dev/null
-	sysctl -w net.ipv4.tcp_rmem='4096 87380 16777216' 2>/dev/null
-	sysctl -w net.ipv4.tcp_wmem='4096 65536 16777216' 2>/dev/null
-	sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null
-	sysctl -w net.ipv4.tcp_max_syn_backlog=8192 2>/dev/null
-	sysctl -w net.ipv4.tcp_tw_reuse=1 2>/dev/null
-	sysctl -w net.ipv4.ip_local_port_range='1024 65535' 2>/dev/null
+    echo -e "${yellow}优化网络设置${white}"
+    sysctl -w net.core.rmem_max=16777216 2>/dev/null
+    sysctl -w net.core.wmem_max=16777216 2>/dev/null
+    sysctl -w net.core.netdev_max_backlog=250000 2>/dev/null
+    sysctl -w net.core.somaxconn=4096 2>/dev/null
+    sysctl -w net.ipv4.tcp_rmem='4096 87380 16777216' 2>/dev/null
+    sysctl -w net.ipv4.tcp_wmem='4096 65536 16777216' 2>/dev/null
+    sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null
+    sysctl -w net.ipv4.tcp_max_syn_backlog=8192 2>/dev/null
+    sysctl -w net.ipv4.tcp_tw_reuse=1 2>/dev/null
+    sysctl -w net.ipv4.ip_local_port_range='1024 65535' 2>/dev/null
 
-	echo -e "${yellow}优化缓存管理${white}"
-	sysctl -w vm.vfs_cache_pressure=50 2>/dev/null
+    echo -e "${yellow}优化缓存管理${white}"
+    sysctl -w vm.vfs_cache_pressure=50 2>/dev/null
 
-	echo -e "${yellow}优化CPU设置${white}"
-	sysctl -w kernel.sched_autogroup_enabled=0 2>/dev/null
+    echo -e "${yellow}优化CPU设置${white}"
+    sysctl -w kernel.sched_autogroup_enabled=0 2>/dev/null
 
-	echo -e "${yellow}其他优化...${white}"
-	# 禁用透明大页面,减少延迟
-	echo never > /sys/kernel/mm/transparent_hugepage/enabled
-	# 禁用NUMA balancing
-	sysctl -w kernel.numa_balancing=0 2>/dev/null
+    echo -e "${yellow}其他优化...${white}"
+    # 禁用透明大页面,减少延迟
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled
+    # 禁用NUMA balancing
+    sysctl -w kernel.numa_balancing=0 2>/dev/null
 }
 
 # 均衡模式优化函数
 optimize_balanced() {
-	echo -e "${yellow}切换到均衡模式${white}"
+    echo -e "${yellow}切换到均衡模式${white}"
 
-	echo -e "${yellow}优化文件描述符${white}"
-	ulimit -n 32768
+    echo -e "${yellow}优化文件描述符${white}"
+    ulimit -n 32768
 
-	echo -e "${yellow}优化虚拟内存${white}"
-	sysctl -w vm.swappiness=30 2>/dev/null
-	sysctl -w vm.dirty_ratio=20 2>/dev/null
-	sysctl -w vm.dirty_background_ratio=10 2>/dev/null
-	sysctl -w vm.overcommit_memory=0 2>/dev/null
-	sysctl -w vm.min_free_kbytes=32768 2>/dev/null
+    echo -e "${yellow}优化虚拟内存${white}"
+    sysctl -w vm.swappiness=30 2>/dev/null
+    sysctl -w vm.dirty_ratio=20 2>/dev/null
+    sysctl -w vm.dirty_background_ratio=10 2>/dev/null
+    sysctl -w vm.overcommit_memory=0 2>/dev/null
+    sysctl -w vm.min_free_kbytes=32768 2>/dev/null
 
-	echo -e "${yellow}优化网络设置${white}"
-	sysctl -w net.core.rmem_max=8388608 2>/dev/null
-	sysctl -w net.core.wmem_max=8388608 2>/dev/null
-	sysctl -w net.core.netdev_max_backlog=125000 2>/dev/null
-	sysctl -w net.core.somaxconn=2048 2>/dev/null
-	sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608' 2>/dev/null
-	sysctl -w net.ipv4.tcp_wmem='4096 32768 8388608' 2>/dev/null
-	sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null
-	sysctl -w net.ipv4.tcp_max_syn_backlog=4096 2>/dev/null
-	sysctl -w net.ipv4.tcp_tw_reuse=1 2>/dev/null
-	sysctl -w net.ipv4.ip_local_port_range='1024 49151' 2>/dev/null
+    echo -e "${yellow}优化网络设置${white}"
+    sysctl -w net.core.rmem_max=8388608 2>/dev/null
+    sysctl -w net.core.wmem_max=8388608 2>/dev/null
+    sysctl -w net.core.netdev_max_backlog=125000 2>/dev/null
+    sysctl -w net.core.somaxconn=2048 2>/dev/null
+    sysctl -w net.ipv4.tcp_rmem='4096 87380 8388608' 2>/dev/null
+    sysctl -w net.ipv4.tcp_wmem='4096 32768 8388608' 2>/dev/null
+    sysctl -w net.ipv4.tcp_congestion_control=bbr 2>/dev/null
+    sysctl -w net.ipv4.tcp_max_syn_backlog=4096 2>/dev/null
+    sysctl -w net.ipv4.tcp_tw_reuse=1 2>/dev/null
+    sysctl -w net.ipv4.ip_local_port_range='1024 49151' 2>/dev/null
 
-	echo -e "${yellow}优化缓存管理${white}"
-	sysctl -w vm.vfs_cache_pressure=75 2>/dev/null
+    echo -e "${yellow}优化缓存管理${white}"
+    sysctl -w vm.vfs_cache_pressure=75 2>/dev/null
 
-	echo -e "${yellow}优化CPU设置${white}"
-	sysctl -w kernel.sched_autogroup_enabled=1 2>/dev/null
+    echo -e "${yellow}优化CPU设置${white}"
+    sysctl -w kernel.sched_autogroup_enabled=1 2>/dev/null
 
-	echo -e "${yellow}其他优化...${white}"
-	# 还原透明大页面
-	echo always > /sys/kernel/mm/transparent_hugepage/enabled
-	# 还原 NUMA balancing
-	sysctl -w kernel.numa_balancing=1 2>/dev/null
+    echo -e "${yellow}其他优化...${white}"
+    # 还原透明大页面
+    echo always > /sys/kernel/mm/transparent_hugepage/enabled
+    # 还原 NUMA balancing
+    sysctl -w kernel.numa_balancing=1 2>/dev/null
 }
 
 # 还原默认设置函数
 restore_defaults() {
-	echo -e "${yellow}还原到默认设置${white}"
+    echo -e "${yellow}还原到默认设置${white}"
 
-	echo -e "${yellow}还原文件描述符${white}"
-	ulimit -n 1024
+    echo -e "${yellow}还原文件描述符${white}"
+    ulimit -n 1024
 
-	echo -e "${yellow}还原虚拟内存${white}"
-	sysctl -w vm.swappiness=60 2>/dev/null
-	sysctl -w vm.dirty_ratio=20 2>/dev/null
-	sysctl -w vm.dirty_background_ratio=10 2>/dev/null
-	sysctl -w vm.overcommit_memory=0 2>/dev/null
-	sysctl -w vm.min_free_kbytes=16384 2>/dev/null
+    echo -e "${yellow}还原虚拟内存${white}"
+    sysctl -w vm.swappiness=60 2>/dev/null
+    sysctl -w vm.dirty_ratio=20 2>/dev/null
+    sysctl -w vm.dirty_background_ratio=10 2>/dev/null
+    sysctl -w vm.overcommit_memory=0 2>/dev/null
+    sysctl -w vm.min_free_kbytes=16384 2>/dev/null
 
-	echo -e "${yellow}还原网络设置${white}"
-	sysctl -w net.core.rmem_max=212992 2>/dev/null
-	sysctl -w net.core.wmem_max=212992 2>/dev/null
-	sysctl -w net.core.netdev_max_backlog=1000 2>/dev/null
-	sysctl -w net.core.somaxconn=128 2>/dev/null
-	sysctl -w net.ipv4.tcp_rmem='4096 87380 6291456' 2>/dev/null
-	sysctl -w net.ipv4.tcp_wmem='4096 16384 4194304' 2>/dev/null
-	sysctl -w net.ipv4.tcp_congestion_control=cubic 2>/dev/null
-	sysctl -w net.ipv4.tcp_max_syn_backlog=2048 2>/dev/null
-	sysctl -w net.ipv4.tcp_tw_reuse=0 2>/dev/null
-	sysctl -w net.ipv4.ip_local_port_range='32768 60999' 2>/dev/null
+    echo -e "${yellow}还原网络设置${white}"
+    sysctl -w net.core.rmem_max=212992 2>/dev/null
+    sysctl -w net.core.wmem_max=212992 2>/dev/null
+    sysctl -w net.core.netdev_max_backlog=1000 2>/dev/null
+    sysctl -w net.core.somaxconn=128 2>/dev/null
+    sysctl -w net.ipv4.tcp_rmem='4096 87380 6291456' 2>/dev/null
+    sysctl -w net.ipv4.tcp_wmem='4096 16384 4194304' 2>/dev/null
+    sysctl -w net.ipv4.tcp_congestion_control=cubic 2>/dev/null
+    sysctl -w net.ipv4.tcp_max_syn_backlog=2048 2>/dev/null
+    sysctl -w net.ipv4.tcp_tw_reuse=0 2>/dev/null
+    sysctl -w net.ipv4.ip_local_port_range='32768 60999' 2>/dev/null
 
-	echo -e "${yellow}还原缓存管理${white}"
-	sysctl -w vm.vfs_cache_pressure=100 2>/dev/null
+    echo -e "${yellow}还原缓存管理${white}"
+    sysctl -w vm.vfs_cache_pressure=100 2>/dev/null
 
-	echo -e "${yellow}还原CPU设置${white}"
-	sysctl -w kernel.sched_autogroup_enabled=1 2>/dev/null
+    echo -e "${yellow}还原CPU设置${white}"
+    sysctl -w kernel.sched_autogroup_enabled=1 2>/dev/null
 
-	echo -e "${yellow}还原其他优化${white}"
-	# 还原透明大页面
-	echo always > /sys/kernel/mm/transparent_hugepage/enabled
-	# 还原 NUMA balancing
-	sysctl -w kernel.numa_balancing=1 2>/dev/null
+    echo -e "${yellow}还原其他优化${white}"
+    # 还原透明大页面
+    echo always > /sys/kernel/mm/transparent_hugepage/enabled
+    # 还原 NUMA balancing
+    sysctl -w kernel.numa_balancing=1 2>/dev/null
 }
 
 clamav_freshclam() {
-	_yellow "正在更新病毒库"
-	docker run --rm \
-		--name clamav \
-		--mount source=clam_db,target=/var/lib/clamav \
-		clamav/clamav-debian:latest \
-		freshclam
+    _yellow "正在更新病毒库"
+    docker run --rm \
+        --name clamav \
+        --mount source=clam_db,target=/var/lib/clamav \
+        clamav/clamav-debian:latest \
+        freshclam
 }
 
 clamav_scan() {
-	local clamav_dir="/data/docker_data/clamav"
+    local clamav_dir="/data/docker_data/clamav"
 
-	if [ $# -eq 0 ]; then
-		_red "请指定要扫描的目录"
-		return 1
-	fi
+    if [ $# -eq 0 ]; then
+        _red "请指定要扫描的目录"
+        return 1
+    fi
 
-	echo -e "${yellow}正在扫描目录$@ ${white}"
+    echo -e "${yellow}正在扫描目录$@ ${white}"
 
-	# 构建mount参数
-	local mount_params=""
-	for dir in "$@"; do
-		mount_params+="--mount type=bind,source=${dir},target=/mnt/host${dir} "
-	done
+    # 构建mount参数
+    local mount_params=""
+    for dir in "$@"; do
+        mount_params+="--mount type=bind,source=${dir},target=/mnt/host${dir} "
+    done
 
-	# 构建clamscan命令参数
-	scan_params=""
-	for dir in "$@"; do
-		scan_params+="/mnt/host${dir} "
-	done
+    # 构建clamscan命令参数
+    scan_params=""
+    for dir in "$@"; do
+        scan_params+="/mnt/host${dir} "
+    done
 
-	mkdir -p $clamav_dir/log/ > /dev/null 2>&1
-	> $clamav_dir/log/scan.log > /dev/null 2>&1
+    mkdir -p $clamav_dir/log/ > /dev/null 2>&1
+    > $clamav_dir/log/scan.log > /dev/null 2>&1
 
-	# 执行docker命令
-	docker run -it --rm \
-		--name clamav \
-		--mount source=clam_db,target=/var/lib/clamav \
-		$mount_params \
-		-v $clamav_dir/log/:/var/log/clamav/ \
-		clamav/clamav-debian:latest \
-		clamscan -r --log=/var/log/clamav/scan.log $scan_params
+    # 执行docker命令
+    docker run -it --rm \
+        --name clamav \
+        --mount source=clam_db,target=/var/lib/clamav \
+        $mount_params \
+        -v $clamav_dir/log/:/var/log/clamav/ \
+        clamav/clamav-debian:latest \
+        clamscan -r --log=/var/log/clamav/scan.log $scan_params
 
-	echo -e "${green}$@ 扫描完成 病毒报告存放在${white}$clamav_dir/log/scan.log"
-	_yellow "如果有病毒请在scan.log中搜索FOUND关键字确认病毒位置"
+    echo -e "${green}$@ 扫描完成 病毒报告存放在${white}$clamav_dir/log/scan.log"
+    _yellow "如果有病毒请在scan.log中搜索FOUND关键字确认病毒位置"
 }
 
 clamav_antivirus() {
-	need_root
-	while true; do
-		clear
-		echo "clamav病毒扫描工具"
-		echo "------------------------"
-		echo "clamav是一个开源的防病毒软件工具,主要用于检测和删除各种类型的恶意软件"
-		echo "包括病毒,特洛伊木马,间谍软件,恶意脚本和其他有害软件"
-		echo "------------------------"
-		echo "1. 全盘扫描     2. 重要目录扫描     3. 自定义目录扫描"
-		echo "------------------------"
-		echo "0. 返回上一级选单"
-		echo "------------------------"
+    need_root
+    while true; do
+        clear
+        echo "clamav病毒扫描工具"
+        echo "------------------------"
+        echo "clamav是一个开源的防病毒软件工具,主要用于检测和删除各种类型的恶意软件"
+        echo "包括病毒,特洛伊木马,间谍软件,恶意脚本和其他有害软件"
+        echo "------------------------"
+        echo "1. 全盘扫描     2. 重要目录扫描     3. 自定义目录扫描"
+        echo "------------------------"
+        echo "0. 返回上一级选单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 install_docker
                 docker volume create clam_db > /dev/null 2>&1
@@ -6201,52 +6201,52 @@ clamav_antivirus() {
             *)
                 break
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
 cloudflare_ddns() {
-	need_root
+    need_root
 
-	local choice CFKEY CFUSER CFZONE_NAME CFRECORD_NAME CFRECORD_TYPE CFTTL
-	local EXPECTED_HASH="81d3d4528a99069c81f1150bb9fa798684b27f5a0248cd4c227200055ecfa8a9"
+    local choice CFKEY CFUSER CFZONE_NAME CFRECORD_NAME CFRECORD_TYPE CFTTL
+    local EXPECTED_HASH="81d3d4528a99069c81f1150bb9fa798684b27f5a0248cd4c227200055ecfa8a9"
 
-	ip_address
+    ip_address
 
-	while true; do
-		clear
-		echo "Cloudflare ddns解析"
-		echo "-------------------------"
-		if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ~/cf-v4-ddns.sh ];then
-            echo -e "${white}Cloudflare ddns: ${green}已安装${white}"
+    while true; do
+        clear
+        echo "Cloudflare ddns解析"
+        echo "-------------------------"
+        if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ~/cf-v4-ddns.sh ]; then
+            echo -e "${white}Cloudflare ddns：${green}已安装${white}"
             crontab -l | grep "/usr/local/bin/cf-ddns.sh"
-		else
-            echo -e "${white}Cloudflare ddns: ${yellow}未安装${white}"
-            echo "使用动态解析之前请解析一个域名,如ddns.honeok.com到你的当前公网IP"
-		fi
-		echo "公网IPV4地址: ${ipv4_address}"
-		echo "公网IPV6地址: ${ipv6_address}"
-		echo "-------------------------"
-		echo "1. 设置DDNS动态域名解析    2. 删除DDNS动态域名解析"
-		echo "-------------------------"
-		echo "0. 返回上一级"
-		echo "-------------------------"
+        else
+            echo -e "${white}Cloudflare ddns：${yellow}未安装${white}"
+            echo "使用动态解析之前请解析一个域名，如ddns.honeok.com到你的当前公网IP"
+        fi
+        echo "公网IPV4地址: ${ipv4_address}"
+        echo "公网IPV6地址: ${ipv6_address}"
+        echo "-------------------------"
+        echo "1. 设置DDNS动态域名解析    2. 删除DDNS动态域名解析"
+        echo "-------------------------"
+        echo "0. 返回上一级"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 # 获取CFKEY
                 while true; do
-                    echo "cloudflare后台右上角我的个人资料,选择左侧API令牌,获取Global API Key"
+                    echo "cloudflare后台右上角我的个人资料，选择左侧API令牌，获取Global API Key"
                     echo "https://dash.cloudflare.com/login"
                     echo -n "请输入你的Global API Key:"
                     read -r CFKEY
                     if [[ -n "$CFKEY" ]]; then
-                    	break
+                        break
                     else
-                    	_red "CFKEY不能为空,请重新输入"
+                        _red "CFKEY不能为空，请重新输入"
                     fi
                 done
 
@@ -6255,51 +6255,51 @@ cloudflare_ddns() {
                     echo -n "请输入你的Cloudflare管理员邮箱:"
                     read -r CFUSER
                     if [[ "$CFUSER" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-                    	break
+                        break
                     else
-                    	_red "无效的邮箱格式,请重新输入"
+                        _red "无效的邮箱格式，请重新输入"
                     fi
                 done
                 
                 # 获取CFZONE_NAME
                 while true; do
-                    echo -n "请输入你的顶级域名(如honeok.com):"
+                    echo -n "请输入你的顶级域名（如honeok.com）:"
                     read -r CFZONE_NAME
                     if [[ "$CFZONE_NAME" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-                    	break
+                        break
                     else
-                    	_red "无效的域名格式,请重新输入"
+                        _red "无效的域名格式,请重新输入"
                     fi
                 done
                 
                 # 获取CFRECORD_NAME
                 while true; do
-                    echo -n "请输入你的主机名(如ddns.honeok.com):"
+                    echo -n "请输入你的主机名（如ddns.honeok.com）:"
                     read -r CFRECORD_NAME
                     if [[ -n "$CFRECORD_NAME" ]]; then
-                    	break
+                        break
                     else
-                    	_red "主机名不能为空,请重新输入"
+                        _red "主机名不能为空请重新输入"
                     fi
                 done
 
                 # 获取CFRECORD_TYPE
-                echo -n "请输入记录类型(A记录或AAAA记录,默认IPV4 A记录,回车使用默认值):"
+                echo -n "请输入记录类型（A记录或AAAA记录，默认IPV4 A记录，回车使用默认值）:"
                 read -r CFRECORD_TYPE
                 CFRECORD_TYPE=${CFRECORD_TYPE:-A}
 
                 # 获取CFTTL
-                echo -n "请输入TTL时间(120~86400秒,默认60秒,回车使用默认值):"
+                echo -n "请输入TTL时间（120~86400秒，默认60秒,回车使用默认值）:"
                 read -r CFTTL
                 CFTTL=${CFTTL:-60}
 
-                curl -fsSL -o ~/cf-v4-ddns.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/cf-v4-ddns.sh
+                curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/cf-v4-ddns.sh"
                 # 计算文件哈希
                 FILE_HASH=$(sha256sum ~/cf-v4-ddns.sh | awk '{ print $1 }')
                 
                 # 校验哈希值
                 if [ "$FILE_HASH" != "$EXPECTED_HASH" ]; then
-                    _red "文件哈希校验失败,脚本可能被篡改"
+                    _red "文件哈希校验失败，脚本可能被篡改"
                     sleep 1
                     rm ~/cf-v4-ddns.sh
                     linux_system_tools # 返回系统工具菜单
@@ -6317,8 +6317,8 @@ cloudflare_ddns() {
 
                 check_crontab_installed
 
-                if ! (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1") | crontab -;then
-                    _red "无法自动添加cron任务,请手动添加以下行到crontab:"
+                if ! (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1") | crontab -; then
+                    _red "无法自动添加Cron任务，请手动添加以下行到Crontab:"
                     _yellow "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1"
                     _yellow "按任意键继续"
                     read -n 1 -s -r -p ""
@@ -6335,12 +6335,12 @@ cloudflare_ddns() {
 
                 if crontab -l 2>/dev/null | grep -q '/usr/local/bin/cf-ddns.sh'; then
                     if (crontab -l 2>/dev/null | grep -v '/usr/local/bin/cf-ddns.sh') | crontab -; then
-                    	_green "定时任务已成功移除"
+                        _green "定时任务已成功移除"
                     else
-                    	_red "无法移除定时任务,请手动移除"
-                    	_yellow "您可以手动删除定时任务中包含 '/usr/local/bin/cf-ddns.sh' 的那一行"
-                    	_yellow "按任意键继续"
-                    	read -n 1 -s -r -p ""
+                        _red "无法移除定时任务，请手动移除"
+                        _yellow "您可以手动删除定时任务中包含 '/usr/local/bin/cf-ddns.sh' 的那一行"
+                        _yellow "按任意键继续"
+                        read -n 1 -s -r -p ""
                     fi
                 else
                     _red "定时任务中未找到与 '/usr/local/bin/cf-ddns.sh' 相关的任务"
@@ -6358,68 +6358,68 @@ cloudflare_ddns() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 
-server_reboot(){
-	local choice
-	echo -n -e "${yellow}现在重启服务器吗?(y/n):${white}"
-	read -r choice
+server_reboot() {
+    local choice
+    echo -n -e "${yellow}现在重启服务器吗?(y/n):${white}"
+    read -r choice
 
-	case "$choice" in
-		[Yy])
+    case "$choice" in
+        [Yy])
             _green "已执行"
             reboot
             ;;
-		*)
+        *)
             _yellow "已取消"
             ;;
-	esac
+    esac
 }
 
 # 系统工具主菜单
-linux_system_tools(){
-	local choice
-	while true; do
-		clear
-		echo "▶ 系统工具"
-		echo "------------------------"
-		echo "2. 修改登录密码"
-		echo "3. ROOT密码登录模式                    4. 安装Python指定版本"
-		echo "5. 开放所有端口                        6. 修改SSH连接端口"
-		echo "7. 优化DNS地址                         8. 一键重装系统"
-		echo "9. 禁用ROOT账户创建新账户              10. 切换IPV4/IPV6优先"
-		echo "------------------------"
-		echo "11. 查看端口占用状态                   12. 修改虚拟内存大小"
-		echo "13. 用户管理                           14. 用户/密码随机生成器"
-		echo "15. 系统时区调整                       16. 设置XanMod BBR3"
-		echo "17.防火墙高级管理器                    18. 修改主机名"
-		echo "19. 切换系统更新源                     20. 定时任务管理"
-		echo "------------------------"
-		echo "21. 本机host解析                       22. Fail2banSSH防御程序"
-		echo "23. 限流自动关机                       24. ROOT私钥登录模式"
-		echo "25. TG-bot系统监控预警                 26. 修复OpenSSH高危漏洞（岫源）"
-		echo "27. 红帽系Linux内核升级                28. Linux系统内核参数优化"
-		echo "29. 病毒扫描工具                       30. 文件管理器"
-		echo "------------------------"
-		echo "31. 切换系统语言                       32. 命令行美化工具"
-		echo "33. 设置系统回收站"
-		echo "------------------------"
-		echo "50. Cloudflare ddns解析                51. 一条龙系统调优"
-		echo "------------------------"
-		echo "99. 重启服务器"
-		echo "------------------------"
-		echo "101. 卸载honeok脚本"
-		echo "------------------------"
-		echo "0. 返回主菜单"
-		echo "------------------------"
+linux_system_tools() {
+    local choice
+    while true; do
+        clear
+        echo "▶ 系统工具"
+        echo "------------------------"
+        echo "2. 修改登录密码"
+        echo "3. ROOT密码登录模式                    4. 安装Python指定版本"
+        echo "5. 开放所有端口                        6. 修改SSH连接端口"
+        echo "7. 优化DNS地址                         8. 一键重装系统"
+        echo "9. 禁用ROOT账户创建新账户              10. 切换IPV4/IPV6优先"
+        echo "------------------------"
+        echo "11. 查看端口占用状态                   12. 修改虚拟内存大小"
+        echo "13. 用户管理                           14. 用户/密码随机生成器"
+        echo "15. 系统时区调整                       16. 设置XanMod BBR3"
+        echo "17. 防火墙高级管理器                    18. 修改主机名"
+        echo "19. 切换系统更新源                     20. 定时任务管理"
+        echo "------------------------"
+        echo "21. 本机host解析                       22. Fail2banSSH防御程序"
+        echo "23. 限流自动关机                       24. ROOT私钥登录模式"
+        echo "25. TG-bot系统监控预警                 26. 修复OpenSSH高危漏洞（岫源）"
+        echo "27. 红帽系Linux内核升级                28. Linux系统内核参数优化"
+        echo "29. 病毒扫描工具                       30. 文件管理器"
+        echo "------------------------"
+        echo "31. 切换系统语言                       32. 命令行美化工具"
+        echo "33. 设置系统回收站"
+        echo "------------------------"
+        echo "50. Cloudflare ddns解析                51. 一条龙系统调优"
+        echo "------------------------"
+        echo "99. 重启服务器"
+        echo "------------------------"
+        echo "101. 卸载honeok脚本"
+        echo "------------------------"
+        echo "0. 返回主菜单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             2)
                 _yellow "设置你的登录密码"
                 passwd
@@ -6430,9 +6430,9 @@ linux_system_tools(){
                 ;;
             4)
                 need_root
-                echo "python版本管理"
+                echo "Python版本管理"
                 echo "------------------------"
-                echo "该功能可无缝安装python官方支持的任何版本！"
+                echo "该功能可无缝安装Python官方支持的任何版本！"
                 VERSION=$(python3 -V 2>&1 | awk '{print $2}')
                 echo -e "当前python版本号：${yellow}$VERSION${white}"
                 echo "------------------------"
@@ -6450,36 +6450,36 @@ linux_system_tools(){
 
                 if ! grep -q 'export PYENV_ROOT="\$HOME/.pyenv"' ~/.bashrc; then
                     if command -v yum &>/dev/null; then
-                    	install git
-                    	yum groupinstall "Development Tools" -y
-                    	install openssl-devel bzip2-devel libffi-devel ncurses-devel zlib-devel readline-devel sqlite-devel xz-devel findutils
+                        install git
+                        yum groupinstall "Development Tools" -y
+                        install openssl-devel bzip2-devel libffi-devel ncurses-devel zlib-devel readline-devel sqlite-devel xz-devel findutils
 
-                    	curl -O https://www.openssl.org/source/openssl-1.1.1u.tar.gz
-                    	tar -xzf openssl-1.1.1u.tar.gz
-                    	cd openssl-1.1.1u
-                    	./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl shared zlib
-                    	make
-                    	make install
-                    	echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1u.conf
-                    	ldconfig -v
-                    	cd ..
+                        curl -O https://www.openssl.org/source/openssl-1.1.1u.tar.gz
+                        tar -xzf openssl-1.1.1u.tar.gz
+                        cd openssl-1.1.1u
+                        ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl shared zlib
+                        make
+                        make install
+                        echo "/usr/local/openssl/lib" > /etc/ld.so.conf.d/openssl-1.1.1u.conf
+                        ldconfig -v
+                        cd ..
 
-                    	export LDFLAGS="-L/usr/local/openssl/lib"
-                    	export CPPFLAGS="-I/usr/local/openssl/include"
-                    	export PKG_CONFIG_PATH="/usr/local/openssl/lib/pkgconfig"
+                        export LDFLAGS="-L/usr/local/openssl/lib"
+                        export CPPFLAGS="-I/usr/local/openssl/include"
+                        export PKG_CONFIG_PATH="/usr/local/openssl/lib/pkgconfig"
                     elif command -v apt &>/dev/null; then
-                    	install git
-                    	install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libnss3-dev libedit-dev
+                        install git
+                        install build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev libgdbm-dev libnss3-dev libedit-dev
                     elif command -v apk &>/dev/null; then
-                    	install git
-                    	apk add --no-cache bash gcc musl-dev libffi-dev openssl-dev bzip2-dev zlib-dev readline-dev sqlite-dev libc6-compat linux-headers make xz-dev build-base ncurses-dev
+                        install git
+                        apk add --no-cache bash gcc musl-dev libffi-dev openssl-dev bzip2-dev zlib-dev readline-dev sqlite-dev libc6-compat linux-headers make xz-dev build-base ncurses-dev
                     else
-                    	_red "未知的包管理器！"
-                    	return 1
+                        _red "未知的包管理器！"
+                        return 1
                     fi
 
-                curl https://pyenv.run | bash
-                cat << EOF >> ~/.bashrc
+                    curl https://pyenv.run | bash
+                    cat << EOF >> ~/.bashrc
 
 export PYENV_ROOT="\$HOME/.pyenv"
 if [[ -d "\$PYENV_ROOT/bin" ]]; then
@@ -6531,17 +6531,17 @@ EOF
 
                     # 判断端口号是否在有效范围内
                     if [[ $new_port =~ ^[0-9]+$ ]]; then  # 检查输入是否为数字
-                    	if [[ $new_port -ge 10000 && $new_port -le 65535 ]]; then
-                    		new_ssh_port
-                    	elif [[ $new_port -eq 0 ]]; then
-                    		break
-                    	else
-                    		_red "端口号无效，请输入10000到65535之间的数字"
-                    		end_of
-                    	fi
+                        if [[ $new_port -ge 10000 && $new_port -le 65535 ]]; then
+                            new_ssh_port
+                        elif [[ $new_port -eq 0 ]]; then
+                            break
+                        else
+                            _red "端口号无效，请输入10000到65535之间的数字"
+                            end_of
+                        fi
                     else
-                    	_red "输入无效，请输入数字"
-                    	end_of
+                        _red "输入无效，请输入数字"
+                        end_of
                     fi
                 done
                 ;;
@@ -6572,26 +6572,26 @@ EOF
                     read -r choice
 
                     case "$choice" in
-                    	1)
-                    		bak_dns
-                    		set_dns
-                    		;;
-                    	2)
-                    		rollbak_dns
-                    		;;
-                    	3)
-                    		if command -v vim >/dev/null 2>&1; then
+                        1)
+                            bak_dns
+                            set_dns
+                            ;;
+                        2)
+                            rollbak_dns
+                            ;;
+                        3)
+                            if command -v vim >/dev/null 2>&1; then
                                 vim /etc/resolv.conf
-                    		else
+                            else
                                 vi /etc/resolv.conf
-                    		fi
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            fi
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -6648,9 +6648,9 @@ EOF
                     ipv6_disabled=$(sysctl -n net.ipv6.conf.all.disable_ipv6)
 
                     if [ "$ipv6_disabled" -eq 1 ]; then
-                    	echo -e "当前网络优先级设置:${yellow}IPv4${white}优先"
+                        echo -e "当前网络优先级设置:${yellow}IPv4${white}优先"
                     else
-                    	echo -e "当前网络优先级设置:${yellow}IPv6${white}优先"
+                        echo -e "当前网络优先级设置:${yellow}IPv6${white}优先"
                     fi
                     echo ""
                     echo "------------------------"
@@ -6660,21 +6660,21 @@ EOF
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		sysctl -w net.ipv6.conf.all.disable_ipv6=1 > /dev/null 2>&1
-                    		_green "已切换为IPv4优先"
-                    		;;
-                    	2)
-                    		sysctl -w net.ipv6.conf.all.disable_ipv6=0 > /dev/null 2>&1
-                    		_green "已切换为IPv6优先"
-                    		;;
-                    	3)
-                    		echo "该功能由jhb提供，感谢！"
-                    		bash <(curl -L -s jhb.ovh/jb/v6.sh)
-                    		;;
-                    	*)
-                    		break
-                    		;;
+                        1)
+                            sysctl -w net.ipv6.conf.all.disable_ipv6=1 > /dev/null 2>&1
+                            _green "已切换为IPv4优先"
+                            ;;
+                        2)
+                            sysctl -w net.ipv6.conf.all.disable_ipv6=0 > /dev/null 2>&1
+                            _green "已切换为IPv6优先"
+                            ;;
+                        3)
+                            echo "该功能由jhb提供，感谢！"
+                            bash <(curl -L -s jhb.ovh/jb/v6.sh)
+                            ;;
+                        *)
+                            break
+                            ;;
                     esac
                 done
                 ;;
@@ -6684,7 +6684,7 @@ EOF
                 ;;
             12)
                 need_root
-                 while true; do
+                while true; do
                     clear
                     echo "设置虚拟内存"
                     # 获取当前虚拟内存使用情况
@@ -6701,30 +6701,30 @@ EOF
                     read -r choice
 
                     case "$choice" in
-                    	1)
-                    		add_swap 1024
-                    		_green "已设置虚拟内存为1024MB"
-                    		;;
-                    	2)
-                    		add_swap 2048
-                    		_green "已设置虚拟内存为2048MB"
-                    		;;
-                    	3)
-                    		echo -n "请输入虚拟内存大小MB:"
-                    		read -r new_swap
-                    		if [[ "$new_swap" =~ ^[0-9]+$ ]] && [ "$new_swap" -gt 0 ]; then
+                        1)
+                            add_swap 1024
+                            _green "已设置虚拟内存为1024MB"
+                            ;;
+                        2)
+                            add_swap 2048
+                            _green "已设置虚拟内存为2048MB"
+                            ;;
+                        3)
+                            echo -n "请输入虚拟内存大小MB:"
+                            read -r new_swap
+                            if [[ "$new_swap" =~ ^[0-9]+$ ]] && [ "$new_swap" -gt 0 ]; then
                                 add_swap "$new_swap"
                                 _green "已设置自定义虚拟内存为 ${new_swap}MB"
-                    		else
+                            else
                                 _red "无效输入，请输入正整数"
-                    		fi
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            fi
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -6735,9 +6735,9 @@ EOF
                     echo "----------------------------------------------------------------------------"
                     printf "%-24s %-34s %-20s %-10s\n" "用户名" "用户权限" "用户组" "sudo权限"
                     while IFS=: read -r username _ userid groupid _ _ homedir shell; do
-                    	groups=$(groups "$username" | cut -d : -f 2)
-                    	sudo_status=$(sudo -n -lU "$username" 2>/dev/null | grep -q '(ALL : ALL)' && echo "Yes" || echo "No")
-                    	printf "%-20s %-30s %-20s %-10s\n" "$username" "$homedir" "$groups" "$sudo_status"
+                        groups=$(groups "$username" | cut -d : -f 2)
+                        sudo_status=$(sudo -n -lU "$username" 2>/dev/null | grep -q '(ALL : ALL)' && echo "Yes" || echo "No")
+                        printf "%-20s %-30s %-20s %-10s\n" "$username" "$homedir" "$groups" "$sudo_status"
                     done < /etc/passwd
 
                     echo ""
@@ -6756,54 +6756,54 @@ EOF
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		echo -n "请输入新用户名："
-                    		read -r new_username
+                        1)
+                            echo -n "请输入新用户名："
+                            read -r new_username
 
-                    		useradd -m -s /bin/bash "$new_username" && \
-                    		passwd "$new_username" && \
-                    		_green "普通账户创建完成"
-                    		;;
-                    	2)
-                    		echo -n "请输入新用户名："
-                    		read -r new_username
+                            useradd -m -s /bin/bash "$new_username" && \
+                            passwd "$new_username" && \
+                            _green "普通账户创建完成"
+                            ;;
+                        2)
+                            echo -n "请输入新用户名："
+                            read -r new_username
 
-                    		useradd -m -s /bin/bash "$new_username" && \
-                    		passwd "$new_username" && \
-                    		echo "$new_username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
-                    		_green "高级账户创建完成"
-                    		;;
-                    	3)
-                    		echo -n "请输入新用户名："
-                    		read -r username
+                            useradd -m -s /bin/bash "$new_username" && \
+                            passwd "$new_username" && \
+                            echo "$new_username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
+                            _green "高级账户创建完成"
+                            ;;
+                        3)
+                            echo -n "请输入新用户名："
+                            read -r username
 
-                    		echo "$username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
-                    		_green "已赋予$username Sudo权限"
-                    		;;
-                    	4)
-                    		echo -n "请输入新用户名:"
-                    		read -r username
-                    		# 从sudoers文件中移除用户的sudo权限
-                    		if sudo sed -i "/^$username\sALL=(ALL:ALL)\sALL/d" /etc/sudoers; then
+                            echo "$username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
+                            _green "已赋予$username Sudo权限"
+                            ;;
+                        4)
+                            echo -n "请输入新用户名:"
+                            read -r username
+                            # 从sudoers文件中移除用户的sudo权限
+                            if sudo sed -i "/^$username\sALL=(ALL:ALL)\sALL/d" /etc/sudoers; then
                                 _green "已取消 $username的Sudo权限"
-                    		else
+                            else
                                 _red "取消Sudo权限失败"
-                    		fi
-                    		;;
-                    	5)
-                    		echo -n "请输入要删除的用户名："
-                    		read -r username
+                            fi
+                            ;;
+                        5)
+                            echo -n "请输入要删除的用户名："
+                            read -r username
 
-                    		# 删除用户及其主目录
-                    		userdel -r "$username" && \
-                    		_green "$username账号已删除"
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            # 删除用户及其主目录
+                            userdel -r "$username" && \
+                            _green "$username账号已删除"
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -6899,38 +6899,38 @@ EOF
                     read -r choice
 
                     case $choice in
-                    	1) set_timedate Asia/Shanghai ;;
-                    	2) set_timedate Asia/Hong_Kong ;;
-                    	3) set_timedate Asia/Tokyo ;;
-                    	4) set_timedate Asia/Seoul ;;
-                    	5) set_timedate Asia/Singapore ;;
-                    	6) set_timedate Asia/Kolkata ;;
-                    	7) set_timedate Asia/Dubai ;;
-                    	8) set_timedate Australia/Sydney ;;
-                    	9) set_timedate Asia/Tel_Aviv ;;
-                    	10) set_timedate Indian/Maldives ;;
-                    	11) set_timedate Europe/London ;;
-                    	12) set_timedate Europe/Paris ;;
-                    	13) set_timedate Europe/Berlin ;;
-                    	14) set_timedate Europe/Moscow ;;
-                    	15) set_timedate Europe/Amsterdam ;;
-                    	16) set_timedate Europe/Madrid ;;
-                    	17) set_timedate Europe/Zurich ;;
-                    	18) set_timedate Europe/Rome ;;
-                    	21) set_timedate America/Los_Angeles ;;
-                    	22) set_timedate America/New_York ;;
-                    	23) set_timedate America/Vancouver ;;
-                    	24) set_timedate America/Mexico_City ;;
-                    	25) set_timedate America/Sao_Paulo ;;
-                    	26) set_timedate America/Argentina/Buenos_Aires ;;
-                    	27) set_timedate America/Santiago ;;
-                    	28) set_timedate America/Bogota ;;
-                    	31) set_timedate Africa/Johannesburg ;;
-                    	32) set_timedate Africa/Cairo ;;
-                    	33) set_timedate Africa/Casablanca ;;
-                    	34) set_timedate Africa/Lagos ;;
-                    	0) break ;;  # 退出循环
-                    	*) _red "无效选项，请重新输入" ;;
+                        1) set_timedate Asia/Shanghai ;;
+                        2) set_timedate Asia/Hong_Kong ;;
+                        3) set_timedate Asia/Tokyo ;;
+                        4) set_timedate Asia/Seoul ;;
+                        5) set_timedate Asia/Singapore ;;
+                        6) set_timedate Asia/Kolkata ;;
+                        7) set_timedate Asia/Dubai ;;
+                        8) set_timedate Australia/Sydney ;;
+                        9) set_timedate Asia/Tel_Aviv ;;
+                        10) set_timedate Indian/Maldives ;;
+                        11) set_timedate Europe/London ;;
+                        12) set_timedate Europe/Paris ;;
+                        13) set_timedate Europe/Berlin ;;
+                        14) set_timedate Europe/Moscow ;;
+                        15) set_timedate Europe/Amsterdam ;;
+                        16) set_timedate Europe/Madrid ;;
+                        17) set_timedate Europe/Zurich ;;
+                        18) set_timedate Europe/Rome ;;
+                        21) set_timedate America/Los_Angeles ;;
+                        22) set_timedate America/New_York ;;
+                        23) set_timedate America/Vancouver ;;
+                        24) set_timedate America/Mexico_City ;;
+                        25) set_timedate America/Sao_Paulo ;;
+                        26) set_timedate America/Argentina/Buenos_Aires ;;
+                        27) set_timedate America/Santiago ;;
+                        28) set_timedate America/Bogota ;;
+                        31) set_timedate Africa/Johannesburg ;;
+                        32) set_timedate Africa/Cairo ;;
+                        33) set_timedate Africa/Casablanca ;;
+                        34) set_timedate Africa/Lagos ;;
+                        0) break ;;  # 退出循环
+                        *) _red "无效选项，请重新输入" ;;
                     esac
                     end_of
                 done
@@ -6942,41 +6942,41 @@ EOF
                 need_root
                 while true; do
                     if dpkg -l | grep -q iptables-persistent; then
-                    	clear
-                    	echo "高级防火墙管理"
-                    	echo "------------------------"
-                    	iptables -L INPUT
-                    	echo ""
-                    	echo "防火墙管理"
-                    	echo "------------------------"
-                    	echo "1. 开放指定端口              2. 关闭指定端口"
-                    	echo "3. 开放所有端口              4. 关闭所有端口"
-                    	echo "------------------------"
-                    	echo "5. IP白名单                  6. IP黑名单"
-                    	echo "7. 清除指定IP"
-                    	echo "------------------------"
-                    	echo "9. 卸载防火墙"
-                    	echo "------------------------"
-                    	echo "0. 返回上一级选单"
-                    	echo "------------------------"
-                    	echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-                    	read -r choice
+                        clear
+                        echo "高级防火墙管理"
+                        echo "------------------------"
+                        iptables -L INPUT
+                        echo ""
+                        echo "防火墙管理"
+                        echo "------------------------"
+                        echo "1. 开放指定端口              2. 关闭指定端口"
+                        echo "3. 开放所有端口              4. 关闭所有端口"
+                        echo "------------------------"
+                        echo "5. IP白名单                  6. IP黑名单"
+                        echo "7. 清除指定IP"
+                        echo "------------------------"
+                        echo "9. 卸载防火墙"
+                        echo "------------------------"
+                        echo "0. 返回上一级选单"
+                        echo "------------------------"
+                        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+                        read -r choice
 
-                    	case $choice in
-                    		1)
+                        case $choice in
+                            1)
                                 echo -n -e "${yellow}请输入开放的端口号:${white}"
                                 read -r o_port
                                 sed -i "/COMMIT/i -A INPUT -p tcp --dport $o_port -j ACCEPT" /etc/iptables/rules.v4
                                 sed -i "/COMMIT/i -A INPUT -p udp --dport $o_port -j ACCEPT" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		2)
+                            2)
                                 echo -n -e "${yellow}请输入关闭的端口号:${white}"
                                 read -r c_port
                                 sed -i "/--dport $c_port/d" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		3)
+                            3)
                                 current_port=$(grep -E '^ *Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
                                 cat > /etc/iptables/rules.v4 << EOF
 *filter
@@ -6992,7 +6992,7 @@ COMMIT
 EOF
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		4)
+                            4)
                                 current_port=$(grep -E '^ *Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
                                 cat > /etc/iptables/rules.v4 << EOF
 *filter
@@ -7008,49 +7008,51 @@ COMMIT
 EOF
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		5)
+                            5)
                                 echo -n -e "${yellow}请输入放行的IP:${white}"
                                 read -r o_ip
                                 sed -i "/COMMIT/i -A INPUT -s $o_ip -j ACCEPT" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		6)
+                            6)
                                 echo -n -e "${yellow}请输入封锁的IP:${white}"
+                                read -r c_ip
                                 sed -i "/COMMIT/i -A INPUT -s $c_ip -j DROP" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		7)
+                            7)
                                 echo -n -e "${yellow}请输入清除的IP:${white}"
+                                read -r d_ip
                                 sed -i "/-A INPUT -s $d_ip/d" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                    		9)
+                            9)
                                 remove iptables-persistent
                                 rm /etc/iptables/rules.v4
                                 break
                                 ;;
-                    		0)
+                            0)
                                 break # 跳出循环，退出菜单
                                 ;;
-                    		*)
+                            *)
                                 _red "无效选项，请重新输入"
                                 ;;
-                    	esac
+                        esac
                     else
-                    	clear
-                    	echo "将为你安装防火墙，该防火墙仅支持Debian/Ubuntu"
-                    	echo "---------------------------------------------"
-                    	echo -n -e "${yellow}确定继续吗?(y/n)${white}"
-                    	read -r choice
+                        clear
+                        echo "将为你安装防火墙，该防火墙仅支持Debian/Ubuntu"
+                        echo "---------------------------------------------"
+                        echo -n -e "${yellow}确定继续吗?(y/n)${white}"
+                        read -r choice
 
-                    	case "$choice" in
-                    		[Yy])
+                        case "$choice" in
+                            [Yy])
                                 if [ -r /etc/os-release ]; then
                                     . /etc/os-release
                                     if [ "$ID" != "debian" ] && [ "$ID" != "ubuntu" ]; then
-                                    	echo "当前环境不支持，仅支持Debian和Ubuntu系统"
-                                    	end_of
-                                    	linux_system_tools
+                                        echo "当前环境不支持，仅支持Debian和Ubuntu系统"
+                                        end_of
+                                        linux_system_tools
                                     fi
                                 else
                                     echo "无法确定操作系统类型"
@@ -7082,11 +7084,11 @@ EOF
                                 _green "防火墙安装完成"
                                 end_of
                                 ;;
-                    		*)
+                            *)
                                 _yellow "已取消"
                                 break
                                 ;;
-                    	esac
+                        esac
                     fi
                 done
                 ;;
@@ -7101,34 +7103,34 @@ EOF
                     read -r new_hostname
 
                     if [ -n "$new_hostname" ] && [ "$new_hostname" != "0" ]; then
-                    	if [ -f /etc/alpine-release ]; then
-                    		# Alpine
-                    		echo "$new_hostname" > /etc/hostname
-                    		hostname "$new_hostname"
-                    	else
-                    		# 其他系统，如 Debian, Ubuntu, CentOS 等
-                    		hostnamectl set-hostname "$new_hostname"
-                    		sed -i "s/$current_hostname/$new_hostname/g" /etc/hostname
-                    		systemctl restart systemd-hostnamed
-                    	fi
+                        if [ -f /etc/alpine-release ]; then
+                            # Alpine
+                            echo "$new_hostname" > /etc/hostname
+                            hostname "$new_hostname"
+                        else
+                            # 其他系统，如 Debian, Ubuntu, CentOS 等
+                            hostnamectl set-hostname "$new_hostname"
+                            sed -i "s/$current_hostname/$new_hostname/g" /etc/hostname
+                            systemctl restart systemd-hostnamed
+                        fi
 
-                    	if grep -q "127.0.0.1" /etc/hosts; then
-                    		sed -i "s/127.0.0.1 .*/127.0.0.1       $new_hostname localhost localhost.localdomain/g" /etc/hosts
-                    	else
-                    		echo "127.0.0.1       $new_hostname localhost localhost.localdomain" >> /etc/hosts
-                    	fi
+                        if grep -q "127.0.0.1" /etc/hosts; then
+                            sed -i "s/127.0.0.1 .*/127.0.0.1       $new_hostname localhost localhost.localdomain/g" /etc/hosts
+                        else
+                            echo "127.0.0.1       $new_hostname localhost localhost.localdomain" >> /etc/hosts
+                        fi
 
-                    	if grep -q "^::1" /etc/hosts; then
-                    		sed -i "s/^::1 .*/::1             "$new_hostname" localhost localhost.localdomain ipv6-localhost ipv6-loopback/g" /etc/hosts
-                    	else
-                    		echo "::1             "$new_hostname" localhost localhost.localdomain ipv6-localhost ipv6-loopback" >> /etc/hosts
-                    	fi
+                        if grep -q "^::1" /etc/hosts; then
+                            sed -i "s/^::1 .*/::1             $new_hostname localhost localhost.localdomain ipv6-localhost ipv6-loopback/g" /etc/hosts
+                        else
+                            echo "::1             $new_hostname localhost localhost.localdomain ipv6-localhost ipv6-loopback" >> /etc/hosts
+                        fi
 
-                    	echo "主机名已更改为：$new_hostname"
-                    	sleep 1
+                        echo "主机名已更改为：$new_hostname"
+                        sleep 1
                     else
-                    	_yellow "已退出，未更改主机名"
-                    	break
+                        _yellow "已退出，未更改主机名"
+                        break
                     fi
                 done
                 ;;
@@ -7157,24 +7159,24 @@ EOF
                     read -r host_dns
 
                     case $host_dns in
-                    	1)
-                    		echo -n "请输入新的解析记录，格式:110.25.5.33 honeok.com:"
-                    		read -r addhost
+                        1)
+                            echo -n "请输入新的解析记录，格式:110.25.5.33 honeok.com:"
+                            read -r addhost
 
-                    		echo "$addhost" >> /etc/hosts
-                    		;;
-                    	2)
-                    		echo -n "请输入需要删除的解析内容关键字:"
-                    		read -r delhost
+                            echo "$addhost" >> /etc/hosts
+                            ;;
+                        2)
+                            echo -n "请输入需要删除的解析内容关键字:"
+                            read -r delhost
 
-                    		sed -i "/$delhost/d" /etc/hosts
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            sed -i "/$delhost/d" /etc/hosts
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 done
                 ;;
@@ -7279,13 +7281,13 @@ EOF
 
                     # 检查是否存在 Limiting_Shut_down.sh 文件
                     if [ -f ~/Limiting_Shut_down.sh ]; then
-                    	# 获取 threshold_gb 的值
-                    	rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                    	tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                    	echo "当前设置的进站限流阈值为：${rx_threshold_gb}GB"
-                    	echo "当前设置的出站限流阈值为：${tx_threshold_gb}GB"
+                        # 获取 threshold_gb 的值
+                        rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
+                        tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
+                        echo "当前设置的进站限流阈值为：${rx_threshold_gb}GB"
+                        echo "当前设置的出站限流阈值为：${tx_threshold_gb}GB"
                     else
-                    	echo "当前未启用限流关机功能"
+                        echo "当前未启用限流关机功能"
                     fi
 
                     echo ""
@@ -7296,38 +7298,38 @@ EOF
                     read -r choice
 
                     case "$choice" in
-                    	1)
-                    		echo "如果实际服务器就100G流量，可设置阈值为95G提前关机，以免出现流量误差或溢出"
-                    		echo -n "请输入进站流量阈值（单位为GB）:"
-                    		read -r rx_threshold_gb
-                    		echo -n "请输入出站流量阈值（单位为GB）:"
-                    		read -r tx_threshold_gb
-                    		echo -n "请输入流量重置日期（默认每月1日重置）:"
-                    		read -r cz_day
-                    		cz_day=${cz_day:-1}
+                        1)
+                            echo "如果实际服务器就100G流量，可设置阈值为95G提前关机，以免出现流量误差或溢出"
+                            echo -n "请输入进站流量阈值（单位为GB）:"
+                            read -r rx_threshold_gb
+                            echo -n "请输入出站流量阈值（单位为GB）:"
+                            read -r tx_threshold_gb
+                            echo -n "请输入流量重置日期（默认每月1日重置）:"
+                            read -r cz_day
+                            cz_day=${cz_day:-1}
 
-                    		cd ~
-                    		curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/Limiting_Shut_down1.sh"
-                    		chmod +x ~/Limiting_Shut_down.sh
-                    		sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
-                    		sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
-                    		check_crontab_installed
-                    		crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
-                    		(crontab -l ; echo "* * * * * ~/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
-                    		crontab -l | grep -v 'reboot' | crontab -
-                    		(crontab -l ; echo "0 1 $cz_day * * reboot") | crontab - > /dev/null 2>&1
-                    		_green "限流关机已开启"
-                    		;;
-                    	2)
-                    		check_crontab_installed
-                    		crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
-                    		crontab -l | grep -v 'reboot' | crontab -
-                    		rm ~/Limiting_Shut_down.sh
-                    		_green "限流关机已卸载"
-                    		;;
-                    	*)
-                    		break
-                    		;;
+                            cd ~
+                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/Limiting_Shut_down1.sh"
+                            chmod +x ~/Limiting_Shut_down.sh
+                            sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
+                            sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
+                            check_crontab_installed
+                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
+                            (crontab -l ; echo "* * * * * ~/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
+                            crontab -l | grep -v 'reboot' | crontab -
+                            (crontab -l ; echo "0 1 $cz_day * * reboot") | crontab - > /dev/null 2>&1
+                            _green "限流关机已开启"
+                            ;;
+                        2)
+                            check_crontab_installed
+                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
+                            crontab -l | grep -v 'reboot' | crontab -
+                            rm ~/Limiting_Shut_down.sh
+                            _green "限流关机已卸载"
+                            ;;
+                        *)
+                            break
+                            ;;
                     esac
                 done
                 ;;
@@ -7341,15 +7343,15 @@ EOF
 
                 case "$choice" in
                     [Yy])
-                    	clear
-                    	add_sshkey
-                    	;;
+                        clear
+                        add_sshkey
+                        ;;
                     [Nn])
-                    	_yellow "已取消"
-                    	;;
+                        _yellow "已取消"
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             25)
@@ -7358,7 +7360,7 @@ EOF
             26)
                 need_root
                 cd ~
-                curl -fsSL -o "upgrade_openssh.sh"  "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/upgrade_openssh9.8p1.sh"
+                curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/upgrade_openssh9.8p1.sh"
                 chmod +x "~/upgrade_openssh.sh"
                 ~/upgrade_openssh.sh
                 rm -f ~/upgrade_openssh.sh
@@ -7375,12 +7377,12 @@ EOF
                     echo "提供多种系统参数调优模式,用户可以根据自身使用场景进行选择切换"
                     _yellow "生产环境请谨慎使用!"
                     echo "--------------------"
-                    echo "1. 高性能优化模式:     最大化系统性能,优化文件描述符,虚拟内存,网络设置,缓存管理和CPU设置"
-                    echo "2. 均衡优化模式:     在性能与资源消耗之间取得平衡,适合日常使用"
-                    echo "3. 网站优化模式:     针对网站服务器进行优化,提高并发连接处理能力,响应速度和整体性能"
-                    echo "4. 直播优化模式:     针对直播推流的特殊需求进行优化,减少延迟,提高传输性能"
-                    echo "5. 游戏服优化模式:     针对游戏服务器进行优化,提高并发处理能力和响应速度"
-                    echo "6. 还原默认设置:     将系统设置还原为默认配置"
+                    echo "1. 高性能优化模式   :     最大化系统性能，优化文件描述符、虚拟内存、网络设置、缓存管理和CPU设置"
+                    echo "2. 均衡优化模式     :     在性能与资源消耗之间取得平衡，适合日常使用"
+                    echo "3. 网站优化模式     :     针对网站服务器进行优化，提高并发连接处理能力，响应速度和整体性能"
+                    echo "4. 直播优化模式     :     针对直播推流的特殊需求进行优化，减少延迟，提高传输性能"
+                    echo "5. 游戏服优化模式   :     针对游戏服务器进行优化，提高并发处理能力和响应速度"
+                    echo "6. 还原默认设置     :     将系统设置还原为默认配置"
                     echo "--------------------"
                     echo "0. 返回上一级"
                     echo "--------------------"
@@ -7389,45 +7391,45 @@ EOF
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		cd ~
-                    		clear
-                    		optimization_mode="高性能优化模式"
-                    		optimize_high_performance
-                    		;;
-                    	2)
-                    		cd ~
-                    		clear
-                    		optimize_balanced
-                    		;;
-                    	3)
-                    		cd ~
-                    		clear
-                    		optimize_web_server
-                    		;;
-                    	4)
-                    		cd ~
-                    		clear
-                    		optimization_mode="直播优化模式"
-                    		optimize_high_performance
-                    		;;
-                    	5)
-                    		cd ~
-                    		clear
-                    		optimization_mode="游戏服优化模式"
-                    		optimize_high_performance
-                    		;;
-                    	6)
-                    		cd ~
-                    		clear
-                    		restore_defaults
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                        1)
+                            cd ~
+                            clear
+                            optimization_mode="高性能优化模式"
+                            optimize_high_performance
+                            ;;
+                        2)
+                            cd ~
+                            clear
+                            optimize_balanced
+                            ;;
+                        3)
+                            cd ~
+                            clear
+                            optimize_web_server
+                            ;;
+                        4)
+                            cd ~
+                            clear
+                            optimization_mode="直播优化模式"
+                            optimize_high_performance
+                            ;;
+                        5)
+                            cd ~
+                            clear
+                            optimization_mode="游戏服优化模式"
+                            optimize_high_performance
+                            ;;
+                        6)
+                            cd ~
+                            clear
+                            restore_defaults
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                     end_of
                 done
@@ -7451,11 +7453,10 @@ EOF
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
-
 #################### 系统工具END ####################
 
 #################### 工作区START ####################
