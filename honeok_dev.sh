@@ -898,9 +898,9 @@ linux_tools() {
 
 #################### BBR START ####################
 linux_bbr() {
-	clear
-	if [ -f "/etc/alpine-release" ]; then
-		while true; do
+    clear
+    if [ -f "/etc/alpine-release" ]; then
+        while true; do
             clear
             # 使用局部变量
             local congestion_algorithm
@@ -939,12 +939,12 @@ linux_bbr() {
                     _red "无效选项，请重新输入"
                     ;;
             esac
-		done
-	else
-		install wget
-		wget --no-check-certificate -O tcpx.sh "${github_proxy}https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
-		rm tcpx.sh
-	fi
+        done
+    else
+        install wget
+        wget --no-check-certificate -O tcpx.sh "${github_proxy}https://raw.githubusercontent.com/ylx2016/Linux-NetSpeed/master/tcpx.sh" && chmod +x tcpx.sh && ./tcpx.sh
+        rm tcpx.sh
+    fi
 }
 #################### BBR END ####################
 
