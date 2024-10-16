@@ -5903,7 +5903,7 @@ redhat_kernel_update() {
         fi
 
         # 打印检测到的操作系统信息
-        _yellow "检测到的操作系统: $os_name $os_version"
+        _yellow "检测到的操作系统：$os_name $os_version"
 
         # 根据系统版本安装对应的 ELRepo 仓库配置
         if [[ "$os_version" == 8 ]]; then
