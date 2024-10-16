@@ -2096,45 +2096,45 @@ check_available_port() {
 }
 
 linux_panel() {
-	local choice
-	while true; do
-		clear
-		echo "▶ 面板工具"
-		echo "------------------------"
-		echo "1. 宝塔面板官方版                      2. aaPanel宝塔国际版"
-		echo "3. 1Panel新一代管理面板                4. NginxProxyManager可视化面板"
-		echo "5. AList多存储文件列表程序             6. Ubuntu远程桌面网页版"
-		echo "7. 哪吒探针VPS监控面板                 8. QB离线BT磁力下载面板"
-		echo "9. Poste.io邮件服务器程序"
-		echo "------------------------"
-		echo "11. 禅道项目管理软件                   12. 青龙面板定时任务管理平台"
-		echo "14. 简单图床图片管理程序"
-		echo "15. emby多媒体管理系统                 16. Speedtest测速面板"
-		echo "17. AdGuardHome去广告软件              18. Onlyoffice在线办公OFFICE"
-		echo "19. 雷池WAF防火墙面板                  20. Portainer容器管理面板"
-		echo "------------------------"
-		echo "21. VScode网页版                       22. UptimeKuma监控工具"
-		echo "23. Memos网页备忘录                    24. Webtop远程桌面网页版"
-		echo "25. Nextcloud网盘                      26. QD Today定时任务管理框架"
-		echo "27. Dockge容器堆栈管理面板             28. LibreSpeed测速工具"
-		echo "29. Searxng聚合搜索站                  30. PhotoPrism私有相册系统"
-		echo "------------------------"
-		echo "31. StirlingPDF工具大全                32. Drawio免费的在线图表软件"
-		echo "33. Sun Panel导航面板                  34. Pingvin Share文件分享平台"
-		echo "35. 极简朋友圈                         36. LobeChatAI聊天聚合网站"
-		echo "37. MyIP工具箱                         38. 小雅Alist全家桶"
-		echo "39. Bililive直播录制工具"
-		echo "41. It-tools工具箱(中文版)"
-		echo "------------------------"
-		echo "51. PVE开小鸡面板"
-		echo "------------------------"
-		echo "0. 返回主菜单"
-		echo "------------------------"
+    local choice
+    while true; do
+        clear
+        echo "▶ 面板工具"
+        echo "------------------------"
+        echo "1. 宝塔面板官方版                      2. aaPanel宝塔国际版"
+        echo "3. 1Panel新一代管理面板                4. NginxProxyManager可视化面板"
+        echo "5. AList多存储文件列表程序             6. Ubuntu远程桌面网页版"
+        echo "7. 哪吒探针VPS监控面板                 8. QB离线BT磁力下载面板"
+        echo "9. Poste.io邮件服务器程序"
+        echo "------------------------"
+        echo "11. 禅道项目管理软件                   12. 青龙面板定时任务管理平台"
+        echo "14. 简单图床图片管理程序"
+        echo "15. emby多媒体管理系统                 16. Speedtest测速面板"
+        echo "17. AdGuardHome去广告软件              18. Onlyoffice在线办公OFFICE"
+        echo "19. 雷池WAF防火墙面板                  20. Portainer容器管理面板"
+        echo "------------------------"
+        echo "21. VScode网页版                       22. UptimeKuma监控工具"
+        echo "23. Memos网页备忘录                    24. Webtop远程桌面网页版"
+        echo "25. Nextcloud网盘                      26. QD Today定时任务管理框架"
+        echo "27. Dockge容器堆栈管理面板             28. LibreSpeed测速工具"
+        echo "29. Searxng聚合搜索站                  30. PhotoPrism私有相册系统"
+        echo "------------------------"
+        echo "31. StirlingPDF工具大全                32. Drawio免费的在线图表软件"
+        echo "33. Sun Panel导航面板                  34. Pingvin Share文件分享平台"
+        echo "35. 极简朋友圈                         36. LobeChatAI聊天聚合网站"
+        echo "37. MyIP工具箱                         38. 小雅Alist全家桶"
+        echo "39. Bililive直播录制工具"
+        echo "41. It-tools工具箱(中文版)"
+        echo "------------------------"
+        echo "51. PVE开小鸡面板"
+        echo "------------------------"
+        echo "0. 返回主菜单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 path="/www/server/panel"
                 panelname="宝塔面板"
@@ -2204,34 +2204,34 @@ linux_panel() {
 
                 if ! docker inspect "$docker_name" >/dev/null 2>&1; then
                     while true;do
-                    	echo "------------------------"
-                    	echo "1. 完整安装npm,基于mariadb(默认)"
-                    	echo "2. 精简安装npm,基于SQLlite"
-                    	echo "------------------------"
-                    	echo "0. 返回上一级"
-                    	echo "------------------------"
-                    	echo -n -e "${yellow}请输入选项并按回车键确认(回车使用默认值:完整安装):${white}"
+                        echo "------------------------"
+                        echo "1. 完整安装npm,基于mariadb(默认)"
+                        echo "2. 精简安装npm,基于SQLlite"
+                        echo "------------------------"
+                        echo "0. 返回上一级"
+                        echo "------------------------"
+                        echo -n -e "${yellow}请输入选项并按回车键确认(回车使用默认值:完整安装):${white}"
 
-                    	# 重置choice变量
-                    	choice=""
-                    	read -r choice
+                        # 重置choice变量
+                        choice=""
+                        read -r choice
 
-                    	case $choice in
-                    		1|"")
+                        case $choice in
+                            1|"")
                                 docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/npm/docker-compose-latest.yml)
                                 break
                                 ;;
-                    		2)
+                            2)
                                 docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/npm-docker-compose.yml)
                                 break
                                 ;;
-                    		0)
+                            0)
                                 linux_panel # 返回面板管理界面
                                 ;;
-                    		*)
+                            *)
                                 _red "无效选项，请重新输入"
                                 ;;
-                    	esac
+                        esac
                     done
                 fi
 
@@ -2275,16 +2275,16 @@ linux_panel() {
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
-                    		./nezha.sh
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                        1)
+                            curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
+                            ./nezha.sh
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                     end_of
                 done
@@ -2313,15 +2313,15 @@ linux_panel() {
                     echo ""
                     echo "端口检测"
                     if echo "quit" | timeout 3 telnet smtp.qq.com 25 | grep 'Connected'; then
-                    	echo -e "${green}端口25当前可用${white}"
+                        echo -e "${green}端口25当前可用${white}"
                     else
-                    	echo -e "${red}端口25当前不可用${white}"
+                        echo -e "${red}端口25当前不可用${white}"
                     fi
                     echo ""
                     if docker inspect "$docker_name" &>/dev/null; then
-                    	domain=$(cat $docker_workdir/mail.txt)
-                    	echo "访问地址:"
-                    	echo "https://$domain"
+                        domain=$(cat $docker_workdir/mail.txt)
+                        echo "访问地址:"
+                        echo "https://$domain"
                     fi
 
                     echo "------------------------"
@@ -2334,61 +2334,61 @@ linux_panel() {
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		echo -n "请设置邮箱域名,例如mail.google.com:"
-                    		read -r domain
+                        1)
+                            echo -n "请设置邮箱域名,例如mail.google.com:"
+                            read -r domain
 
-                    		[ ! -d "$docker_workdir" ] && mkdir "$docker_workdir" -p
-                    		echo "$domain" > "$docker_workdir/mail.txt"
-                    		cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            [ ! -d "$docker_workdir" ] && mkdir "$docker_workdir" -p
+                            echo "$domain" > "$docker_workdir/mail.txt"
+                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
 
-                    		echo "------------------------"
-                    		ip_address
-                    		echo "先解析这些DNS记录"
-                    		echo "A         mail        $ipv4_address"
-                    		echo "CNAME     imap        $domain"
-                    		echo "CNAME     pop         $domain"
-                    		echo "CNAME     smtp        $domain"
-                    		echo "MX        @           $domain"
-                    		echo "TXT       @           v=spf1 mx ~all"
-                    		echo "TXT       ?           ?"
-                    		echo ""
-                    		echo "------------------------"
-                    		_yellow "按任意键继续"
-                    		read -n 1 -s -r -p ""
+                            echo "------------------------"
+                            ip_address
+                            echo "先解析这些DNS记录"
+                            echo "A         mail        $ipv4_address"
+                            echo "CNAME     imap        $domain"
+                            echo "CNAME     pop         $domain"
+                            echo "CNAME     smtp        $domain"
+                            echo "MX        @           $domain"
+                            echo "TXT       @           v=spf1 mx ~all"
+                            echo "TXT       ?           ?"
+                            echo ""
+                            echo "------------------------"
+                            _yellow "按任意键继续"
+                            read -n 1 -s -r -p ""
 
-                    		install_docker
-                    		docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/poste-docker-compose.yml)
-                    		echo "$docker_compose_content" > docker-compose.yml
-                    		sed -i "s/\${domain}/$domain/g" docker-compose.yml
+                            install_docker
+                            docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/poste-docker-compose.yml)
+                            echo "$docker_compose_content" > docker-compose.yml
+                            sed -i "s/\${domain}/$domain/g" docker-compose.yml
 
-                    		clear
-                    		echo "poste.io安装完成"
-                    		echo "------------------------"
-                    		echo "您可以使用以下地址访问poste.io:"
-                    		echo "https://$domain"
-                    		echo ""
-                    		;;
-                    	2)
-                    		cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
-                    		manage_compose pull && manage_compose start
-                    		echo "poste.io更新完成"
-                    		echo "------------------------"
-                    		echo "您可以使用以下地址访问poste.io:"
-                    		echo "https://$domain"
-                    		;;
-                    	3)
-                    		cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
-                    		manage_compose down_all
-                    		[ -d "$docker_workdir" ] && rm -fr "$docker_workdir"
-                    		_green "Poste卸载完成"
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            clear
+                            echo "poste.io安装完成"
+                            echo "------------------------"
+                            echo "您可以使用以下地址访问poste.io:"
+                            echo "https://$domain"
+                            echo ""
+                            ;;
+                        2)
+                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            manage_compose pull && manage_compose start
+                            echo "poste.io更新完成"
+                            echo "------------------------"
+                            echo "您可以使用以下地址访问poste.io:"
+                            echo "https://$domain"
+                            ;;
+                        3)
+                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            manage_compose down_all
+                            [ -d "$docker_workdir" ] && rm -fr "$docker_workdir"
+                            _green "Poste卸载完成"
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                     end_of
                 done
@@ -2776,9 +2776,9 @@ linux_panel() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done	
+        esac
+        end_of
+    done
 }
 #################### Docker END ####################
 
