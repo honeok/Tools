@@ -4294,20 +4294,20 @@ linux_ldnmp() {
 
                 case $choice in
                     1)
-                    	check_crontab_installed
-                    	echo -n "选择每周备份的星期几（0-6,0代表星期日）:"
-                    	read -r weekday
-                    	(crontab -l ; echo "0 0 * * $weekday /data/script/${useip}_backup.sh > /dev/null 2>&1") | crontab -
-                    	;;
+                        check_crontab_installed
+                        echo -n "选择每周备份的星期几（0-6,0代表星期日）:"
+                        read -r weekday
+                        (crontab -l ; echo "0 0 * * $weekday /data/script/${useip}_backup.sh > /dev/null 2>&1") | crontab -
+                        ;;
                     2)
-                    	check_crontab_installed
-                    	echo -n "选择每天备份的时间(小时,0-23):"
-                    	read -r hour
-                    	(crontab -l ; echo "0 $hour * * * /data/script/${useip}_backup.sh") | crontab - > /dev/null 2>&1
-                    	;;
+                        check_crontab_installed
+                        echo -n "选择每天备份的时间(小时,0-23):"
+                        read -r hour
+                        (crontab -l ; echo "0 $hour * * * /data/script/${useip}_backup.sh") | crontab - > /dev/null 2>&1
+                        ;;
                     *)
-                    	break  # 跳出
-                    	;;
+                        break  # 跳出
+                        ;;
                 esac
 
                 install sshpass
@@ -4338,54 +4338,54 @@ linux_ldnmp() {
             35)
                 if docker inspect fail2ban &>/dev/null ; then
                     while true; do
-                    	clear
-                    	echo "服务器防御程序已启动"
-                    	echo "------------------------"
-                    	echo "1. 开启SSH防暴力破解              2. 关闭SSH防暴力破解"
-                    	echo "3. 开启网站保护                   4. 关闭网站保护"
-                    	echo "------------------------"
-                    	echo "5. 查看SSH拦截记录                6. 查看网站拦截记录"
-                    	echo "7. 查看防御规则列表               8. 查看日志实时监控"
-                    	echo "------------------------"
-                    	echo "11. 配置拦截参数"
-                    	echo "------------------------"
-                    	echo "21. cloudflare模式                22. 高负载开启5秒盾"
-                    	echo "------------------------"
-                    	echo "9. 卸载防御程序"
-                    	echo "------------------------"
-                    	echo "0. 退出"
-                    	echo "------------------------"
+                        clear
+                        echo "服务器防御程序已启动"
+                        echo "------------------------"
+                        echo "1. 开启SSH防暴力破解              2. 关闭SSH防暴力破解"
+                        echo "3. 开启网站保护                   4. 关闭网站保护"
+                        echo "------------------------"
+                        echo "5. 查看SSH拦截记录                6. 查看网站拦截记录"
+                        echo "7. 查看防御规则列表               8. 查看日志实时监控"
+                        echo "------------------------"
+                        echo "11. 配置拦截参数"
+                        echo "------------------------"
+                        echo "21. cloudflare模式                22. 高负载开启5秒盾"
+                        echo "------------------------"
+                        echo "9. 卸载防御程序"
+                        echo "------------------------"
+                        echo "0. 退出"
+                        echo "------------------------"
 
-                    	echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-                    	read -r choice
+                        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+                        read -r choice
 
-                    	case $choice in
-                    		1)
+                        case $choice in
+                            1)
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/alpine-ssh.conf ] && sed -i 's/false/true/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/alpine-ssh.conf
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/linux-ssh.conf ] && sed -i 's/false/true/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/linux-ssh.conf
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/centos-ssh.conf ] && sed -i 's/false/true/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/centos-ssh.conf
                                 fail2ban_status
                                 ;;
-                    		2)
+                            2)
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/alpine-ssh.conf ] && sed -i 's/true/false/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/alpine-ssh.conf
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/linux-ssh.conf ] && sed -i 's/true/false/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/linux-ssh.conf
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/centos-ssh.conf ] && sed -i 's/true/false/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/centos-ssh.conf
                                 fail2ban_status
                                 ;;
-                    		3)
+                            3)
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/nginx-docker-cc.conf ] && sed -i 's/false/true/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/nginx-docker-cc.conf
                                 fail2ban_status
                                 ;;
-                    		4)
+                            4)
                                 [ -f /data/docker_data/fail2ban/config/fail2ban/jail.d/nginx-docker-cc.conf ] && sed -i 's/true/false/g' /data/docker_data/fail2ban/config/fail2ban/jail.d/nginx-docker-cc.conf
                                 fail2ban_status
                                 ;;
-                    		5)
+                            5)
                                 echo "------------------------"
                                 fail2ban_sshd
                                 echo "------------------------"
                                 ;;
-                    		6)
+                            6)
                                 echo "------------------------"
                                 jail_name=fail2ban-nginx-cc
                                 fail2ban_status_jail
@@ -4406,13 +4406,13 @@ linux_ldnmp() {
                                 fail2ban_status_jail
                                 echo "------------------------"
                                 ;;
-                    		7)
+                            7)
                                 docker exec fail2ban fail2ban-client status
                                 ;;
-                    		8)
+                            8)
                                 timeout 5 tail -f /data/docker_data/fail2ban/config/log/fail2ban/fail2ban.log
                                 ;;
-                    		9)
+                            9)
                                 cd /data/docker_data/fail2ban
                                 manage_compose down_all
 
@@ -4421,12 +4421,12 @@ linux_ldnmp() {
                                 _green "Fail2Ban防御程序已卸载"
                                 break
                                 ;;
-                    		11)
+                            11)
                                 vim /data/docker_data/fail2ban/config/fail2ban/jail.d/nginx-docker-cc.conf
                                 fail2ban_status
                                 break
                                 ;;
-                    		21)
+                            21)
                                 echo "Cloudflare后台右上角我的个人资料，选择左侧API令牌,获取Global API Key"
                                 echo "https://dash.cloudflare.com/login"
 
@@ -4435,9 +4435,9 @@ linux_ldnmp() {
                                     echo -n "请输入你的Cloudflare管理员邮箱:"
                                     read -r CFUSER
                                     if [[ "$CFUSER" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-                                    	break
+                                        break
                                     else
-                                    	_red "无效的邮箱格式，请重新输入"
+                                        _red "无效的邮箱格式，请重新输入"
                                     fi
                                 done
                                 # 获取CFKEY
@@ -4447,9 +4447,9 @@ linux_ldnmp() {
                                     echo -n "请输入你的Global API Key:"
                                     read -r CFKEY
                                     if [[ -n "$CFKEY" ]]; then
-                                    	break
+                                        break
                                     else
-                                    	_red "CFKEY不能为空，请重新输入"
+                                        _red "CFKEY不能为空，请重新输入"
                                     fi
                                 done
 
@@ -4474,7 +4474,7 @@ linux_ldnmp() {
                                 fail2ban_status
                                 _green "已配置Cloudflare模式，可在Cloudflare后台站点-安全性-事件中查看拦截记录"
                                 ;;
-                    		22)
+                            22)
                                 echo "网站每5分钟自动检测，当达检测到高负载会自动开盾，低负载也会自动关闭5秒盾"
                                 echo "------------------------"
 
@@ -4483,9 +4483,9 @@ linux_ldnmp() {
                                     echo -n "请输入你的Cloudflare管理员邮箱:"
                                     read -r CFUSER
                                     if [[ "$CFUSER" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
-                                    	break
+                                        break
                                     else
-                                    	_red "无效的邮箱格式，请重新输入"
+                                        _red "无效的邮箱格式，请重新输入"
                                     fi
                                 done
                                 # 获取CFKEY
@@ -4495,9 +4495,9 @@ linux_ldnmp() {
                                     echo -n "请输入你的Global API Key:"
                                     read -r CFKEY
                                     if [[ -n "$CFKEY" ]]; then
-                                    	break
+                                        break
                                     else
-                                    	_red "CFKEY不能为空，请重新输入"
+                                        _red "CFKEY不能为空，请重新输入"
                                     fi
                                 done
                                 # 获取ZoneID
@@ -4506,9 +4506,9 @@ linux_ldnmp() {
                                     echo -n "请输入你的ZoneID:"
                                     read -r CFZoneID
                                     if [[ -n "$CFZoneID" ]]; then
-                                    	break
+                                        break
                                     else
-                                    	_red "CFZoneID不能为空，请重新输入"
+                                        _red "CFZoneID不能为空，请重新输入"
                                     fi
                                 done
 
@@ -4534,14 +4534,14 @@ linux_ldnmp() {
                                     _yellow "自动开盾脚本已存在，无需添加"
                                 fi
                                 ;;
-                    		0)
+                            0)
                                 break
                                 ;;
-                    		*)
+                            *)
                                 _red "无效选项，请重新输入"
                                 ;;
-                    	esac
-                    	end_of
+                        esac
+                        end_of
                     done
                 elif [ -x "$(command -v fail2ban-client)" ] ; then
                     clear
@@ -4550,18 +4550,18 @@ linux_ldnmp() {
                     read -r choice
                     
                     case "$choice" in
-                    	[Yy])
-                    		remove fail2ban
-                    		rm -fr /etc/fail2ban
-                    		_green "Fail2Ban防御程序已卸载"
-                    		;;
-                    	[Nn])
-                    		:
-                    		_yellow "已取消"
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                        [Yy])
+                            remove fail2ban
+                            rm -fr /etc/fail2ban
+                            _green "Fail2Ban防御程序已卸载"
+                            ;;
+                        [Nn])
+                            :
+                            _yellow "已取消"
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                 else
                     clear
@@ -4794,32 +4794,32 @@ linux_ldnmp() {
 
                 case "$choice" in
                     [Yy])
-                    	if docker inspect "ldnmp" &>/dev/null; then
-                    		cd "$web_dir" || { _red "无法进入目录 $web_dir"; return 1; }
-                    		manage_compose down_all
-                    		ldnmp_uninstall_deps
-                    		ldnmp_uninstall_certbot
-                    		ldnmp_uninstall_ngx_logrotate
-                    		rm -fr "$web_dir"
-                    		_green "LDNMP环境已卸载并清除相关依赖"
-                    	elif docker inspect "nginx" &>/dev/null && [ -d "$nginx_dir" ]; then
-                    		cd "$web_dir" || { _red "无法进入目录 $web_dir"; return 1; }
-                    		manage_compose down_all
-                    		ldnmp_uninstall_deps
-                    		ldnmp_uninstall_certbot
-                    		ldnmp_uninstall_ngx_logrotate
-                    		rm -fr "$web_dir"
-                    		_green "Nginx环境已卸载并清除相关依赖"
-                    	else
-                    		_red "未发现符合条件的LDNMP或Nginx环境"
-                    	fi
-                    	;;
+                        if docker inspect "ldnmp" &>/dev/null; then
+                            cd "$web_dir" || { _red "无法进入目录 $web_dir"; return 1; }
+                            manage_compose down_all
+                            ldnmp_uninstall_deps
+                            ldnmp_uninstall_certbot
+                            ldnmp_uninstall_ngx_logrotate
+                            rm -fr "$web_dir"
+                            _green "LDNMP环境已卸载并清除相关依赖"
+                        elif docker inspect "nginx" &>/dev/null && [ -d "$nginx_dir" ]; then
+                            cd "$web_dir" || { _red "无法进入目录 $web_dir"; return 1; }
+                            manage_compose down_all
+                            ldnmp_uninstall_deps
+                            ldnmp_uninstall_certbot
+                            ldnmp_uninstall_ngx_logrotate
+                            rm -fr "$web_dir"
+                            _green "Nginx环境已卸载并清除相关依赖"
+                        else
+                            _red "未发现符合条件的LDNMP或Nginx环境"
+                        fi
+                        ;;
                     [Nn])
-                    	_yellow "操作已取消"
-                    	;;
+                        _yellow "操作已取消"
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             0)
@@ -4828,9 +4828,9 @@ linux_ldnmp() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 #################### LDNMP建站END ####################
 
