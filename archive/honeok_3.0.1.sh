@@ -234,7 +234,7 @@ system_info(){
     fi
     # 如果lscpu没有捕捉到虚拟化类型，尝试使用hostnamectl
     if [ -z "$virt_type" ]; then
-        virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print $2}')
+        virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print toupper($2)}')
     fi
     # 检查是否为空，空则认为是物理机
     if [ -z "$virt_type" ]; then
@@ -282,7 +282,7 @@ system_info(){
     echo "系统在线时间      : ${uptime_str}"
     echo "负载/CPU占用率    : ${load_average} / ${cpu_usage}"
     echo "系统              : ${os_release} (${cpu_architecture})"
-    echo "架构              : ${cpu_architecture} $(getconf LONG_BIT) Bit"
+    echo "架构              : ${cpu_architecture} ($(getconf LONG_BIT) Bit)"
     echo "内核              : ${kernel_version}"
     echo "网络拥塞控制算法  : ${congestion_algorithm} ${queue_algorithm}"
     echo "网络接收数据量    : $(bytes_to_gb $total_recv_bytes)"
