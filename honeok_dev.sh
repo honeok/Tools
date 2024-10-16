@@ -7771,51 +7771,50 @@ servertest_script() {
 #################### VPS测试脚本 END ####################
 
 #################### 节点搭建脚本START ####################
-node_create(){
-	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-		clear
-		_red "时刻铭记上网三要素:不评政治、不谈宗教、不碰黄賭毒，龙的传人需自律"
-		_red "本功能所提供的内容已触犯你的IP所在地相关法律法规，请绕行！"
-		end_of
-		honeok # 返回主菜单
-	fi
+node_create() {
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        clear
+        _red "时刻铭记上网三要素:不评政治、不谈宗教、不碰黄賭毒，龙的传人需自律"
+        _red "本功能所提供的内容已触犯你的IP所在地相关法律法规，请绕行！"
+        end_of
+        honeok # 返回主菜单
+    fi
 
-	local choice
-	while true; do
-		clear
-		echo "▶ 节点搭建脚本合集"
-		echo "-------------------------------"
-		_yellow "Sing-box多合一/Argo-tunnel"
-		echo "-------------------------------"
-		echo "1. Fscarmen Sing-box一键脚本"
-		echo "3. FranzKafkaYu Sing-box一键脚本"
-		echo "5. 233boy Sing-box一键脚本"
-		echo "6. 233boy V2Ray一键脚本"
-		echo "7. Fscarmen ArgoX一键脚本"
-		echo "8. WL一键Argo哪吒脚本"
-		echo "9. Fscarmen Argo+Sing-box一键脚本"
-		echo "10. 甬哥 Sing-box一键四协议共存脚本"
-		echo "11. Multi EasyGost一键脚本"
-		echo "-------------------------------"
-		_yellow "单协议/XRAY面板及其他"
-		echo "-------------------------------"
-		echo "25. Brutal Reality一键脚本"
-		echo "26. Vaxilu X-UI面板一键脚本"
-		echo "27. FranzKafkaYu X-UI面板一键脚本"
-		echo "28. Alireza0 X-UI面板一键脚本"
-		echo "29. MHSanaei 3X-UI面板一键脚本"
-		echo "-------------------------------"
-		echo "40. OpenVPN一键安装脚本"
-		echo "41. 一键搭建TG代理"
-		echo "-------------------------------"
-		echo "0. 返回主菜单"
-		echo "-------------------------------"
+    local choice
+    while true; do
+        clear
+        echo "▶ 节点搭建脚本合集"
+        echo "-------------------------------"
+        _yellow "Sing-box多合一/Argo-tunnel"
+        echo "-------------------------------"
+        echo "1. Fscarmen Sing-box一键脚本"
+        echo "3. FranzKafkaYu Sing-box一键脚本"
+        echo "5. 233boy Sing-box一键脚本"
+        echo "6. 233boy V2Ray一键脚本"
+        echo "7. Fscarmen ArgoX一键脚本"
+        echo "8. WL一键Argo哪吒脚本"
+        echo "9. Fscarmen Argo+Sing-box一键脚本"
+        echo "10. 甬哥 Sing-box一键四协议共存脚本"
+        echo "11. Multi EasyGost一键脚本"
+        echo "-------------------------------"
+        _yellow "单协议/XRAY面板及其他"
+        echo "-------------------------------"
+        echo "25. Brutal Reality一键脚本"
+        echo "26. Vaxilu X-UI面板一键脚本"
+        echo "27. FranzKafkaYu X-UI面板一键脚本"
+        echo "28. Alireza0 X-UI面板一键脚本"
+        echo "29. MHSanaei 3X-UI面板一键脚本"
+        echo "-------------------------------"
+        echo "40. OpenVPN一键安装脚本"
+        echo "41. 一键搭建TG代理"
+        echo "-------------------------------"
+        echo "0. 返回主菜单"
+        echo "-------------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
-
+        case $choice in
             1)
                 clear
                 install wget >/dev/null 2>&1
@@ -7911,82 +7910,82 @@ node_create(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 #################### 节点搭建脚本END ####################
 
 #################### 甲骨文START ####################
 oracle_script() {
-	while true; do
-		clear
-		echo "▶ 甲骨文云脚本合集"
-		echo "-------------------------"
-		echo "1. 安装闲置机器活跃脚本"
-		echo "2. 卸载闲置机器活跃脚本"
-		echo "-------------------------"
-		echo "3. DD重装系统脚本"
-		echo "4. R探长开机脚本"
-		echo "-------------------------"
-		echo "5. 开启ROOT密码登录模式"
-		echo "6. IPV6恢复工具"
-		echo "-------------------------"
-		echo "0. 返回主菜单"
-		echo "------------------------"
+    while true; do
+        clear
+        echo "▶ 甲骨文云脚本合集"
+        echo "-------------------------"
+        echo "1. 安装闲置机器活跃脚本"
+        echo "2. 卸载闲置机器活跃脚本"
+        echo "-------------------------"
+        echo "3. DD重装系统脚本"
+        echo "4. R探长开机脚本"
+        echo "-------------------------"
+        echo "5. 开启ROOT密码登录模式"
+        echo "6. IPV6恢复工具"
+        echo "-------------------------"
+        echo "0. 返回主菜单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 clear
                 _yellow "活跃脚本：CPU占用10-20% 内存占用20%"
-                echo -n -e "${yellow}确定安装吗?(y/n/):${white}"
+                echo -n -e "${yellow}确定安装吗?(y/n):${white}"
                 read -r ins
                 
                 case "$ins" in
                     [Yy])
-                    	install_docker
+                        install_docker
 
-                    	# 设置默认值
-                    	DEFAULT_CPU_CORE=1
-                    	DEFAULT_CPU_UTIL="10-20"
-                    	DEFAULT_MEM_UTIL=20
-                    	DEFAULT_SPEEDTEST_INTERVAL=120
+                        # 设置默认值
+                        DEFAULT_CPU_CORE=1
+                        DEFAULT_CPU_UTIL="10-20"
+                        DEFAULT_MEM_UTIL=20
+                        DEFAULT_SPEEDTEST_INTERVAL=120
 
-                    	# 提示用户输入CPU核心数和占用百分比,如果回车则使用默认值
-                    	echo -n -e "${yellow}请输入CPU核心数[默认:$DEFAULT_CPU_CORE]:${white}"
-                    	read -r cpu_core
-                    	cpu_core=${cpu_core:-$DEFAULT_CPU_CORE}
+                        # 提示用户输入CPU核心数和占用百分比,如果回车则使用默认值
+                        echo -n -e "${yellow}请输入CPU核心数[默认:$DEFAULT_CPU_CORE]:${white}"
+                        read -r cpu_core
+                        cpu_core=${cpu_core:-$DEFAULT_CPU_CORE}
 
-                    	echo -n -e "${yellow}请输入CPU占用百分比范围（例如10-20）[默认:$DEFAULT_CPU_UTIL]:${white}"
-                    	read -r cpu_util
-                    	cpu_util=${cpu_util:-$DEFAULT_CPU_UTIL}
+                        echo -n -e "${yellow}请输入CPU占用百分比范围（例如10-20）[默认:$DEFAULT_CPU_UTIL]:${white}"
+                        read -r cpu_util
+                        cpu_util=${cpu_util:-$DEFAULT_CPU_UTIL}
 
-                    	echo -n -e "${yellow}请输入内存占用百分比[默认:$DEFAULT_MEM_UTIL]:${white}"
-                    	read -r mem_util
-                    	mem_util=${mem_util:-$DEFAULT_MEM_UTIL}
+                        echo -n -e "${yellow}请输入内存占用百分比[默认:$DEFAULT_MEM_UTIL]:${white}"
+                        read -r mem_util
+                        mem_util=${mem_util:-$DEFAULT_MEM_UTIL}
 
-                    	echo -n -e "${yellow}请输入Speedtest间隔时间（秒）[默认:$DEFAULT_SPEEDTEST_INTERVAL]:${white}"
-                    	read -r speedtest_interval
-                    	speedtest_interval=${speedtest_interval:-$DEFAULT_SPEEDTEST_INTERVAL}
+                        echo -n -e "${yellow}请输入Speedtest间隔时间（秒）[默认:$DEFAULT_SPEEDTEST_INTERVAL]:${white}"
+                        read -r speedtest_interval
+                        speedtest_interval=${speedtest_interval:-$DEFAULT_SPEEDTEST_INTERVAL}
 
-                    	# 运行Docker容器
-                    	docker run -itd --name=lookbusy --restart=unless-stopped \
-                    		-e TZ=Asia/Shanghai \
-                    		-e CPU_UTIL="$cpu_util" \
-                    		-e CPU_CORE="$cpu_core" \
-                    		-e MEM_UTIL="$mem_util" \
-                    		-e SPEEDTEST_INTERVAL="$speedtest_interval" \
-                    		fogforest/lookbusy
-                    	;;
+                        # 运行Docker容器
+                        docker run -itd --name=lookbusy --restart=unless-stopped \
+                            -e TZ=Asia/Shanghai \
+                            -e CPU_UTIL="$cpu_util" \
+                            -e CPU_CORE="$cpu_core" \
+                            -e MEM_UTIL="$mem_util" \
+                            -e SPEEDTEST_INTERVAL="$speedtest_interval" \
+                            fogforest/lookbusy
+                        ;;
                     [Nn])
-                    	echo ""
-                    	;;
+                        echo ""
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             2)
@@ -8006,11 +8005,11 @@ oracle_script() {
 
                 case "$choice" in
                     [Yy])
-                    	while true; do
-                    		echo -n -e "${yellow}请选择要重装的系统:  1. Debian12 | 2. Ubuntu20.04${white}"
-                    		read -r sys_choice
+                        while true; do
+                            echo -n -e "${yellow}请选择要重装的系统:  1. Debian12 | 2. Ubuntu20.04${white}"
+                            read -r sys_choice
 
-                    		case "$sys_choice" in
+                            case "$sys_choice" in
                                 1)
                                     xitong="-d 12"
                                     break  # 结束循环
@@ -8022,21 +8021,21 @@ oracle_script() {
                                 *)
                                     _red "无效选项，请重新输入"
                                     ;;
-                    		esac
-                    	done
+                            esac
+                        done
 
-                    	echo -n -e "${yellow}请输入你重装后的密码:${white}"
-                    	read -r vpspasswd
+                        echo -n -e "${yellow}请输入你重装后的密码:${white}"
+                        read -r vpspasswd
                 
-                    	install wget
-                    	bash <(wget --no-check-certificate -qO- "${github_proxy}https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh") "$xitong" -v 64 -p "$vpspasswd" -port 22
-                    	;;
+                        install wget
+                        bash <(wget --no-check-certificate -qO- "${github_proxy}https://raw.githubusercontent.com/MoeClub/Note/master/InstallNET.sh") "$xitong" -v 64 -p "$vpspasswd" -port 22
+                        ;;
                     [Nn])
-                    	_yellow "已取消"
-                    	;;
+                        _yellow "已取消"
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             4)
@@ -8057,37 +8056,37 @@ oracle_script() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
+        esac
+        end_of
     done
 }
 #################### 甲骨文END ####################
 
 #################### 幻兽帕鲁START ####################
-palworld_script(){
-	need_root
-	while true; do
-		clear
+palworld_script() {
+    need_root
+    while true; do
+        clear
 
-		if [ -f ~/palworld.sh ]; then
+        if [ -f ~/palworld.sh ]; then
             echo -e "${white}幻兽帕鲁脚本: ${green}已安装${white}"
-		else
+        else
             echo -e "${white}幻兽帕鲁脚本: ${yellow}未安装${white}"
-		fi
+        fi
 
-		echo ""
-		echo "幻兽帕鲁管理"
-		echo "Author: kejilion"
-		echo "-------------------------"
-		echo "1. 安装脚本  2. 卸载脚本  3. 运行脚本"
-		echo "-------------------------"
-		echo "0. 返回主菜单"
-		echo "-------------------------"
+        echo ""
+        echo "幻兽帕鲁管理"
+        echo "Author: kejilion"
+        echo "-------------------------"
+        echo "1. 安装脚本  2. 卸载脚本  3. 运行脚本"
+        echo "-------------------------"
+        echo "0. 返回主菜单"
+        echo "-------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 cd ~
                 curl -fsSL -o ./palworld.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/palworld.sh
@@ -8116,78 +8115,78 @@ palworld_script(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 }
 #################### 幻兽帕鲁END ####################
 
 #################### 脚本更新START ####################
 honeok_update() {
-	local remote_script_url="https://raw.githubusercontent.com/honeok/shell/main/honeok.sh"
-	local local_script_path="$HOME/honeok.sh"
+    local remote_script_url="https://raw.githubusercontent.com/honeok/shell/main/honeok.sh"
+    local local_script_path="$HOME/honeok.sh"
 
-	# 检查本地脚本是否存在
-	if [[ ! -f "$local_script_path" ]]; then
-		_yellow "本地脚本不存在，正在下载"
-		curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
-		return 0
-	fi
+    # 检查本地脚本是否存在
+    if [[ ! -f "$local_script_path" ]]; then
+        _yellow "本地脚本不存在，正在下载"
+        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
+        return 0
+    fi
 
-	# 从远程脚本中提取第29行的版本号
-	local remote_version
-	remote_version=$(curl -s "$remote_script_url" | sed -n '29p' | awk -F'=' '{print $2}' | tr -d '"')
+    # 从远程脚本中提取第25行的版本号
+    local remote_version
+    remote_version=$(curl -s "$remote_script_url" | sed -n '25p' | awk -F'=' '{print $2}' | tr -d '"')
 
-	# 从本地脚本中提取第29行的版本号
-	local local_version
-	local_version=$(sed -n '29p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"')
+    # 从本地脚本中提取第29行的版本号
+    local local_version
+    local_version=$(sed -n '29p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"')
 
-	# 检查版本号并更新脚本
-	if [[ "$remote_version" != "$local_version" ]]; then
-		echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本:${yellow}$local_version${white}" 
-		curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
-		echo -e "${white}脚本已更新到最新版本:${yellow}$remote_version${white}"
-	else
-		echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
-	fi
+    # 检查版本号并更新脚本
+    if [[ "$remote_version" != "$local_version" ]]; then
+        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
+        echo -e "${white}脚本已更新到最新版本: ${yellow}$remote_version${white}"
+    else
+        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
+    fi
 }
 #################### 脚本更新END ####################
-honeok(){
-	local choice
+honeok() {
+    local choice
 
-	while true; do
-		clear
-		print_logo
-		_purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
-		echo -e "${cyan}Author: honeok${white} ${yellow} ${honeok_v}${white}"
-		echo "------------------------"
-		echo "1. 系统信息查询"
-		echo "2. 系统更新"
-		echo "3. 系统清理"
-		echo "4. 常用工具 ▶"
-		echo "5. BBR管理 ▶"
-		echo "6. Docker管理 ▶"
-		echo "7. WARP管理 ▶"
-		echo "8. LDNMP建站 ▶"
-		echo "12. 面板工具 ▶"
-		echo "13. 系统工具 ▶"
-		echo "14. 我的工作区 ▶"
-		echo "15. VPS测试脚本合集 ▶"
-		echo "16. 节点搭建脚本合集 ▶"
-		echo "17. 甲骨文云脚本合集 ▶"
-		echo "18. 常用环境管理 ▶"
-		echo "------------------------"
-		echo "99. 幻兽帕鲁开服脚本 ▶"
-		echo "------------------------"
-		echo "00.脚本更新"
-		echo "------------------------"
-		echo "0. 退出脚本"
-		echo "------------------------"
-		echo ""
+    while true; do
+        clear
+        print_logo
+        _purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
+        echo -e "${cyan}Author: honeok${white} ${yellow} ${honeok_v}${white}"
+        echo "------------------------"
+        echo "1. 系统信息查询"
+        echo "2. 系统更新"
+        echo "3. 系统清理"
+        echo "4. 常用工具 ▶"
+        echo "5. BBR管理 ▶"
+        echo "6. Docker管理 ▶"
+        echo "7. WARP管理 ▶"
+        echo "8. LDNMP建站 ▶"
+        echo "12. 面板工具 ▶"
+        echo "13. 系统工具 ▶"
+        echo "14. 我的工作区 ▶"
+        echo "15. VPS测试脚本合集 ▶"
+        echo "16. 节点搭建脚本合集 ▶"
+        echo "17. 甲骨文云脚本合集 ▶"
+        echo "18. 常用环境管理 ▶"
+        echo "------------------------"
+        echo "99. 幻兽帕鲁开服脚本 ▶"
+        echo "------------------------"
+        echo "00.脚本更新"
+        echo "------------------------"
+        echo "0. 退出脚本"
+        echo "------------------------"
+        echo ""
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case "$choice" in
+        case "$choice" in
             1)
                 clear
                 system_info
@@ -8212,7 +8211,7 @@ honeok(){
             7)
                 clear
                 install wget
-                wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [lisence/url/token]
+                wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [license/url/token]
                 ;;
             8)
                 linux_ldnmp
@@ -8252,9 +8251,9 @@ honeok(){
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 
 # 脚本入口
