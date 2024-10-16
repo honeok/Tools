@@ -282,7 +282,7 @@ system_info(){
     echo "系统在线时间      : ${uptime_str}"
     echo "负载/CPU占用率    : ${load_average} / ${cpu_usage}"
     echo "系统              : ${os_release} (${cpu_architecture})"
-    echo "架构              : ${cpu_architecture} $(getconf LONG_BIT)Bit"
+    echo "架构              : ${cpu_architecture} $(getconf LONG_BIT) Bit"
     echo "内核              : ${kernel_version}"
     echo "网络拥塞控制算法  : ${congestion_algorithm} ${queue_algorithm}"
     echo "网络接收数据量    : $(bytes_to_gb $total_recv_bytes)"
