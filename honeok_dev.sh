@@ -8272,13 +8272,7 @@ honeok_update() {
 }
 #################### 脚本更新END ####################
 honeok(){
-	local choice system_time
-
-	if grep -q 'Alpine' /etc/issue; then
-		system_time=$(date +"%Z %z")
-	else
-		system_time=$(timedatectl | grep 'Time zone' | awk '{print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
-	fi
+	local choice
 
 	while true; do
 		clear
