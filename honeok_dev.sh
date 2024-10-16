@@ -294,43 +294,43 @@ system_info(){
 #################### 通用函数START ####################
 # 设置地区相关的Github代理配置
 set_region_config() {
-	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-		_yellow "检测到当前IP为中国，正在分配最佳GitHub代理"
-		execute_commands=0                    # 0 表示允许执行命令
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        _yellow "检测到当前IP为中国，正在分配最佳GitHub代理"
+        execute_commands=0  # 0 表示允许执行命令
 
-		# 局部变量定义，Github代理均使用双栈同时兼容IPV4和IPV6的代理
-		local github_proxies=("gh-proxy.com" "gh.kejilion.pro" "github.moeyy.xyz" "ghproxy.1888866.xyz")
-		local best_proxy=""
-		local best_time=9999                  # 设置一个较大的初始延迟值
-		local ping_time=""
+        # 定义局部变量，GitHub代理均为双栈，兼容IPv4和IPv6
+        local github_proxies=("gh-proxy.com" "gh.kejilion.pro" "github.moeyy.xyz" "ghproxy.1888866.xyz")
+        local best_proxy=""
+        local best_time=9999  # 设置一个较大的初始延迟值
+        local ping_time=""
 		
-		# 对每个代理进行 ping 测试，选出延迟最短的
-		for proxy in "${github_proxies[@]}"; do
+        # 对每个代理进行 ping 测试，选出延迟最短的代理
+        for proxy in "${github_proxies[@]}"; do
             # 进行两次 ping 测试并提取平均时间，如果 ping 失败则设为9999
             ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
-            
+
             # 使用整数比较
             if (( $(echo "$ping_time" | awk '{print int($1+0.5)}') < $best_time )); then
                 best_time=$(echo "$ping_time" | awk '{print int($1+0.5)}')
                 best_proxy=$proxy
             fi
-		done
+        done
 
-		# 设置找到的最佳代理
-		github_proxy="https://$best_proxy/"
-		_yellow "当前GitHub代理为: ${github_proxy}"
-		sleep 1s
-	else
-		execute_commands=1                    # 1 表示不执行命令
-		github_proxy=""                       # 不使用代理
-	fi
+        # 设置找到的最佳代理
+        github_proxy="https://$best_proxy/"
+        _yellow "当前GitHub代理为: ${github_proxy}"
+        sleep 1s
+    else
+        execute_commands=1  # 1 表示不执行命令
+        github_proxy=""  # 不使用代理
+    fi
 }
 
-# 定义一个根据中国地区配置条件执行命令的函数
+# 根据地区配置条件执行命令的函数
 exec_cmd() {
-	if [ "$execute_commands" -eq 0 ]; then  # 检查是否允许执行命令
-		"$@"
-	fi
+    if [ "$execute_commands" -eq 0 ]; then  # 检查是否允许执行命令
+        "$@"
+    fi
 }
 
 # 调用地区配置函数
