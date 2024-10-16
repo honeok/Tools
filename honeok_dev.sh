@@ -4,12 +4,12 @@
 # Github：https://github.com/honeok/shell
 
 yellow='\033[93m'        # 亮黄色
-red='\033[1;31m'         # 亮红色
+red='\033[91m'           # 亮红色
 green='\033[92m'         # 亮绿色
-blue='\033[1;34m'        # 亮蓝色
+blue='\033[94m'          # 亮蓝色
 cyan='\033[96m'          # 亮青色
 purple='\033[95m'        # 亮紫色
-gray='\033[1;37m'        # 亮灰色
+gray='\033[37m'          # 亮灰色
 orange='\033[38;5;214m'  # 亮橙色
 white='\033[0m'          # 重置为默认颜色
 
