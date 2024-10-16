@@ -7429,7 +7429,7 @@ EOF
 							cz_day=${cz_day:-1}
 
 							cd ~
-							curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/kejilion/sh/main/Limiting_Shut_down1.sh"
+							curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/Limiting_Shut_down1.sh"
 							chmod +x ~/Limiting_Shut_down.sh
 							sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
 							sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
