@@ -2784,280 +2784,278 @@ linux_panel() {
 
 #################### LDNMP建站START ####################
 manage_compose() {
-	local compose_cmd
-	# 检查docker compose版本
-	if docker compose version >/dev/null 2>&1; then
-		compose_cmd="docker compose"
-	elif command -v docker-compose >/dev/null 2>&1; then
-		compose_cmd="docker-compose"
-	fi
+    local compose_cmd
+    # 检查 docker compose 版本
+    if docker compose version >/dev/null 2>&1; then
+        compose_cmd="docker compose"
+    elif command -v docker-compose >/dev/null 2>&1; then
+        compose_cmd="docker-compose"
+    fi
 
-	case "$1" in
-		start)	# 启动容器
+    case "$1" in
+        start)    # 启动容器
             $compose_cmd up -d
             ;;
-		restart)
+        restart)
             $compose_cmd restart
             ;;
-		stop)	# 停止容器
+        stop)    # 停止容器
             $compose_cmd stop
             ;;
-		recreate)
+        recreate)
             $compose_cmd up -d --force-recreate
             ;;
-		down)	# 停止并删除容器
+        down)    # 停止并删除容器
             $compose_cmd down
             ;;
-		pull)
+        pull)
             $compose_cmd pull
             ;;
-		down_all) # 停止并删除容器,镜像,卷,未使用的网络
+        down_all) # 停止并删除容器、镜像、卷、未使用的网络
             $compose_cmd down --rmi all --volumes --remove-orphans
             ;;
-		version)
+        version)
             $compose_cmd version
             ;;
-	esac
+    esac
 }
 
 ldnmp_check_status() {
-	if docker inspect "ldnmp" &>/dev/null; then
-		_yellow "LDNMP环境已安装，可以选择更新LDNMP环境！"
-		end_of
-		linux_ldnmp
-	fi
+    if docker inspect "ldnmp" &>/dev/null; then
+        _yellow "LDNMP环境已安装，可以选择更新LDNMP环境！"
+        end_of
+        linux_ldnmp
+    fi
 }
 
 ldnmp_install_status() {
-	if docker inspect "ldnmp" &>/dev/null; then
-		_yellow "LDNMP环境已安装，开始部署$webname"
-	else
-		_red "LDNMP环境未安装，请先安装LDNMP环境再部署网站！"
-		end_of
-		linux_ldnmp
-	fi
+    if docker inspect "ldnmp" &>/dev/null; then
+        _yellow "LDNMP环境已安装，开始部署$webname"
+    else
+        _red "LDNMP环境未安装，请先安装LDNMP环境再部署网站！"
+        end_of
+        linux_ldnmp
+    fi
 }
 
-ldnmp_restore_check(){
-	if docker inspect "ldnmp" &>/dev/null; then
-		_yellow "LDNMP环境已安装，无法还原LDNMP环境，请先卸载现有环境再次尝试还原！"
-		end_of
-		linux_ldnmp
-	fi
+ldnmp_restore_check() {
+    if docker inspect "ldnmp" &>/dev/null; then
+        _yellow "LDNMP环境已安装，无法还原LDNMP环境，请先卸载现有环境再次尝试还原！"
+        end_of
+        linux_ldnmp
+    fi
 }
 
 nginx_install_status() {
-	if docker inspect "nginx" &>/dev/null; then
-		_yellow "Nginx环境已安装，开始部署$webname！"
-	else
-		_red "Nginx环境未安装，请先安装Nginx环境再部署网站！"
-		end_of
-		linux_ldnmp
-	fi
+    if docker inspect "nginx" &>/dev/null; then
+        _yellow "Nginx环境已安装，开始部署$webname！"
+    else
+        _red "Nginx环境未安装，请先安装Nginx环境再部署网站！"
+        end_of
+        linux_ldnmp
+    fi
 }
 
 ldnmp_check_port() {
-	# 定义要检测的端口
-	ports=("80" "443")
+    # 定义要检测的端口
+    ports=("80" "443")
 
-	# 检查端口占用情况
-	for port in "${ports[@]}"; do
-		result=$(netstat -tulpn | grep ":$port ")
+    # 检查端口占用情况
+    for port in "${ports[@]}"; do
+        result=$(netstat -tulpn | grep ":$port ")
 
-		if [ -n "$result" ]; then
+        if [ -n "$result" ]; then
             clear
             _red "端口$port已被占用，无法安装环境，卸载以下程序后重试！"
             _yellow "$result"
             end_of
             linux_ldnmp
             return 1
-		fi
-	done
+        fi
+    done
 }
 
 ldnmp_install_deps() {
-	clear
-	# 安装依赖包
-	install wget socat unzip tar
+    clear
+    # 安装依赖包
+    install wget socat unzip tar
 }
 
-ldnmp_uninstall_deps(){
-	clear
-	remove socat
+ldnmp_uninstall_deps() {
+    clear
+    remove socat
 }
 
 ldnmp_install_certbot() {
-	local cron_job existing_cron certbot_dir
-	certbot_dir="/data/docker_data/certbot"
+    local cron_job existing_cron certbot_dir
+    certbot_dir="/data/docker_data/certbot"
 
-	# 创建Certbot工作目录
-	[ ! -d "$certbot_dir" ] && mkdir -p "$certbot_dir/cert" "$certbot_dir/data"
+    # 创建Certbot工作目录
+    [ ! -d "$certbot_dir" ] && mkdir -p "$certbot_dir/cert" "$certbot_dir/data"
 
-	# 创建并进入脚本目录
-	[ ! -d /data/script ] && mkdir -p /data/script
-	cd /data/script || { _red "进入目录/data/script失败"; return 1; }
+    # 创建并进入脚本目录
+    [ ! -d /data/script ] && mkdir -p /data/script
+    cd /data/script || { _red "进入目录/data/script失败"; return 1; }
 
-	# 设置定时任务字符串
-	check_crontab_installed
-	cron_job="0 0 * * * /data/script/cert_renewal.sh >/dev/null 2>&1"
+    # 设置定时任务字符串
+    check_crontab_installed
+    cron_job="0 0 * * * /data/script/cert_renewal.sh >/dev/null 2>&1"
 
-	# 检查是否存在相同的定时任务
-	existing_cron=$(crontab -l 2>/dev/null | grep -F "$cron_job")
+    # 检查是否存在相同的定时任务
+    existing_cron=$(crontab -l 2>/dev/null | grep -F "$cron_job")
 
-	if [ -z "$existing_cron" ]; then
-		# 下载并使脚本可执行
-		curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/shell/raw/refs/heads/main/callscript/docker_certbot.sh"
-		chmod +x cert_renewal.sh
+    if [ -z "$existing_cron" ]; then
+        # 下载并使脚本可执行
+        curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/shell/raw/refs/heads/main/callscript/docker_certbot.sh"
+        chmod +x cert_renewal.sh
 
-		# 添加定时任务
-		(crontab -l 2>/dev/null; echo "$cron_job") | crontab -
-		_green "证书续签任务已安装！"
-	else
-		_yellow "证书续签任务已存在，无需重复安装！"
-	fi
+        # 添加定时任务
+        (crontab -l 2>/dev/null; echo "$cron_job") | crontab -
+        _green "证书续签任务已安装！"
+    else
+        _yellow "证书续签任务已存在，无需重复安装！"
+    fi
 }
 
 ldnmp_uninstall_certbot() {
-	local cron_job existing_cron certbot_dir certbot_image_ids
-	certbot_dir="/data/docker_data/certbot"
-	certbot_image_ids=$(docker images --format "{{.ID}}" --filter=reference='certbot/*')
+    local cron_job existing_cron certbot_dir certbot_image_ids
+    certbot_dir="/data/docker_data/certbot"
+    certbot_image_ids=$(docker images --format "{{.ID}}" --filter=reference='certbot/*')
 
-	if [ -n "$certbot_image_ids" ]; then
-		while IFS= read -r image_id; do
+    if [ -n "$certbot_image_ids" ]; then
+        while IFS= read -r image_id; do
             docker rmi "$image_id" > /dev/null 2>&1
-		done <<< "$certbot_image_ids"
-	fi
+        done <<< "$certbot_image_ids"
+    fi
 
-	cron_job="0 0 * * * /data/script/cert_renewal.sh >/dev/null 2>&1"
+    cron_job="0 0 * * * /data/script/cert_renewal.sh >/dev/null 2>&1"
 
-	# 检查并删除定时任务
-	existing_cron=$(crontab -l 2>/dev/null | grep -F "$cron_job")
-	if [ -n "$existing_cron" ]; then
-		(crontab -l 2>/dev/null | grep -Fv "$cron_job") | crontab -
-		_green "续签任务已从定时任务中移除"
-	else
-		_yellow "定时任务未找到，无需移除"
-	fi
+    # 检查并删除定时任务
+    existing_cron=$(crontab -l 2>/dev/null | grep -F "$cron_job")
+    if [ -n "$existing_cron" ]; then
+        (crontab -l 2>/dev/null | grep -Fv "$cron_job") | crontab -
+        _green "续签任务已从定时任务中移除"
+    else
+        _yellow "定时任务未找到，无需移除"
+    fi
 
-	# 删除脚本文件
-	if [ -f /data/script/cert_renewal.sh ]; then
-		rm /data/script/cert_renewal.sh
-		_green "续签脚本文件已删除"
-	fi
+    # 删除脚本文件
+    if [ -f /data/script/cert_renewal.sh ]; then
+        rm /data/script/cert_renewal.sh
+        _green "续签脚本文件已删除"
+    fi
 
-	# 删除certbot目录及其内容
-	if [ -d "$certbot_dir" ]; then
-		rm -fr "$certbot_dir"
-		_green "Certbot目录及其内容已删除"
-	fi
+    # 删除certbot目录及其内容
+    if [ -d "$certbot_dir" ]; then
+        rm -fr "$certbot_dir"
+        _green "Certbot目录及其内容已删除"
+    fi
 }
 
 default_server_ssl() {
-	install openssl
+    install openssl
 
-	if command -v dnf &>/dev/null || command -v yum &>/dev/null; then
-		openssl req -x509 -nodes -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -keyout "$nginx_dir/certs/default_server.key" -out "$nginx_dir/certs/default_server.crt" -days 5475 -subj "/C=US/ST=State/L=City/O=Organization/OU=Organizational Unit/CN=Common Name"
-	else
-		openssl genpkey -algorithm Ed25519 -out "$nginx_dir/certs/default_server.key"
-		openssl req -x509 -key "$nginx_dir/certs/default_server.key" -out "$nginx_dir/certs/default_server.crt" -days 5475 -subj "/C=US/ST=State/L=City/O=Organization/OU=Organizational Unit/CN=Common Name"
-	fi
+    if command -v dnf &>/dev/null || command -v yum &>/dev/null; then
+        openssl req -x509 -nodes -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -keyout "$nginx_dir/certs/default_server.key" -out "$nginx_dir/certs/default_server.crt" -days 5475 -subj "/C=US/ST=State/L=City/O=Organization/OU=Organizational Unit/CN=Common Name"
+    else
+        openssl genpkey -algorithm Ed25519 -out "$nginx_dir/certs/default_server.key"
+        openssl req -x509 -key "$nginx_dir/certs/default_server.key" -out "$nginx_dir/certs/default_server.crt" -days 5475 -subj "/C=US/ST=State/L=City/O=Organization/OU=Organizational Unit/CN=Common Name"
+    fi
 
-	openssl rand -out "$nginx_dir/certs/ticket12.key" 48
-	openssl rand -out "$nginx_dir/certs/ticket13.key" 80
+    openssl rand -out "$nginx_dir/certs/ticket12.key" 48
+    openssl rand -out "$nginx_dir/certs/ticket13.key" 80
 }
 
 # Nginx日志轮转
-ldnmp_install_ngx_logrotate(){
-	web_dir="/data/docker_data/web"
-	nginx_dir="$web_dir/nginx"
+ldnmp_install_ngx_logrotate() {
+    web_dir="/data/docker_data/web"
+    nginx_dir="$web_dir/nginx"
 
-	# 定义日志截断文件脚本路径
-	rotate_script="$nginx_dir/rotate.sh"
+    # 定义日志截断文件脚本路径
+    rotate_script="$nginx_dir/rotate.sh"
 
-	if [[ ! -d "$nginx_dir" ]]; then
-		_red "Nginx目录不存在"
-		return 1
-	else
-		curl -fsSL -o "$rotate_script" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/nginx/docker_ngx_rotate2.sh"
-		if [[ $? -ne 0 ]]; then
+    if [[ ! -d "$nginx_dir" ]]; then
+        _red "Nginx目录不存在"
+        return 1
+    else
+        curl -fsSL -o "$rotate_script" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/nginx/docker_ngx_rotate2.sh"
+        if [[ $? -ne 0 ]]; then
             _red "脚本下载失败，请检查网络连接或脚本URL"
             return 1
-		fi
-		chmod +x "$rotate_script"
-	fi
+        fi
+        chmod +x "$rotate_script"
+    fi
 
-	# 检查crontab中是否存在相关任务
-	crontab_entry="0 0 * * 0 $rotate_script >/dev/null 2>&1"
-	if ! crontab -l | grep -q "$rotate_script"; then
-		# 添加crontab任务
-		(crontab -l; echo "$crontab_entry") | crontab -
-		_green "Nginx日志轮转任务已安装！"
-	else
-		_yellow "Nginx日志轮转任务已存在"
-	fi
+    # 检查crontab中是否存在相关任务
+    crontab_entry="0 0 * * 0 $rotate_script >/dev/null 2>&1"
+    if ! crontab -l | grep -q "$rotate_script"; then
+        # 添加crontab任务
+        (crontab -l; echo "$crontab_entry") | crontab -
+        _green "Nginx日志轮转任务已安装！"
+    else
+        _yellow "Nginx日志轮转任务已存在"
+    fi
 }
 
 ldnmp_uninstall_ngx_logrotate() {
-	web_dir="/data/docker_data/web"
-	nginx_dir="$web_dir/nginx"
+    web_dir="/data/docker_data/web"
+    nginx_dir="$web_dir/nginx"
 
-	# 定义日志截断文件脚本路径
-	rotate_script="$nginx_dir/rotate.sh"
+    # 定义日志截断文件脚本路径
+    rotate_script="$nginx_dir/rotate.sh"
 
-	if [[ -d $nginx_dir ]]; then
-		if [[ -f $rotate_script ]]; then
+    if [[ -d $nginx_dir ]]; then
+        if [[ -f $rotate_script ]]; then
             rm -f "$rotate_script"
             _green "日志截断脚本已删除"
-		else
+        else
             _yellow "日志截断脚本不存在"
-		fi
-	fi
+        fi
+    fi
 
-	crontab_entry="0 0 * * 0 $rotate_script >/dev/null 2>&1"
-	if crontab -l | grep -q "$rotate_script"; then
-		crontab -l | grep -v "$rotate_script" | crontab -
-		_green "Nginx日志轮转任务已卸载"
-	else
-		_yellow "Nginx日志轮转任务不存在"
-	fi
+    crontab_entry="0 0 * * 0 $rotate_script >/dev/null 2>&1"
+    if crontab -l | grep -q "$rotate_script"; then
+        crontab -l | grep -v "$rotate_script" | crontab -
+        _green "Nginx日志轮转任务已卸载"
+    else
+        _yellow "Nginx日志轮转任务不存在"
+    fi
 }
 
 install_ldnmp() {
-	check_swap
-	cd "$web_dir" || { _red "无法进入目录$web_dir"; return 1; }
+    check_swap
+    cd "$web_dir"
+    manage_compose start
+    clear
+    _yellow "正在配置LDNMP环境，请耐心等待"
 
-	manage_compose start
+    # 定义要执行的命令
+    commands=(
+        "docker exec nginx chmod -R 777 /var/www/html > /dev/null 2>&1"
+        "docker exec nginx mkdir -p /var/cache/nginx/proxy > /dev/null 2>&1"
+        "docker exec nginx chmod 777 /var/cache/nginx/proxy > /dev/null 2>&1"
+        "docker exec nginx mkdir -p /var/cache/nginx/fastcgi > /dev/null 2>&1"
+        "docker exec nginx chmod 777 /var/cache/nginx/fastcgi > /dev/null 2>&1"
+        "docker restart nginx > /dev/null 2>&1"
 
-	clear
-	_yellow "正在配置LDNMP环境，请耐心等待..."
+        "exec_cmd docker exec php sed -i \"s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g\" /etc/apk/repositories > /dev/null 2>&1"
+        "exec_cmd docker exec php74 sed -i \"s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g\" /etc/apk/repositories > /dev/null 2>&1"
 
-	# 定义要执行的命令
-	commands=(
-		"docker exec nginx chmod -R 777 /var/www/html > /dev/null 2>&1"
-		"docker exec nginx mkdir -p /var/cache/nginx/proxy > /dev/null 2>&1"
-		"docker exec nginx chmod 777 /var/cache/nginx/proxy > /dev/null 2>&1"
-		"docker exec nginx mkdir -p /var/cache/nginx/fastcgi > /dev/null 2>&1"
-		"docker exec nginx chmod 777 /var/cache/nginx/fastcgi > /dev/null 2>&1"
-		"docker restart nginx > /dev/null 2>&1"
+        "docker exec php apk update > /dev/null 2>&1"
+        "docker exec php74 apk update > /dev/null 2>&1"
 
-		"exec_cmd docker exec php sed -i \"s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g\" /etc/apk/repositories > /dev/null 2>&1"
-		"exec_cmd docker exec php74 sed -i \"s/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g\" /etc/apk/repositories > /dev/null 2>&1"
+        # php安装包管理
+        "curl -fsSL ${github_proxy}github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions > /dev/null 2>&1"
+        "docker exec php mkdir -p /usr/local/bin/ > /dev/null 2>&1"
+        "docker exec php74 mkdir -p /usr/local/bin/ > /dev/null 2>&1"
+        "docker cp /usr/local/bin/install-php-extensions php:/usr/local/bin/ > /dev/null 2>&1"
+        "docker cp /usr/local/bin/install-php-extensions php74:/usr/local/bin/ > /dev/null 2>&1"
+        "docker exec php chmod +x /usr/local/bin/install-php-extensions > /dev/null 2>&1"
+        "docker exec php74 chmod +x /usr/local/bin/install-php-extensions > /dev/null 2>&1"
+        "rm /usr/local/bin/install-php-extensions > /dev/null 2>&1"
 
-		"docker exec php apk update > /dev/null 2>&1"
-		"docker exec php74 apk update > /dev/null 2>&1"
-
-		# php安装包管理
-		"curl -fsSL ${github_proxy}github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions > /dev/null 2>&1"
-		"docker exec php mkdir -p /usr/local/bin/ > /dev/null 2>&1"
-		"docker exec php74 mkdir -p /usr/local/bin/ > /dev/null 2>&1"
-		"docker cp /usr/local/bin/install-php-extensions php:/usr/local/bin/ > /dev/null 2>&1"
-		"docker cp /usr/local/bin/install-php-extensions php74:/usr/local/bin/ > /dev/null 2>&1"
-		"docker exec php chmod +x /usr/local/bin/install-php-extensions > /dev/null 2>&1"
-		"docker exec php74 chmod +x /usr/local/bin/install-php-extensions > /dev/null 2>&1"
-		"rm /usr/local/bin/install-php-extensions > /dev/null 2>&1"
-
-		# php安装扩展
-		"docker exec php sh -c '\
+        # php安装扩展
+        "docker exec php sh -c '\
             apk add --no-cache imagemagick imagemagick-dev \
             && apk add --no-cache git autoconf gcc g++ make pkgconfig \
             && rm -fr /tmp/imagick \
@@ -3070,71 +3068,71 @@ install_ldnmp() {
             && echo 'extension=imagick.so' > /usr/local/etc/php/conf.d/imagick.ini \
             && rm -fr /tmp/imagick' > /dev/null 2>&1"
 
-		"docker exec php install-php-extensions imagick > /dev/null 2>&1"
-		"docker exec php install-php-extensions mysqli > /dev/null 2>&1"
-		"docker exec php install-php-extensions pdo_mysql > /dev/null 2>&1"
-		"docker exec php install-php-extensions gd > /dev/null 2>&1"
-		"docker exec php install-php-extensions intl > /dev/null 2>&1"
-		"docker exec php install-php-extensions zip > /dev/null 2>&1"
-		"docker exec php install-php-extensions exif > /dev/null 2>&1"
-		"docker exec php install-php-extensions bcmath > /dev/null 2>&1"
-		"docker exec php install-php-extensions opcache > /dev/null 2>&1"
-		"docker exec php install-php-extensions redis > /dev/null 2>&1"
+        "docker exec php install-php-extensions imagick > /dev/null 2>&1"
+        "docker exec php install-php-extensions mysqli > /dev/null 2>&1"
+        "docker exec php install-php-extensions pdo_mysql > /dev/null 2>&1"
+        "docker exec php install-php-extensions gd > /dev/null 2>&1"
+        "docker exec php install-php-extensions intl > /dev/null 2>&1"
+        "docker exec php install-php-extensions zip > /dev/null 2>&1"
+        "docker exec php install-php-extensions exif > /dev/null 2>&1"
+        "docker exec php install-php-extensions bcmath > /dev/null 2>&1"
+        "docker exec php install-php-extensions opcache > /dev/null 2>&1"
+        "docker exec php install-php-extensions redis > /dev/null 2>&1"
 
-		# php配置参数
-		"docker exec php sh -c 'echo \"upload_max_filesize=50M \" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"post_max_size=50M \" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"max_input_vars=3000\" > /usr/local/etc/php/conf.d/max_input_vars.ini' > /dev/null 2>&1"
-		"docker exec php sh -c 'echo \"expose_php=Off\" > /usr/local/etc/php/conf.d/custom-php-settings.ini' > /dev/null 2>&1"
+        # php配置参数
+        "docker exec php sh -c 'echo \"upload_max_filesize=50M \" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"post_max_size=50M \" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"max_input_vars=3000\" > /usr/local/etc/php/conf.d/max_input_vars.ini' > /dev/null 2>&1"
+        "docker exec php sh -c 'echo \"expose_php=Off\" > /usr/local/etc/php/conf.d/custom-php-settings.ini' > /dev/null 2>&1"
 
-		# php重启
-		"docker exec php chmod -R 777 /var/www/html"
-		"docker restart php > /dev/null 2>&1"
+        # php重启
+        "docker exec php chmod -R 777 /var/www/html"
+        "docker restart php > /dev/null 2>&1"
 
-		# php7.4安装扩展
-		"docker exec php74 install-php-extensions imagick > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions mysqli > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions pdo_mysql > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions gd > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions intl > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions zip > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions exif > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions bcmath > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions opcache > /dev/null 2>&1"
-		"docker exec php74 install-php-extensions redis > /dev/null 2>&1"
+        # php7.4安装扩展
+        "docker exec php74 install-php-extensions imagick > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions mysqli > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions pdo_mysql > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions gd > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions intl > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions zip > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions exif > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions bcmath > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions opcache > /dev/null 2>&1"
+        "docker exec php74 install-php-extensions redis > /dev/null 2>&1"
 
-		# php7.4配置参数
-		"docker exec php74 sh -c 'echo \"upload_max_filesize=50M \" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"post_max_size=50M \" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"max_input_vars=3000\" > /usr/local/etc/php/conf.d/max_input_vars.ini' > /dev/null 2>&1"
-		"docker exec php74 sh -c 'echo \"expose_php=Off\" > /usr/local/etc/php/conf.d/custom-php-settings.ini' > /dev/null 2>&1"
+        # php7.4配置参数
+        "docker exec php74 sh -c 'echo \"upload_max_filesize=50M \" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"post_max_size=50M \" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"memory_limit=256M\" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"max_execution_time=1200\" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"max_input_time=600\" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"max_input_vars=3000\" > /usr/local/etc/php/conf.d/max_input_vars.ini' > /dev/null 2>&1"
+        "docker exec php74 sh -c 'echo \"expose_php=Off\" > /usr/local/etc/php/conf.d/custom-php-settings.ini' > /dev/null 2>&1"
 
-		# php7.4重启
-		"docker exec php74 chmod -R 777 /var/www/html"
-		"docker restart php74 > /dev/null 2>&1"
+        # php7.4重启
+        "docker exec php74 chmod -R 777 /var/www/html"
+        "docker restart php74 > /dev/null 2>&1"
 
-		# redis调优
-		"docker exec -it redis redis-cli CONFIG SET maxmemory 512mb > /dev/null 2>&1"
-		"docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru > /dev/null 2>&1"
-      )
+        # redis调优
+        "docker exec -it redis redis-cli CONFIG SET maxmemory 512mb > /dev/null 2>&1"
+        "docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru > /dev/null 2>&1"
+    )
 
-	total_commands=${#commands[@]}  # 计算总命令数
+    total_commands=${#commands[@]}  # 计算总命令数
 
-	for ((i = 0; i < total_commands; i++)); do
-		command="${commands[i]}"
-		eval $command  # 执行命令
+    for ((i = 0; i < total_commands; i++)); do
+        command="${commands[i]}"
+        eval $command  # 执行命令
 
-		# 打印百分比和进度条
-		percentage=$(( (i + 1) * 100 / total_commands ))
-		completed=$(( percentage / 2 ))
-		remaining=$(( 50 - completed ))
-		progressBar="["
+        # 打印百分比和进度条
+        percentage=$(( (i + 1) * 100 / total_commands ))
+        completed=$(( percentage / 2 ))
+        remaining=$(( 50 - completed ))
+        progressBar="["
             for ((j = 0; j < completed; j++)); do
                 progressBar+="#"
             done
@@ -3143,14 +3141,14 @@ install_ldnmp() {
             done
             progressBar+="]"
             echo -ne "\r[${yellow}$percentage%${white}] $progressBar"
-	done
+    done
 
-	echo # 打印换行，以便输出不被覆盖
+    echo # 打印换行，以便输出不被覆盖
 
-	clear
-	_green "LDNMP环境安装完毕！"
-	echo "------------------------"
-	ldnmp_version
+    clear
+    _green "LDNMP环境安装完毕！"
+    echo "------------------------"
+    ldnmp_version
 }
 
 ldnmp_install_nginx(){
