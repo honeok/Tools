@@ -237,7 +237,6 @@ system_info(){
 	# 检查是否获取到信息，如果没有则使用备用命令
 	if [ -z "$isp_info" ]; then
 		isp_info=$(curl -s ping0.cc/geo | tail -n 1)
-		#isp_info=$(curl -s http://ip-api.com/json | grep -o '"isp":"[^"]*"\|"org":"[^"]*"' | awk -F'"' '{print $4}' | tr '\n' ' ')
 	fi
 
 	ip_address
