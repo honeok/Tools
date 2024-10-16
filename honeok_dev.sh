@@ -1807,69 +1807,69 @@ docker_manager(){
 }
 
 check_network_protocols() {
-	ip_address
+    ip_address
 
-	ipv4_enabled=false
-	ipv6_enabled=false
+    ipv4_enabled=false
+    ipv6_enabled=false
 
-	if [ -n "$ipv4_address" ]; then
-		ipv4_enabled=true
-	fi
-	if [ -n "$ipv6_address" ]; then
-		ipv6_enabled=true
-	fi
+    if [ -n "$ipv4_address" ]; then
+        ipv4_enabled=true
+    fi
+    if [ -n "$ipv6_address" ]; then
+        ipv6_enabled=true
+    fi
 }
 
 display_docker_access() {
-	local docker_web_port
-	docker_web_port=$(docker inspect "$docker_name" --format '{{ range $p, $conf := .NetworkSettings.Ports }}{{ range $conf }}{{ $p }}:{{ .HostPort }}{{ end }}{{ end }}' | grep -oP '(\d+)$')
+    local docker_web_port
+    docker_web_port=$(docker inspect "$docker_name" --format '{{ range $p, $conf := .NetworkSettings.Ports }}{{ range $conf }}{{ $p }}:{{ .HostPort }}{{ end }}{{ end }}' | grep -oP '(\d+)$')
 
-	echo "------------------------"
-	echo "访问地址:"
-	if [ "$ipv4_enabled" = true ]; then
-		echo -e "http://$ipv4_address:$docker_web_port"
-	fi
-	if [ "$ipv6_enabled" = true ]; then
-		echo -e "http://[$ipv6_address]:$docker_web_port"
-	fi
+    echo "------------------------"
+    echo "访问地址:"
+    if [ "$ipv4_enabled" = true ]; then
+        echo -e "http://$ipv4_address:$docker_web_port"
+    fi
+    if [ "$ipv6_enabled" = true ]; then
+        echo -e "http://[$ipv6_address]:$docker_web_port"
+    fi
 }
 
 check_docker_status() {
-	if docker inspect "$docker_name" &>/dev/null; then
-		check_docker="${green}已安装${white}"
-	else
-		check_docker="${yellow}未安装${white}"
-	fi
+    if docker inspect "$docker_name" &>/dev/null; then
+        check_docker="${green}已安装${white}"
+    else
+        check_docker="${yellow}未安装${white}"
+    fi
 }
 
 check_panel_status() {
-	if [ -d "$path" ]; then
-		check_panel="${green}已安装${white}"
-	else
-		check_panel="${yellow}未安装${white}"
-	fi
+    if [ -d "$path" ]; then
+        check_panel="${green}已安装${white}"
+    else
+        check_panel="${yellow}未安装${white}"
+    fi
 }
 
 manage_panel_application() {
-	local choice
-	while true; do
-		clear
-		check_panel_status
-		echo -e "$panelname $check_panel"
-		echo "${panelname}是一款时下流行且强大的运维管理面板"
-		echo "官网介绍: $panelurl "
+    local choice
+    while true; do
+        clear
+        check_panel_status
+        echo -e "$panelname $check_panel"
+        echo "${panelname}是一款时下流行且强大的运维管理面板"
+        echo "官网介绍: $panelurl "
 
-		echo ""
-		echo "------------------------"
-		echo "1. 安装            2. 管理            3. 卸载"
-		echo "------------------------"
-		echo "0. 返回上一级"
-		echo "------------------------"
+        echo ""
+        echo "------------------------"
+        echo "1. 安装            2. 管理            3. 卸载"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
 
-		case $choice in
+        case $choice in
             1)
                 iptables_open
                 install wget
@@ -1904,9 +1904,9 @@ manage_panel_application() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-		end_of
-	done
+        esac
+        end_of
+    done
 }
 
 manage_docker_application() {
