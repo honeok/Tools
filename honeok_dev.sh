@@ -5755,42 +5755,49 @@ cron_manager(){
 }
 
 output_status() {
-	output=$(awk 'BEGIN { rx_total = 0; tx_total = 0 }
-		NR > 2 { rx_total += $2; tx_total += $10 }
-		END {
-			rx_units = "Bytes";
-			tx_units = "Bytes";
-			if (rx_total > 1024) { rx_total /= 1024; rx_units = "KB"; }
-			if (rx_total > 1024) { rx_total /= 1024; rx_units = "MB"; }
-			if (rx_total > 1024) { rx_total /= 1024; rx_units = "GB"; }
+    output=$(awk 'BEGIN { rx_total = 0; tx_total = 0 }
+        NR > 2 { rx_total += $2; tx_total += $10 }
+        END {
+            rx_units = "Bytes";
+            tx_units = "Bytes";
+            if (rx_total > 1024) { rx_total /= 1024; rx_units = "KB"; }
+            if (rx_total > 1024) { rx_total /= 1024; rx_units = "MB"; }
+            if (rx_total > 1024) { rx_total /= 1024; rx_units = "GB"; }
 
-			if (tx_total > 1024) { tx_total /= 1024; tx_units = "KB"; }
-			if (tx_total > 1024) { tx_total /= 1024; tx_units = "MB"; }
-			if (tx_total > 1024) { tx_total /= 1024; tx_units = "GB"; }
+            if (tx_total > 1024) { tx_total /= 1024; tx_units = "KB"; }
+            if (tx_total > 1024) { tx_total /= 1024; tx_units = "MB"; }
+            if (tx_total > 1024) { tx_total /= 1024; tx_units = "GB"; }
 
-			printf("总接收: %.2f %s\n总发送: %.2f %s\n", rx_total, rx_units, tx_total, tx_units);
-		}' /proc/net/dev)
+            printf("总接收: %.2f %s\n总发送: %.2f %s\n", rx_total, rx_units, tx_total, tx_units);
+        }' /proc/net/dev)
 }
 
 add_sshkey() {
-	# ssh-keygen -t rsa -b 4096 -C "xxxx@gmail.com" -f /root/.ssh/sshkey -N ""
-	ssh-keygen -t ed25519 -C "honeok@gmail.com" -f /root/.ssh/sshkey -N ""
+    # 生成 ED25519 类型的 SSH 密钥
+    # ssh-keygen -t rsa -b 4096 -C "xxxx@gmail.com" -f /root/.ssh/sshkey -N ""
+    ssh-keygen -t ed25519 -C "honeok@gmail.com" -f /root/.ssh/sshkey -N ""
 
-	cat ~/.ssh/sshkey.pub >> ~/.ssh/authorized_keys
-	chmod 600 ~/.ssh/authorized_keys
+    # 将公钥添加到 authorized_keys 文件中
+    cat ~/.ssh/sshkey.pub >> ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
 
-	ip_address
-	echo -e "私钥信息已生成务必复制保存，可保存为${yellow}${ipv4_address}_ssh.key${white}文件，用于以后的SSH登录"
-	echo "--------------------------------"
-	cat ~/.ssh/sshkey
-	echo "--------------------------------"
+    # 获取 IP 地址
+    ip_address
+    echo -e "私钥信息已生成务必复制保存，可保存为${yellow}${ipv4_address}_ssh.key${white}文件，用于以后的SSH登录"
+    echo "--------------------------------"
+    cat ~/.ssh/sshkey
+    echo "--------------------------------"
 
-	sed -i -e 's/^\s*#\?\s*PermitRootLogin .*/PermitRootLogin prohibit-password/' \
-		-e 's/^\s*#\?\s*PasswordAuthentication .*/PasswordAuthentication no/' \
-		-e 's/^\s*#\?\s*PubkeyAuthentication .*/PubkeyAuthentication yes/' \
-		-e 's/^\s*#\?\s*ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
-	rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/*
-	echo -e "${green}root私钥登录已开启，已关闭root密码登录重连将会生效${white}"
+    # 修改 sshd 配置，禁止密码登录，仅允许公钥登录
+    sed -i -e 's/^\s*#\?\s*PermitRootLogin .*/PermitRootLogin prohibit-password/' \
+           -e 's/^\s*#\?\s*PasswordAuthentication .*/PasswordAuthentication no/' \
+           -e 's/^\s*#\?\s*PubkeyAuthentication .*/PubkeyAuthentication yes/' \
+           -e 's/^\s*#\?\s*ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+
+    # 删除 sshd 和 ssh 配置文件中的无用文件夹
+    rm -fr /etc/ssh/sshd_config.d/* /etc/ssh/ssh_config.d/*
+
+    echo -e "${green}root私钥登录已开启，已关闭root密码登录重连将会生效${white}"
 }
 
 telegram_bot(){
