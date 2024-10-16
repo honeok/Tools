@@ -6795,6 +6795,7 @@ EOF
 						3)
 							echo "该功能由jhb提供，感谢！"
 							bash <(curl -L -s jhb.ovh/jb/v6.sh)
+							;;
 						*)
 							break
 							;;
