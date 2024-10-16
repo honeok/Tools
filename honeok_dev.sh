@@ -7366,10 +7366,10 @@ EOF
                 ~/upgrade_openssh.sh
                 rm -f ~/upgrade_openssh.sh
                 ;;
-			27)
-				redhat_kernel_update
-				;;
-			28)
+            27)
+                redhat_kernel_update
+                ;;
+            28)
 				need_root
 				while true; do
 					clear
