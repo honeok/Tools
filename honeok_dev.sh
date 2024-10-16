@@ -1347,29 +1347,29 @@ uninstall_docker() {
 }
 
 docker_ps() {
-	while true; do
-		clear
-		echo "Docker容器列表"
-		docker ps -a
-		echo ""
-		echo "容器操作"
-		echo "------------------------"
-		echo "1. 创建新的容器"
-		echo "------------------------"
-		echo "2. 启动指定容器             6. 启动所有容器"
-		echo "3. 停止指定容器             7. 停止所有容器"
-		echo "4. 删除指定容器             8. 删除所有容器"
-		echo "5. 重启指定容器             9. 重启所有容器"
-		echo "------------------------"
-		echo "11. 进入指定容器            12. 查看容器日志"
-		echo "13. 查看容器网络            14. 查看容器占用"
-		echo "------------------------"
-		echo "0. 返回上一级选单"
-		echo "------------------------"
+    while true; do
+        clear
+        echo "Docker容器列表"
+        docker ps -a
+        echo ""
+        echo "容器操作"
+        echo "------------------------"
+        echo "1. 创建新的容器"
+        echo "------------------------"
+        echo "2. 启动指定容器             6. 启动所有容器"
+        echo "3. 停止指定容器             7. 停止所有容器"
+        echo "4. 删除指定容器             8. 删除所有容器"
+        echo "5. 重启指定容器             9. 重启所有容器"
+        echo "------------------------"
+        echo "11. 进入指定容器            12. 查看容器日志"
+        echo "13. 查看容器网络            14. 查看容器占用"
+        echo "------------------------"
+        echo "0. 返回上一级选单"
+        echo "------------------------"
 
-		echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
-		read -r choice
-		case $choice in
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+        case $choice in
             1)
                 echo -n "请输入创建命令:"
                 read -r dockername
@@ -1407,13 +1407,13 @@ docker_ps() {
 
                 case "$choice" in
                     [Yy])
-                    	docker rm -f $(docker ps -a -q)
-                    	;;
+                        docker rm -f $(docker ps -a -q)
+                        ;;
                     [Nn])
-                    	;;
+                        ;;
                     *)
-                    	_red "无效选项，请重新输入"
-                    	;;
+                        _red "无效选项，请重新输入"
+                        ;;
                 esac
                 ;;
             9)
@@ -1436,14 +1436,14 @@ docker_ps() {
                 container_ids=$(docker ps -q)
                 echo "------------------------------------------------------------"
                 printf "%-25s %-25s %-25s\n" "容器名称" "网络名称" "IP地址"
-                for container_id in "$container_ids"; do
+                for container_id in $container_ids; do
                     container_info=$(docker inspect --format '{{ .Name }}{{ range $network, $config := .NetworkSettings.Networks }} {{ $network }} {{ $config.IPAddress }}{{ end }}' "$container_id")
                     container_name=$(echo "$container_info" | awk '{print $1}')
                     network_info=$(echo "$container_info" | cut -d' ' -f2-)
                     while IFS= read -r line; do
-                    	network_name=$(echo "$line" | awk '{print $1}')
-                    	ip_address=$(echo "$line" | awk '{print $2}')
-                    	printf "%-20s %-20s %-15s\n" "$container_name" "$network_name" "$ip_address"
+                        network_name=$(echo "$line" | awk '{print $1}')
+                        ip_address=$(echo "$line" | awk '{print $2}')
+                        printf "%-20s %-20s %-15s\n" "$container_name" "$network_name" "$ip_address"
                     done <<< "$network_info"
                 done
                 end_of
@@ -1458,8 +1458,8 @@ docker_ps() {
             *)
                 _red "无效选项，请重新输入"
                 ;;
-		esac
-	done
+        esac
+    done
 }
 
 docker_image() {
