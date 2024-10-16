@@ -296,6 +296,7 @@ system_info(){
 # 设置地区相关的Github代理配置
 set_region_config() {
 	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+		_yellow "检测到当前IP为中国，正在分配最佳GitHub代理"
 		execute_commands=0                    # 0 表示允许执行命令
 
 		# 局部变量定义，Github代理均使用双栈同时兼容IPV4和IPV6的代理
@@ -318,6 +319,7 @@ set_region_config() {
 
 		# 设置找到的最佳代理
 		github_proxy="https://$best_proxy/"
+		_yellow "当前GitHub代理为: ${github_proxy}"
 	else
 		execute_commands=1                    # 1 表示不执行命令
 		github_proxy=""                       # 不使用代理
@@ -8248,7 +8250,7 @@ honeok_update() {
 
 	# 检查本地脚本是否存在
 	if [[ ! -f "$local_script_path" ]]; then
-		_yellow "本地脚本不存在,正在下载"
+		_yellow "本地脚本不存在，正在下载"
 		curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x $local_script_path
 		return 0
 	fi
