@@ -6704,7 +6704,7 @@ EOF
 							rollbak_dns
 							;;
 						3)
-							if command -v vim >/dev/null 2>&1
+							if command -v vim >/dev/null 2>&1;then
 								vim /etc/resolv.conf
 							else
 								vi /etc/resolv.conf
