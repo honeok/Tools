@@ -4594,64 +4594,64 @@ linux_ldnmp() {
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		_yellow "站点标准模式"
-                    		# nginx调优
-                    		sed -i 's/worker_connections.*/worker_connections 1024;/' "$nginx_dir/nginx.conf"
+                        1)
+                            _yellow "站点标准模式"
+                            # nginx调优
+                            sed -i 's/worker_connections.*/worker_connections 1024;/' "$nginx_dir/nginx.conf"
 
-                    		# php调优
-                    		curl -fsSL -o "$web_dir/optimized_php.ini" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/optimized_php.ini"
-                    		docker cp "$web_dir/optimized_php.ini" "php:/usr/local/etc/php/conf.d/optimized_php.ini"
-                    		docker cp "$web_dir/optimized_php.ini" "php74:/usr/local/etc/php/conf.d/optimized_php.ini"
-                    		rm -f "$web_dir/optimized_php.ini"
+                            # php调优
+                            curl -fsSL -o "$web_dir/optimized_php.ini" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/optimized_php.ini"
+                            docker cp "$web_dir/optimized_php.ini" "php:/usr/local/etc/php/conf.d/optimized_php.ini"
+                            docker cp "$web_dir/optimized_php.ini" "php74:/usr/local/etc/php/conf.d/optimized_php.ini"
+                            rm -f "$web_dir/optimized_php.ini"
 
-                    		# php调优
-                    		curl -fsSL -o "$web_dir/www.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/www-1.conf"
-                    		docker cp "$web_dir/www.conf" "php:/usr/local/etc/php-fpm.d/www.conf"
-                    		docker cp "$web_dir/www.conf" "php74:/usr/local/etc/php-fpm.d/www.conf"
-                    		rm -f "$web_dir/www.conf"
+                            # php调优
+                            curl -fsSL -o "$web_dir/www.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/www-1.conf"
+                            docker cp "$web_dir/www.conf" "php:/usr/local/etc/php-fpm.d/www.conf"
+                            docker cp "$web_dir/www.conf" "php74:/usr/local/etc/php-fpm.d/www.conf"
+                            rm -f "$web_dir/www.conf"
 
-                    		# mysql调优
-                    		curl -fsSL -o "$web_dir/mysql_config.cnf" "${github_proxy}raw.githubusercontent.com/kejilion/sh/main/custom_mysql_config-1.cnf"
-                    		docker cp "$web_dir/mysql_config.cnf" "mysql:/etc/mysql/conf.d/"
-                    		rm -f "$web_dir/mysql_config.cnf"
+                            # mysql调优
+                            curl -fsSL -o "$web_dir/mysql_config.cnf" "${github_proxy}raw.githubusercontent.com/kejilion/sh/main/custom_mysql_config-1.cnf"
+                            docker cp "$web_dir/mysql_config.cnf" "mysql:/etc/mysql/conf.d/"
+                            rm -f "$web_dir/mysql_config.cnf"
 
-                    		cd "${web_dir}"
-                    		manage_compose restart
-                    		docker exec -it redis redis-cli CONFIG SET maxmemory 512mb
-                    		docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru
+                            cd "${web_dir}"
+                            manage_compose restart
+                            docker exec -it redis redis-cli CONFIG SET maxmemory 512mb
+                            docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru
 
-                    		_green "LDNMP环境已设置成标准模式"
-                    		;;
-                    	2)
-                    		_yellow "站点高性能模式"
-                    		# nginx调优
-                    		sed -i 's/worker_connections.*/worker_connections 10240;/' "$nginx_dir/nginx/nginx.conf"
+                            _green "LDNMP环境已设置成标准模式"
+                            ;;
+                        2)
+                            _yellow "站点高性能模式"
+                            # nginx调优
+                            sed -i 's/worker_connections.*/worker_connections 10240;/' "$nginx_dir/nginx/nginx.conf"
 
-                    		# php调优
-                    		curl -fsSL -o "$web_dir/www.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/www.conf"
-                    		docker cp "$web_dir/www.conf" php:/usr/local/etc/php-fpm.d/www.conf
-                    		docker cp "$web_dir/www.conf" php74:/usr/local/etc/php-fpm.d/www.conf
-                    		rm -f "$web_dir/www.conf"
+                            # php调优
+                            curl -fsSL -o "$web_dir/www.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/www.conf"
+                            docker cp "$web_dir/www.conf" php:/usr/local/etc/php-fpm.d/www.conf
+                            docker cp "$web_dir/www.conf" php74:/usr/local/etc/php-fpm.d/www.conf
+                            rm -f "$web_dir/www.conf"
 
-                    		# mysql调优
-                    		curl -fsSL -o "$web_dir/mysql_config.cnf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/custom_mysql_config.cnf"
-                    		docker cp "$web_dir/mysql_config.cnf" mysql:/etc/mysql/conf.d/
-                    		rm -f "$web_dir/mysql_config.cnf"
+                            # mysql调优
+                            curl -fsSL -o "$web_dir/mysql_config.cnf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/ldnmp/optimize/custom_mysql_config.cnf"
+                            docker cp "$web_dir/mysql_config.cnf" mysql:/etc/mysql/conf.d/
+                            rm -f "$web_dir/mysql_config.cnf"
 
-                    		cd "${web_dir}"
-                    		manage_compose restart
-                    		docker exec -it redis redis-cli CONFIG SET maxmemory 1024mb
-                    		docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru
+                            cd "${web_dir}"
+                            manage_compose restart
+                            docker exec -it redis redis-cli CONFIG SET maxmemory 1024mb
+                            docker exec -it redis redis-cli CONFIG SET maxmemory-policy allkeys-lru
 
-                    		_green "LDNMP环境已设置成高性能模式"
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            _green "LDNMP环境已设置成高性能模式"
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                     end_of
                 done
@@ -4674,52 +4674,52 @@ linux_ldnmp() {
                     read -r choice
 
                     case $choice in
-                    	1)
-                    		ldnmp_pods="nginx"
-                    		cd "$web_dir"
+                        1)
+                            ldnmp_pods="nginx"
+                            cd "$web_dir"
 
-                    		docker rm -f "$ldnmp_pods" > /dev/null 2>&1
-                    		docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
-                    		manage_compose recreate "$ldnmp_pods"
-                    		docker exec "$ldnmp_pods" chmod -R 777 /var/www/html
-                    		docker restart "$ldnmp_pods" > /dev/null 2>&1
-                    		_green "更新${ldnmp_pods}完成"
-                    		;;
-                    	2)
-                    		ldnmp_pods="mysql"
-                    		echo -n "请输入${ldnmp_pods}版本号(如: 8.0 8.3 8.4 9.0)(回车获取最新版):"
-                    		read -r version
-                    		version=${version:-latest}
-                    		cd "$web_dir"
+                            docker rm -f "$ldnmp_pods" > /dev/null 2>&1
+                            docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
+                            manage_compose recreate "$ldnmp_pods"
+                            docker exec "$ldnmp_pods" chmod -R 777 /var/www/html
+                            docker restart "$ldnmp_pods" > /dev/null 2>&1
+                            _green "更新${ldnmp_pods}完成"
+                            ;;
+                        2)
+                            ldnmp_pods="mysql"
+                            echo -n "请输入${ldnmp_pods}版本号（如: 8.0 8.3 8.4 9.0）（回车获取最新版）:"
+                            read -r version
+                            version=${version:-latest}
+                            cd "$web_dir"
 
-                    		sed -i "s/image: mysql/image: mysql:$version/" "$web_dir/docker-compose.yml"
-                    		docker rm -f "$ldnmp_pods"
-                    		docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
-                    		manage_compose recreate "$ldnmp_pods"
-                    		docker restart "$ldnmp_pods" > /dev/null 2>&1
-                    		_green "更新${ldnmp_pods}完成"
-                    		;;
-                    	3)
-                    		ldnmp_pods="php"
-                    		echo -n "请输入${ldnmp_pods}版本号(如: 7.4 8.0 8.1 8.2 8.3)(回车获取最新版):"
-                    		read -r version
+                            sed -i "s/image: mysql/image: mysql:$version/" "$web_dir/docker-compose.yml"
+                            docker rm -f "$ldnmp_pods"
+                            docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
+                            manage_compose recreate "$ldnmp_pods"
+                            docker restart "$ldnmp_pods" > /dev/null 2>&1
+                            _green "更新${ldnmp_pods}完成"
+                            ;;
+                        3)
+                            ldnmp_pods="php"
+                            echo -n "请输入${ldnmp_pods}版本号（如: 7.4 8.0 8.1 8.2 8.3）（回车获取最新版）:"
+                            read -r version
 
-                    		version=${version:-8.3}
-                    		cd "$web_dir"
-                    		sed -i "s/image: php:fpm-alpine/image: php:${version}-fpm-alpine/" "$web_dir/docker-compose.yml"
-                    		docker rm -f "$ldnmp_pods" > /dev/null 2>&1
-                    		docker images --filter=reference="php:*" -q | xargs -r docker rmi > /dev/null 2>&1
-                    		manage_compose recreate "$ldnmp_pods"
-                    		docker exec "$ldnmp_pods" chmod -R 777 /var/www/html
+                            version=${version:-8.3}
+                            cd "$web_dir"
+                            sed -i "s/image: php:fpm-alpine/image: php:${version}-fpm-alpine/" "$web_dir/docker-compose.yml"
+                            docker rm -f "$ldnmp_pods" > /dev/null 2>&1
+                            docker images --filter=reference="php:*" -q | xargs -r docker rmi > /dev/null 2>&1
+                            manage_compose recreate "$ldnmp_pods"
+                            docker exec "$ldnmp_pods" chmod -R 777 /var/www/html
 
-                    		docker exec "$ldnmp_pods" apk update
-                    		curl -sL https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions
-                    		docker exec "$ldnmp_pods" mkdir -p /usr/local/bin/
-                    		docker cp /usr/local/bin/install-php-extensions "$ldnmp_pods":/usr/local/bin/
-                    		docker exec "$ldnmp_pods" chmod +x /usr/local/bin/install-php-extensions
-                    		rm /usr/local/bin/install-php-extensions
+                            docker exec "$ldnmp_pods" apk update
+                            curl -fsSL ${github_proxy}github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions
+                            docker exec "$ldnmp_pods" mkdir -p /usr/local/bin/
+                            docker cp /usr/local/bin/install-php-extensions "$ldnmp_pods":/usr/local/bin/
+                            docker exec "$ldnmp_pods" chmod +x /usr/local/bin/install-php-extensions
+                            rm /usr/local/bin/install-php-extensions > /dev/null 2>&1
 
-                    		docker exec "$ldnmp_pods" sh -c "\
+                            docker exec "$ldnmp_pods" sh -c "\
                                 apk add --no-cache imagemagick imagemagick-dev \
                                 && apk add --no-cache git autoconf gcc g++ make pkgconfig \
                                 && rm -fr /tmp/imagick \
@@ -4732,34 +4732,36 @@ linux_ldnmp() {
                                 && echo 'extension=imagick.so' > /usr/local/etc/php/conf.d/imagick.ini \
                                 && rm -fr /tmp/imagick"
 
-                    		docker exec "$ldnmp_pods" install-php-extensions mysqli pdo_mysql gd intl zip exif bcmath opcache redis
+                            docker exec "$ldnmp_pods" install-php-extensions mysqli pdo_mysql gd intl zip exif bcmath opcache redis
 
-                    		docker exec "$ldnmp_pods" sh -c 'echo "upload_max_filesize=50M" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1
-                    		docker exec "$ldnmp_pods" sh -c 'echo "post_max_size=50M" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1
-                    		docker exec "$ldnmp_pods" sh -c 'echo "memory_limit=256M" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1
-                    		docker exec "$ldnmp_pods" sh -c 'echo "max_execution_time=1200" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1
-                    		docker exec "$ldnmp_pods" sh -c 'echo "max_input_time=600" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "upload_max_filesize=50M" > /usr/local/etc/php/conf.d/uploads.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "post_max_size=50M" > /usr/local/etc/php/conf.d/post.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "memory_limit=256M" > /usr/local/etc/php/conf.d/memory.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "max_execution_time=1200" > /usr/local/etc/php/conf.d/max_execution_time.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "max_input_time=600" > /usr/local/etc/php/conf.d/max_input_time.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "max_input_vars=3000" > /usr/local/etc/php/conf.d/max_input_vars.ini' > /dev/null 2>&1
+                            docker exec "$ldnmp_pods" sh -c 'echo "expose_php=Off" > /usr/local/etc/php/conf.d/custom-php-settings.ini' > /dev/null 2>&1
 
-                    		docker restart "$ldnmp_pods" > /dev/null 2>&1
-                    		_green "更新${ldnmp_pods}完成"
-                    		;;
-                    	4)
-                    		ldnmp_pods="redis"
+                            docker restart "$ldnmp_pods" > /dev/null 2>&1
+                            _green "更新${ldnmp_pods}完成"
+                            ;;
+                        4)
+                            ldnmp_pods="redis"
 
-                    		cd "$web_dir"
-                    		docker rm -f "$ldnmp_pods" > /dev/null 2>&1
-                    		docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
-                    		manage_compose recreate "$ldnmp_pods"
-                    		docker exec -it "$ldnmp_pods" redis-cli CONFIG SET maxmemory 512mb
-                    		docker exec -it "$ldnmp_pods" redis-cli CONFIG SET maxmemory-policy allkeys-lru
-                    		docker restart "$ldnmp_pods" > /dev/null 2>&1
-                    		_green "更新${ldnmp_pods}完成"
-                    		;;
-                    	5)
-                    		echo -n -e "${yellow}长时间不更新环境的用户请慎重更新LDNMP环境，会有数据库更新失败的风险，确定更新LDNMP环境吗?(y/n)${white}"
-                    		read -r choice
+                            cd "$web_dir"
+                            docker rm -f "$ldnmp_pods" > /dev/null 2>&1
+                            docker images --filter=reference="$ldnmp_pods*" -q | xargs docker rmi > /dev/null 2>&1
+                            manage_compose recreate "$ldnmp_pods"
+                            docker exec -it "$ldnmp_pods" redis-cli CONFIG SET maxmemory 512mb
+                            docker exec -it "$ldnmp_pods" redis-cli CONFIG SET maxmemory-policy allkeys-lru
+                            docker restart "$ldnmp_pods" > /dev/null 2>&1
+                            _green "更新${ldnmp_pods}完成"
+                            ;;
+                        5)
+                            echo -n -e "${yellow}长时间不更新环境的用户请慎重更新LDNMP环境，会有数据库更新失败的风险，确定更新LDNMP环境吗?(y/n)${white}"
+                            read -r choice
 
-                    		case "$choice" in
+                            case "$choice" in
                                 [Yy])
                                     _yellow "完整更新LDNMP环境"
                                     cd "$web_dir"
@@ -4773,14 +4775,14 @@ linux_ldnmp() {
                                     ;;
                                 *)
                                     ;;
-                    		esac
-                    		;;
-                    	0)
-                    		break
-                    		;;
-                    	*)
-                    		_red "无效选项，请重新输入"
-                    		;;
+                            esac
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
                     esac
                     end_of
                 done
