@@ -5887,153 +5887,6 @@ telegram_bot(){
     esac
 }
 
-update_openssh() {
-	local openssh_version="9.8p1"
-
-	# 检测系统类型
-	if [ -f /etc/os-release ]; then
-		. /etc/os-release
-		OS=$ID
-	else
-		_red "无法检测操作系统类型"
-		return 1
-	fi
-
-	# 等待并检查锁文件
-	wait_for_lock() {
-		while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-			_yellow "等待dpkg锁释放"
-			sleep 1
-		done
-	}
-
-	# 修复dpkg中断问题
-	fix_dpkg() {
-		DEBIAN_FRONTEND=noninteractive dpkg --configure -a
-	}
-
-	# 安装依赖包
-	install_dependencies() {
-		case $OS in
-			ubuntu|debian)
-				wait_for_lock
-				fix_dpkg
-				DEBIAN_FRONTEND=noninteractive apt update
-				DEBIAN_FRONTEND=noninteractive apt install -y build-essential zlib1g-dev libssl-dev libpam0g-dev wget ntpdate -o Dpkg::Options::="--force-confnew"
-				;;
-			centos|rhel|almalinux|rocky|fedora)
-				yum install -y epel-release
-				yum groupinstall "Development Tools" -y
-				install zlib-devel openssl-devel pam-devel wget ntpdate
-				;;
-			alpine)
-				apk add build-base zlib-dev openssl-dev pam-dev wget ntpdate
-				;;
-			*)
-				_red "不支持的操作系统:$OS"
-				return 1
-				;;
-		esac
-	}
-
-	# 下载编译和安装OpenSSH
-	install_openssh() {
-		wget --no-check-certificate https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${openssh_version}.tar.gz
-		tar -xzf openssh-${openssh_version}.tar.gz
-		cd openssh-${openssh_version}
-		./configure
-		make -j$(nproc)
-		make install
-		cd ..
-	}
-
-	# 重启SSH服务
-	restart_ssh() {
-		case $OS in
-			ubuntu|debian)
-				systemctl restart ssh
-				;;
-			centos|rhel|almalinux|rocky|fedora)
-				systemctl restart sshd
-				;;
-			alpine)
-				rc-service sshd restart
-				;;
-			*)
-				_red "不支持的操作系统:$OS"
-				return 1
-				;;
-		esac
-	}
-
-	# 设置路径优先级
-	set_path_priority() {
-		local new_ssh_path
-		local new_ssh_dir
-
-		new_ssh_path=$(which sshd)
-		new_ssh_dir=$(dirname "$new_ssh_path")
-
-		if [[ ":$PATH:" != *":$new_ssh_dir:"* ]]; then
-			export PATH="$new_ssh_dir:$PATH"
-			echo "export PATH=\"$new_ssh_dir:\$PATH\"" >> ~/.bashrc
-		fi
-	}
-
-	# 验证更新
-	verify_installation() {
-		_yellow "ssh版本信息:"
-		ssh -V
-		sshd -V
-	}
-
-	# 清理下载的文件
-	clean_up() {
-		rm -fr openssh-${openssh_version}*
-	}
-
-	# 检查OpenSSH版本
-	current_version=$(ssh -V 2>&1 | awk '{print $1}' | cut -d'_' -f2 | cut -d'p' -f1)
-
-	# 版本范围
-	min_version=8.5
-	max_version=9.7
-
-	if awk -v ver="$current_version" -v min="$min_version" -v max="$max_version" 'BEGIN{if(ver>=min && ver<=max) exit 0; else exit 1}'; then
-		echo "SSH高危漏洞修复工具"
-		echo "--------------------------"
-
-		echo -e "${white}SSH版本: $current_version 在8.5到9.7之间 ${yellow}需要修复${white}"
-		echo -n -e "${yellow}确定继续吗?(y/n)${white}"
-		read -r choice
-
-		case "$choice" in
-			[Yy])
-				install_dependencies
-				install_openssh
-				restart_ssh
-				set_path_priority
-				verify_installation
-				clean_up
-				;;
-			[Nn])
-				_red "已取消"
-				return 1
-				;;
-			*)
-				_red "无效选项，请重新输入"
-				return 1
-				;;
-		esac
-	else
-		echo "SSH高危漏洞修复工具"
-		echo "--------------------------"
-
-		echo -e "${white}SSH版本: $current_version ${green}无需修复${white}"
-		return 1
-	fi
-}
-
 redhat_kernel_update() {
 	install_elrepo() {
 		# 导入ELRepo GPG公钥
@@ -7504,11 +7357,14 @@ EOF
 			25)
 				telegram_bot
 				;;
-			26)
-				need_root
-				cd ~
-				update_openssh
-				;;
+            26)
+                need_root
+                cd ~
+                curl -fsSL -o "upgrade_openssh.sh"  "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/upgrade_openssh9.8p1.sh"
+                chmod +x "~/upgrade_openssh.sh"
+                ~/upgrade_openssh.sh
+                rm -f ~/upgrade_openssh.sh
+                ;;
 			27)
 				redhat_kernel_update
 				;;
