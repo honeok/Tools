@@ -320,6 +320,7 @@ set_region_config() {
 		# 设置找到的最佳代理
 		github_proxy="https://$best_proxy/"
 		_yellow "当前GitHub代理为: ${github_proxy}"
+		sleep 1s
 	else
 		execute_commands=1                    # 1 表示不执行命令
 		github_proxy=""                       # 不使用代理
