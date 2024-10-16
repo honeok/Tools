@@ -1,7 +1,7 @@
 ## VPS工具箱
 集成各种vps常用工具，去掉繁琐操作
 
-![](./img/dash.png)
+![](./img/interface_3.x.png)
 
 在线执行
 
