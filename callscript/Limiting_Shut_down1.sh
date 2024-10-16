@@ -33,22 +33,22 @@ tx_threshold=$((tx_threshold_gb * 1024 * 1024 * 1024))
 
 # 检查是否达到接收流量阈值
 if (( $rx > $rx_threshold )); then
-    echo "接收流量达到${rx_threshold}，正在关闭服务器..."
+    echo "接收流量达到${rx_threshold}，正在关闭服务器"
     # 在此处执行关闭服务器的命令，例如：
     shutdown -h now
     # 或者
     # systemctl poweroff
 else
-    echo "当前接收流量未达到${rx_threshold}，继续监视..."
+    echo "当前接收流量未达到${rx_threshold}，继续监视"
 fi
 
 # 检查是否达到发送流量阈值
 if (( $tx > $tx_threshold )); then
-    echo "发送流量达到${tx_threshold}，正在关闭服务器..."
+    echo "发送流量达到${tx_threshold}，正在关闭服务器"
     # 在此处执行关闭服务器的命令，例如：
     shutdown -h now
     # 或者
     # systemctl poweroff
 else
-    echo "当前发送流量未达到${tx_threshold}，继续监视..."
+    echo "当前发送流量未达到${tx_threshold}，继续监视"
 fi
