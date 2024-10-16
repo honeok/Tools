@@ -1222,11 +1222,11 @@ EOF
 }
 
 docker_ipv6_off() {
-	need_root
-	install python3
+    need_root
+    install python3
 
-	local CONFIG_FILE="/etc/docker/daemon.json"
-	local PYTHON_CODE=$(cat <<EOF
+    local CONFIG_FILE="/etc/docker/daemon.json"
+    local PYTHON_CODE=$(cat <<EOF
 import json
 import sys
 
@@ -1260,90 +1260,90 @@ else:
 EOF
 	)
 
-	local RESULT=$(python3 -c "$PYTHON_CODE" "$CONFIG_FILE")
+    local RESULT=$(python3 -c "$PYTHON_CODE" "$CONFIG_FILE")
 
-	if [[ "$RESULT" == *"RELOAD"* ]]; then
-		restart docker
-	elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-		_yellow "当前已关闭IPV6访问"
-	else
-		_red "处理配置时发生错误"
-	fi
+    if [[ "$RESULT" == *"RELOAD"* ]]; then
+        restart docker
+    elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
+        _yellow "当前已关闭IPV6访问"
+    else
+        _red "处理配置时发生错误"
+    fi
 }
 
 # 卸载Docker
 uninstall_docker() {
-	local os_name
-	local docker_data_files=("/var/lib/docker" "/var/lib/containerd" "/etc/docker" "/opt/containerd" "/data/docker_data")
-	local docker_depend_files=("/etc/yum.repos.d/docker*" "/etc/apt/sources.list.d/docker.*" "/etc/apt/keyrings/docker.*" "/var/log/docker.*")
-	local binary_files=("/usr/bin/docker" "/usr/bin/docker-compose")  # 删除二进制文件路径
+    local os_name
+    local docker_data_files=("/var/lib/docker" "/var/lib/containerd" "/etc/docker" "/opt/containerd" "/data/docker_data")
+    local docker_depend_files=("/etc/yum.repos.d/docker*" "/etc/apt/sources.list.d/docker.*" "/etc/apt/keyrings/docker.*" "/var/log/docker.*")
+    local binary_files=("/usr/bin/docker" "/usr/bin/docker-compose")  # 删除二进制文件路径
 
-	need_root
+    need_root
 
-	# 停止并删除Docker服务和容器
-	stop_and_remove_docker() {
-		local running_containers=$(docker ps -aq)
-		[ -n "$running_containers" ] && docker rm -f "$running_containers" >/dev/null 2>&1
-		stop docker >/dev/null 2>&1
-		disable docker >/dev/null 2>&1
-	}
+    # 停止并删除Docker服务和容器
+    stop_and_remove_docker() {
+        local running_containers=$(docker ps -aq)
+        [ -n "$running_containers" ] && docker rm -f "$running_containers" >/dev/null 2>&1
+        stop docker >/dev/null 2>&1
+        disable docker >/dev/null 2>&1
+    }
 
-	# 移除Docker文件和仓库文件
-	cleanup_files() {
-		for pattern in "${docker_depend_files[@]}"; do
+    # 移除Docker文件和仓库文件
+    cleanup_files() {
+        for pattern in "${docker_depend_files[@]}"; do
             for file in $pattern; do
                 [ -e "$file" ] && rm -fr "$file" >/dev/null 2>&1
             done
-		done
+        done
 
-		for file in "${docker_data_files[@]}" "${binary_files[@]}"; do
+        for file in "${docker_data_files[@]}" "${binary_files[@]}"; do
             [ -e "$file" ] && rm -fr "$file" >/dev/null 2>&1
-		done
-	}
+        done
+    }
 
-	# 获取操作系统信息
-	if [ -f /etc/os-release ]; then
-		os_name=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
-	else
-		_red "无法识别操作系统版本"
-		return 1
-	fi
+    # 获取操作系统信息
+    if [ -f /etc/os-release ]; then
+        os_name=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+    else
+        _red "无法识别操作系统版本"
+        return 1
+    fi
 
-	# 检查Docker是否安装
-	if ! command -v docker &> /dev/null; then
-		_red "Docker未安装在系统上，无法继续卸载"
-		return 1
-	fi
+    # 检查Docker是否安装
+    if ! command -v docker &> /dev/null; then
+        _red "Docker未安装在系统上，无法继续卸载"
+        return 1
+    fi
 
-	stop_and_remove_docker
+    stop_and_remove_docker
 
-	case "$os_name" in
-		ubuntu|debian|kali|centos|rhel|almalinux|rocky|fedora)
+    case "$os_name" in
+        ubuntu|debian|kali|centos|rhel|almalinux|rocky|fedora)
             remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin docker-ce-rootless-extras
             ;;
-		alpine)
+        alpine)
             remove docker docker-compose
             ;;
-		*)
+        *)
             _red "此脚本不支持您的Linux发行版"
             return 1
             ;;
-	esac
+    esac
 
-	cleanup_files
+    cleanup_files
 
-	# 清除命令缓存
-	hash -r
+    # 清除命令缓存
+    hash -r
 
-	sleep 2
+    sleep 2
 
-	# 检查卸载是否成功
-	if command -v docker &> /dev/null || [ -e "/usr/bin/docker" ]; then
-		_red "Docker卸载失败，请手动检查"
-		return 1
-	else
-		_green "Docker和Docker Compose已卸载，并清理文件夹和相关依赖"
-	fi
+    # 检查卸载是否成功
+    if command -v docker &> /dev/null || [ -e "/usr/bin/docker" ]; then
+        _red "Docker卸载失败，请手动检查"
+        return 1
+    else
+        _green "Docker和Docker Compose已卸载，并清理文件夹和相关依赖"
+    fi
 }
 
 docker_ps() {
