@@ -298,8 +298,8 @@ set_region_config() {
 	if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
 		execute_commands=0                    # 0 表示允许执行命令
 
-		# 定义局部变量
-		local github_proxies=("gh-proxy.com" "gh.kejilion.pro" "github.moeyy.xyz")
+		# 局部变量定义，Github代理均使用双栈同时兼容IPV4和IPV6的代理
+		local github_proxies=("gh-proxy.com" "gh.kejilion.pro" "github.moeyy.xyz" "ghproxy.1888866.xyz")
 		local best_proxy=""
 		local best_time=9999                  # 设置一个较大的初始延迟值
 		local ping_time=""
@@ -5758,7 +5758,7 @@ output_status() {
 
 add_sshkey() {
 	# ssh-keygen -t rsa -b 4096 -C "xxxx@gmail.com" -f /root/.ssh/sshkey -N ""
-	ssh-keygen -t ed25519 -C "fuck@gmail.com" -f /root/.ssh/sshkey -N ""
+	ssh-keygen -t ed25519 -C "honeok@gmail.com" -f /root/.ssh/sshkey -N ""
 
 	cat ~/.ssh/sshkey.pub >> ~/.ssh/authorized_keys
 	chmod 600 ~/.ssh/authorized_keys
@@ -5803,7 +5803,7 @@ telegram_bot(){
 				chmod +x ~/TG-check-notify.sh
 				vim ~/TG-check-notify.sh
 			else
-				curl -fsSL -o ~/TG-check-notify.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/TG-check-notify.sh
+				curl -fsSL -o "~/TG-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/TG-check-notify.sh"
 				# 计算文件哈希
 				TG_check_notify=$(sha256sum ~/TG-check-notify.sh | awk '{ print $1 }')
 
@@ -5823,7 +5823,7 @@ telegram_bot(){
 			crontab -l | grep -v '~/TG-check-notify.sh' | crontab - > /dev/null 2>&1
 			(crontab -l ; echo "@reboot tmux new -d -s TG-check-notify '~/TG-check-notify.sh'") | crontab - > /dev/null 2>&1
 
-			curl -fsSL -o ~/TG-SSH-check-notify.sh https://raw.githubusercontent.com/honeok/shell/main/callscript/TG-SSH-check-notify.sh
+			curl -fsSL -o "~/TG-SSH-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/shell/main/callscript/TG-SSH-check-notify.sh"
 			# 计算文件哈希
 			TG_SSH_check_notify=$(sha256sum ~/TG-SSH-check-notify.sh | awk '{ print $1 }')
 
