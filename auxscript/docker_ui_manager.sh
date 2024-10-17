@@ -73,6 +73,11 @@ end_of() {
 
 #######################################################################################################################
 
+
+
+
+
+
 # 获取公网IP地址
 ip_address() {
     local ipv4_services=("ipv4.ip.sb" "api.ipify.org" "checkip.amazonaws.com" "ipinfo.io/ip")
@@ -388,7 +393,7 @@ linux_panel() {
                 while true; do
                     clear
                     echo "哪吒监控管理"
-                    echo "开源,轻量,易用的服务器监控与运维工具"
+                    echo "开源、轻量、易用的服务器监控与运维工具"
                     echo "------------------------"
                     echo "1. 使用           0. 返回上一级"
                     echo "------------------------"
@@ -398,7 +403,7 @@ linux_panel() {
 
                     case $choice in
                         1)
-                            curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
+                            curl -fsSL -o "nezha.sh" "${github_proxy}raw.githubusercontent.com/naiba/nezha/master/script/install.sh" && chmod +x nezha.sh
                             ./nezha.sh
                             ;;
                         0)
@@ -457,23 +462,23 @@ linux_panel() {
 
                     case $choice in
                         1)
-                            echo -n "请设置邮箱域名,例如mail.google.com:"
+                            echo -n "请设置邮箱域名，例如mail.google.com:"
                             read -r domain
 
                             [ ! -d "$docker_workdir" ] && mkdir "$docker_workdir" -p
                             echo "$domain" > "$docker_workdir/mail.txt"
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
 
                             echo "------------------------"
                             ip_address
                             echo "先解析这些DNS记录"
-                            echo "A         mail        $ipv4_address"
-                            echo "CNAME     imap        $domain"
-                            echo "CNAME     pop         $domain"
-                            echo "CNAME     smtp        $domain"
-                            echo "MX        @           $domain"
-                            echo "TXT       @           v=spf1 mx ~all"
-                            echo "TXT       ?           ?"
+                            echo "A           mail            $ipv4_address"
+                            echo "CNAME       imap            $domain"
+                            echo "CNAME       pop             $domain"
+                            echo "CNAME       smtp            $domain"
+                            echo "MX          @               $domain"
+                            echo "TXT         @               v=spf1 mx ~all"
+                            echo "TXT         ?               ?"
                             echo ""
                             echo "------------------------"
                             _yellow "按任意键继续"
@@ -492,7 +497,7 @@ linux_panel() {
                             echo ""
                             ;;
                         2)
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
                             manage_compose pull && manage_compose start
                             echo "poste.io更新完成"
                             echo "------------------------"
@@ -500,7 +505,7 @@ linux_panel() {
                             echo "https://$domain"
                             ;;
                         3)
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
                             manage_compose down_all
                             [ -d "$docker_workdir" ] && rm -fr "$docker_workdir"
                             _green "Poste卸载完成"
@@ -564,7 +569,7 @@ linux_panel() {
             16)
                 docker_name="looking-glass"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Speedtest测速面板是一个VPS网速测试工具,多项测试功能,还可以实时监控VPS进出站流量"
+                docker_describe="Speedtest测速面板是一个VPS网速测试工具，多项测试功能，还可以实时监控VPS进出站流量"
                 docker_url="官网介绍: https://github.com/wikihost-opensource/als"
                 default_port_1=8080
                 default_port_2=30000
@@ -576,7 +581,7 @@ linux_panel() {
             17)
                 docker_name="adguardhome"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件,未来将不止是一个DNS服务器"
+                docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件，未来将不止是一个DNS服务器"
                 docker_url="官网介绍: https://hub.docker.com/r/adguard/adguardhome"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/adguardhome-docker-compose.yml)
@@ -587,7 +592,7 @@ linux_panel() {
             18)
                 docker_name="onlyoffice"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="onlyoffice是一款开源的在线office工具,太强大了!"
+                docker_describe="onlyoffice是一款开源的在线office工具，太强大了！"
                 docker_url="官网介绍: https://www.onlyoffice.com/"
                 default_port_1=8080
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/onlyoffice-docker-compose.yml)
