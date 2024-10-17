@@ -577,6 +577,9 @@ ip_address() {
     local ipv4_services=("ipv4.ip.sb" "api.ipify.org" "checkip.amazonaws.com" "ipinfo.io/ip")
     local ipv6_services=("ipv6.ip.sb" "api6.ipify.org" "v6.ident.me" "ipv6.icanhazip.com")
 
+    ipv4_address=""  # 初始化全局变量
+    ipv6_address=""
+
     # 获取IPv4地址
     for service in "${ipv4_services[@]}"; do
         ipv4_address=$(curl -s "$service")
@@ -590,8 +593,6 @@ ip_address() {
         ipv6_address=$(curl -s --max-time 1 "$service")
         if [[ "$ipv6_address" =~ ^[0-9a-fA-F:]+$ ]]; then
             break
-        else
-            ipv6_address=""
         fi
     done
 }
