@@ -2,7 +2,10 @@
 # Author: honeok
 # Blog：www.honeok.com
 # Github：https://github.com/honeok/shell
+
+honeok_v="v3.0.1 (2024.10.17)"
 export LANG=en_US.UTF-8
+
 yellow='\033[93m'        # 亮黄色
 red='\033[91m'           # 亮红色
 green='\033[92m'         # 亮绿色
@@ -21,8 +24,6 @@ _cyan() { echo -e ${cyan}$@${white}; }
 _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
-
-honeok_v="v3.0.1 (2024.10.17)"
 ########################################
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
@@ -8141,13 +8142,13 @@ honeok_update() {
         return 0
     fi
 
-    # 从远程脚本中提取第25行的版本号
+    # 从远程脚本中提取第6行的版本号
     local remote_version
-    remote_version=$(curl -sL "$remote_script_url" | sed -n '25p' | awk -F'=' '{print $2}' | tr -d '"')
+    remote_version=$(curl -sL "$remote_script_url" | sed -n '6p' | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
 
-    # 从本地脚本中提取第25行的版本号
+    # 从本地脚本中提取第6行的版本号
     local local_version
-    local_version=$(sed -n '25p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"')
+    local_version=$(sed -n '6p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
 
     # 检查版本号并更新脚本
     if [[ "$remote_version" != "$local_version" ]]; then
