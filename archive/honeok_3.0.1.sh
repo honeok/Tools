@@ -22,8 +22,7 @@ _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 
-honeok_v="v3.0.1"
-honeok_time="dev"
+honeok_v="v3.0.0 (2024.08.06)"
 ########################################
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
@@ -8167,7 +8166,7 @@ honeok() {
         clear
         print_logo
         _purple "适配Ubuntu/Debian/CentOS/Alpine/Kali/Arch/RedHat/Fedora/Alma/Rocky系统"
-        echo -e "${cyan}Author: honeok${white}  ${yellow}${honeok_v}${white}  ${orange}${honeok_time}${white}"
+        echo -e "${cyan}Author: honeok${white}  ${yellow}${honeok_v}${white}"
         echo "------------------------"
         echo "1. 系统信息查询"
         echo "2. 系统更新"
