@@ -7690,7 +7690,7 @@ servertest_script() {
                 ;;
             3)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 wget -qO- "${github_proxy}https://github.com/yeahwu/check/raw/main/check.sh" | bash
                 ;;
             4)
@@ -7699,7 +7699,7 @@ servertest_script() {
                 ;;
             12)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 wget -qO- git.io/besttrace | bash
                 ;;
             13)
@@ -7827,8 +7827,8 @@ node_create() {
         case $choice in
             1)
                 clear
-                install wget >/dev/null 2>&1
-                bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/sing-box/main/sing-box.sh)
+                install wget
+                bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/sing-box/main/sing-box.sh) -c
                 ;;
             3)
                 clear
@@ -7836,17 +7836,17 @@ node_create() {
                 ;;
             5)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 bash <(wget -qO- -o- https://github.com/233boy/sing-box/raw/main/install.sh)
                 ;;
             6)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 bash <(wget -qO- -o- https://git.io/v2ray.sh)
                 ;;
             7)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/argox/main/argox.sh)
                 ;;
             8)
@@ -7855,7 +7855,7 @@ node_create() {
                 ;;
             9)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 bash <(wget -qO- https://raw.githubusercontent.com/fscarmen/sba/main/sba.sh)
                 ;;
             10)
@@ -7864,7 +7864,7 @@ node_create() {
                 ;;
             11)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 wget --no-check-certificate -O gost.sh https://raw.githubusercontent.com/KANIKIG/Multi-EasyGost/master/gost.sh && chmod +x gost.sh && ./gost.sh
                 ;;
             25)
@@ -7904,7 +7904,7 @@ node_create() {
                 ;;
             40)
                 clear
-                install wget >/dev/null 2>&1
+                install wget
                 wget https://git.io/vpn -O openvpn-install.sh && bash openvpn-install.sh
                 ;;
             41)
