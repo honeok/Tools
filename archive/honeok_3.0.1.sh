@@ -260,8 +260,12 @@ system_info(){
     local system_time
     if grep -q 'Alpine' /etc/issue; then
         system_time=$(date +"%Z %z")
+    elif command -v timedatectl >/dev/null 2>&1; then
+        system_time=$(timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
+    elif [ -f /etc/timezone ]; then
+        system_time=$(cat /etc/timezone)
     else
-        system_time=$(timedatectl | grep 'Time zone' | awk '{print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
+        system_time=$(date +"%Z %z")  # 如果其他方法失败，使用date作为默认选项
     fi
 
     # 获取服务器当前时间
