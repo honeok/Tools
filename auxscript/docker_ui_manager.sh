@@ -24,7 +24,7 @@ _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 ########################################
-
+# 无任何操作，只调用没有更新的函数，不用merge
 manage_compose() {
     local compose_cmd
     # 检查 docker compose 版本
