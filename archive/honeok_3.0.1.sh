@@ -2461,7 +2461,7 @@ linux_panel() {
                 docker_url="官网介绍: https://github.com/wikihost-opensource/als"
                 default_port_1=8080
                 default_port_2=30000
-                docker_compose_content=$(curl -sS https://raw.githubusercontent.com/honeok/conf/main/docker_app/looking-glass-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/looking-glass-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_docker_application
