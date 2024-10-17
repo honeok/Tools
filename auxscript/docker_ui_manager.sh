@@ -608,7 +608,7 @@ linux_panel() {
                     check_dockerapp_status
                     clear
                     echo -e "雷池服务 $dockerapp_status"
-                    echo "雷池是长亭科技开发的WAF站点防火墙程序面板,可以反代站点进行自动化防御"
+                    echo "雷池是长亭科技开发的WAF站点防火墙程序面板，可以反代站点进行自动化防御"
 
                     if docker inspect "$docker_name" &>/dev/null; then
                     	display_docker_access
@@ -659,6 +659,28 @@ linux_panel() {
                     esac
                     end_of
                 done
+                ;;
+            20)
+                docker_name="portainer"
+                docker_workdir="/data/docker_data/$docker_name"
+                docker_describe="portainer是一个轻量级的docker容器管理面板"
+                docker_url="官网介绍: https://www.portainer.io/"
+                default_port_1=9000
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/portainer-docker-compose.yml)
+                docker_exec_command=""
+                docker_password=""
+                manage_docker_application
+                ;;
+            21)
+                docker_name="vscode-web"
+                docker_workdir="/data/docker_data/$docker_name"
+                docker_describe="VScode是一款强大的在线代码编写工具"
+                docker_url="官网介绍: https://github.com/coder/code-server"
+                default_port_1=8080
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/vscode-web-docker-compose.yml)
+                docker_exec_command="sleep 3"
+                docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
+                manage_docker_application
                 ;;
             51)
                 clear
