@@ -156,21 +156,6 @@ check_available_port() {
         fi
     fi
 
-    find_available_port() {
-        local start_port=$1
-        local end_port=$2
-        local port
-
-        for port in $(seq $start_port $end_port); do
-            if ! $check_command | grep -q ":$port "; then
-                echo "$port"
-                return
-            fi
-        done
-        _red "在范围（$start_port-$end_port）内没有找到可用的端口" >&2
-        return 1
-    }
-
     # 如果Docker容器未运行，检查每个端口
     if ! docker inspect "$docker_name" >/dev/null 2>&1; then
         for i in "${!default_ports[@]}"; do
@@ -181,16 +166,23 @@ check_available_port() {
                 # 检查端口是否被占用
                 if $check_command | grep -q ":$default_port "; then
                     # 端口被占用，查找可用端口
-                    local new_port=$(find_available_port $((30000 + i * 5000)) 50000)
+                    local found_port=false
 
-                    # 确保新端口不与其他默认端口和已使用端口冲突
-                    while [[ " ${default_ports[@]} " =~ " $new_port " ]] || [[ " ${used_ports[@]} " =~ " $new_port " ]]; do
-                        new_port=$(find_available_port $((30000 + i * 5000)) 50000)
+                    for port in $(seq 30000 50000); do
+                        if ! $check_command | grep -q ":$port " && ! [[ " ${default_ports[@]} " =~ " $port " ]] && ! [[ " ${used_ports[@]} " =~ " $port " ]]; then
+                            docker_ports[i]="$port"
+                            used_ports+=("$port")  # 将新端口添加到已使用的端口列表
+                            _yellow "默认端口${default_port}被占用，端口跳跃为${port}"
+                            found_port=true
+                            break  # 找到可用端口后退出循环
+                        fi
                     done
 
-                    docker_ports[i]="$new_port"
-                    used_ports+=("$new_port")  # 将新端口添加到已使用的端口列表
-                    _yellow "默认端口${default_port}被占用，端口跳跃为${docker_ports[i]}"
+                    # 如果没有找到可用端口，输出错误信息
+                    if [ "$found_port" = false ]; then
+                        _red "在范围（30000-50000）内没有找到可用的端口" >&2
+                        return 1
+                    fi
                 else
                     docker_ports[i]="$default_port"
                     used_ports+=("$default_port")  # 将默认端口添加到已使用的端口列表
