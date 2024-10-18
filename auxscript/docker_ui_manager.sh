@@ -168,7 +168,7 @@ check_available_port() {
                     # 端口被占用，查找可用端口
                     local found_port=false
 
-                    for port in $(seq 30000 50000); do
+                    for port in $(seq "$default_port" 50000); do
                         if ! $check_command | grep -q ":$port " && ! [[ " ${default_ports[@]} " =~ " $port " ]] && ! [[ " ${used_ports[@]} " =~ " $port " ]]; then
                             docker_ports[i]="$port"
                             used_ports+=("$port")  # 将新端口添加到已使用的端口列表
