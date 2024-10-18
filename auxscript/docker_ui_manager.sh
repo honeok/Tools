@@ -98,6 +98,81 @@ ip_address() {
     done
 }
 
+check_available_port() {
+    local check_command
+    local default_ports=( "$default_port_1" "$default_port_2" "$default_port_3" )
+    local docker_ports=( "" "" "" )  # 存储最终可用端口
+    local used_ports=()  # 存储已使用的端口
+
+    docker_port_1=""
+    docker_port_2=""
+    docker_port_3=""
+
+    # 确定可用的端口检测工具
+    if command -v netstat >/dev/null 2>&1; then
+        check_command="netstat -tuln"
+    elif command -v ss >/dev/null 2>&1; then
+        check_command="ss -tuln"
+    else
+        _yellow "未检测到可用的端口检测工具，正在安装net-tools"
+        install net-tools
+        if command -v netstat >/dev/null 2>&1; then
+            check_command="netstat -tuln"
+        else
+            _red "安装失败且默认网络工具无法使用，请自行检查"
+            return 1
+    fi
+
+    find_available_port() {
+        local start_port=$1
+        local end_port=$2
+        local port
+
+        for port in $(seq $start_port $end_port); do
+            if ! $check_command | grep -q ":$port "; then
+                echo "$port"
+                return
+            fi
+        done
+        _red "在范围（$start_port-$end_port）内没有找到可用的端口" >&2
+        return 1
+    }
+
+    # 如果Docker容器未运行，检查每个端口
+    if ! docker inspect "$docker_name" >/dev/null 2>&1; then
+        for i in "${!default_ports[@]}"; do
+            local default_port="${default_ports[i]}"
+
+            # 确保default_port不为空
+            if [ -n "$default_port" ]; then
+                # 检查端口是否被占用
+                if $check_command | grep -q ":$default_port "; then
+                    # 端口被占用，查找可用端口
+                    local new_port=$(find_available_port $((30000 + i * 5000)) 50000)
+
+                    # 确保新端口不与其他默认端口和已使用端口冲突
+                    while [[ " ${default_ports[@]} " =~ " $new_port " ]] || [[ " ${used_ports[@]} " =~ " $new_port " ]]; do
+                        new_port=$(find_available_port $((30000 + i * 5000)) 50000)
+                    done
+
+                    docker_ports[i]="$new_port"
+                    used_ports+=("$new_port")  # 将新端口添加到已使用的端口列表
+                    _yellow "默认端口${default_port}被占用，端口跳跃为${docker_ports[i]}"
+                else
+                    docker_ports[i]="$default_port"
+                    used_ports+=("$default_port")  # 将默认端口添加到已使用的端口列表
+                    _yellow "使用默认端口${docker_ports[i]}"
+                fi
+            fi
+        done
+    fi
+
+    # 赋值变量
+    docker_port_1="${docker_ports[0]}"
+    docker_port_2="${docker_ports[1]}"
+    docker_port_3="${docker_ports[2]}"
+}
+
 manage_dockerapp() {
     local choice
     while true; do
