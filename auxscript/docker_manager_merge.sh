@@ -180,7 +180,7 @@ check_available_port() {
 
                     # 如果没有找到可用端口，输出错误信息
                     if [ "$found_port" = false ]; then
-                        _red "在范围（30000-50000）内没有找到可用的端口" >&2
+                        _red "没有找到可用的端口" >&2
                         return 1
                     fi
                 else
