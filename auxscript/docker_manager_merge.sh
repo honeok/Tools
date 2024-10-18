@@ -301,14 +301,14 @@ manage_dockerapp() {
                 cd "$docker_workdir"
 
                 if [ -f "docker-compose.yml" ]; then
-                    ${EDITOR:-vi} docker-compose.yml
+                    command -v vim >/dev/null 2>&1 && { vim docker-compose.yml; } || { vi docker-compose.yml; }
 
                     manage_compose start
 
                     # 检查重启状态
                     [ "$?" -eq 0 ] && _green "$docker_name重启成功" || _red "$docker_name重启失败"
                 else
-                    _red "docker-compose.yml 文件不存在，请检查工作目录"
+                    _red "docker-compose.yml文件不存在，请检查工作目录"
                 fi
                 ;;
             4)
