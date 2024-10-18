@@ -104,10 +104,6 @@ check_available_port() {
     local docker_ports=( "" "" "" )  # 存储最终可用端口
     local used_ports=()  # 存储已使用的端口
 
-    docker_port_1=""
-    docker_port_2=""
-    docker_port_3=""
-
     # 确定可用的端口检测工具
     if command -v netstat >/dev/null 2>&1; then
         check_command="netstat -tuln"
