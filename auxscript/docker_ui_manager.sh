@@ -117,6 +117,7 @@ check_available_port() {
         else
             _red "安装失败且默认网络工具无法使用，请自行检查"
             return 1
+        fi
     fi
 
     find_available_port() {
