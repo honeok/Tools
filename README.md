@@ -15,7 +15,7 @@ bash <(curl -sL gh-proxy.com/github.com/honeok/shell/raw/main/honeok.sh)
 ```shell
 curl -sL -O github.com/honeok/shell/raw/main/honeok.sh && chmod +x ./honeok.sh && ./honeok.sh
 ```
-or 使用Github代理在线执行
+or 使用Github代理本地执行
 ```shell
 curl -sL -O gh-proxy.com/github.com/honeok/shell/raw/main/honeok.sh && chmod +x ./honeok.sh && ./honeok.sh
 ```
@@ -23,4 +23,4 @@ curl -sL -O gh-proxy.com/github.com/honeok/shell/raw/main/honeok.sh && chmod +x 
 
 ## 鸣谢
 
-kejilion：[https://github.com/kejilion/sh](https://github.com/kejilion/sh)
+kejilion：[https://github.com/kejilion](https://github.com/kejilion)
