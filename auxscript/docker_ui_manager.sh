@@ -236,7 +236,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-ubuntu-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             7)
                 local choice
@@ -275,7 +275,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qbittorrent-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker logs qbittorrent"
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             9)
                 clear
@@ -380,7 +380,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/zentao-server-docker-compose.yml)
                 docker_exec_command="echo 初始用户名: admin"
                 docker_password="echo 初始密码: 123456"
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             12)
                 docker_name="qinglong"
@@ -391,7 +391,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qinglong-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             14)
                 docker_name="easyimage"
@@ -402,7 +402,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/easyimage-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             15)
                 docker_name="emby"
@@ -414,7 +414,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/emby-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             16)
                 docker_name="looking-glass"
@@ -426,7 +426,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/looking-glass-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             17)
                 docker_name="adguardhome"
@@ -437,7 +437,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/adguardhome-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             18)
                 docker_name="onlyoffice"
@@ -448,7 +448,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/onlyoffice-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             19)
                 check_network_protocols
@@ -519,7 +519,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/portainer-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             21)
                 docker_name="vscode-web"
@@ -530,7 +530,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/vscode-web-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             22)
                 docker_name="uptimekuma"
@@ -541,7 +541,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/uptimekuma-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             23)
                 docker_name="memeos"
@@ -552,7 +552,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/memeos-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             24)
                 docker_name="webtop"
@@ -563,7 +563,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             25)
                 docker_name="nextcloud"
@@ -575,7 +575,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/nextcloud-simple-docker-compose.yml)
                 docker_exec_command="echo 账号: nextcloud  密码: $random_password"
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             26)
                 docker_name="qd"
@@ -586,7 +586,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qd-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             27)
                 docker_name="dockge"
@@ -597,7 +597,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/dockge-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             28)
                 docker_name="speedtest"
@@ -608,7 +608,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/speedtest-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             29)
                 docker_name="searxng"
@@ -619,7 +619,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/searxng-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             30)
                 docker_name="photoprism"
@@ -631,7 +631,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/photoprism-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: $random_password"
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             31)
                 docker_name="s-pdf"
@@ -642,7 +642,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/s-pdf-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             32)
                 docker_name="drawio"
@@ -653,7 +653,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/drawio-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             33)
                 docker_name="sun-panel"
@@ -664,7 +664,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sun-panel-docker-compose.yml)
                 docker_exec_command="echo 账号: admin@sun.cc  密码: 12345678"
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             34)
                 docker_name="pingvin-share"
@@ -675,7 +675,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/pingvin-share-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             35)
                 docker_name="moments"
@@ -686,7 +686,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/moments-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: a123456"
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             36)
                 docker_name="lobe-chat"
@@ -697,7 +697,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/lobe-chat-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             37)
                 docker_name="myip"
@@ -708,7 +708,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/myip-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             38)
                 clear
@@ -730,7 +730,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/bililive-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             41)
                 docker_name="it-tools"
@@ -741,7 +741,7 @@ panel_manage() {
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/it-tools-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
-                manage_dockerapplication
+                manage_dockerapp
                 ;;
             51)
                 clear
