@@ -394,7 +394,7 @@ panel_manage() {
                 while true; do
                     clear
                     echo "哪吒监控管理"
-                    echo "开源,轻量,易用的服务器监控与运维工具"
+                    echo "开源、轻量、易用的服务器监控与运维工具"
                     echo "------------------------"
                     echo "1. 使用           0. 返回上一级"
                     echo "------------------------"
@@ -404,7 +404,7 @@ panel_manage() {
 
                     case $choice in
                         1)
-                            curl -L https://raw.githubusercontent.com/naiba/nezha/master/script/install.sh  -o nezha.sh && chmod +x nezha.sh
+                            curl -fsSL -o "nezha.sh" ${github_proxy}raw.githubusercontent.com/naiba/nezha/master/script/install.sh && chmod +x nezha.sh
                             ./nezha.sh
                             ;;
                         0)
