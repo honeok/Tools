@@ -404,8 +404,8 @@ panel_manage() {
 
                     case $choice in
                         1)
-                            curl -fsSL -o "nezha.sh" ${github_proxy}raw.githubusercontent.com/naiba/nezha/master/script/install.sh && chmod +x nezha.sh
-                            ./nezha.sh
+                            cd ~
+                            [ ! -f ./nezha.sh ] && curl -fsSL -o "nezha.sh" "${github_proxy}raw.githubusercontent.com/naiba/nezha/master/script/install.sh" && chmod +x nezha.sh && ./nezha.sh || { chmod +x nezha.sh && ./nezha.sh; }
                             ;;
                         0)
                             break
