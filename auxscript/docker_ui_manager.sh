@@ -98,6 +98,42 @@ ip_address() {
     done
 }
 
+check_network_protocols() {
+    ip_address
+
+    ipv4_enabled=false
+    ipv6_enabled=false
+
+    if [ -n "$ipv4_address" ]; then
+        ipv4_enabled=true
+    fi
+    if [ -n "$ipv6_address" ]; then
+        ipv6_enabled=true
+    fi
+}
+
+display_docker_access() {
+    local docker_web_port
+
+    docker_web_port=$(docker inspect "$docker_name" --format '{{ range $p, $conf := .NetworkSettings.Ports }}{{ range $conf }}{{ $p }}:{{ .HostPort }}{{ end }}{{ end }}' | grep -oP '(\d+)$')
+    echo "------------------------"
+    echo "访问地址:"
+    if [ "$ipv4_enabled" = true ]; then
+        echo -e "http://$ipv4_address:$docker_web_port"
+    fi
+    if [ "$ipv6_enabled" = true ]; then
+        echo -e "http://[$ipv6_address]:$docker_web_port"
+    fi
+}
+
+check_dockerapp_status() {
+    if docker inspect "$docker_name" &>/dev/null; then
+        dockerapp_status="${green}已安装${white}"
+    else
+        dockerapp_status="${yellow}未安装${white}"
+    fi
+}
+
 check_available_port() {
     local check_command
     local default_ports=( "$default_port_1" "$default_port_2" "$default_port_3" )
@@ -172,9 +208,106 @@ check_available_port() {
 
 manage_dockerapp() {
     local choice
+    check_network_protocols
     while true; do
         clear
+        check_dockerapp_status
+        echo -e "$docker_name $dockerapp_status"
+        echo "$docker_describe"
+        echo "$docker_url"
 
+        # 获取并显示当前端口
+        if docker inspect "$docker_name" &>/dev/null; then
+            display_docker_access
+        fi
+        echo "------------------------"
+        echo "1. 安装            2. 更新"
+        echo "3. 编辑            4. 卸载"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                #install_docker
+                [ ! -d "$docker_workdir" ] && mkdir -p "$docker_workdir"
+                cd "$docker_workdir"
+
+                # 判断$docker_port_1是否已硬性赋值
+                if [ ! -z "$docker_port_1" ]; then
+                    echo "$docker_compose_content" > docker-compose.yml
+                else
+                    # 只有在端口未硬性赋值时才进行端口检查和替换
+                    check_available_port
+                    echo "$docker_compose_content" > docker-compose.yml
+                    # 构建并执行Sed命令替换端口
+                    sed_commands="s#default_port_1#$docker_port_1#g;"
+                    [ -n "$docker_port_2" ] && sed_commands+="s#default_port_2#$docker_port_2#g;"
+                    [ -n "$docker_port_3" ] && sed_commands+="s#default_port_3#$docker_port_3#g;"
+                    [ -n "$random_password" ] && sed_commands+="s#random_password#$random_password#g;"
+                    sed -i -e "$sed_commands" docker-compose.yml
+                fi
+
+                manage_compose start
+                clear
+                _green "${docker_name}安装完成"
+                display_docker_access
+                echo ""
+
+                # 前置变量非空则执行
+                if [ -n "$docker_exec_command" ]; then
+                    $docker_exec_command
+                fi
+                if [ -n "$docker_password" ]; then
+                    $docker_password
+                fi
+
+                # 清空端口变量
+                docker_port_1=""
+                docker_port_2=""
+                docker_port_3=""
+                ;;
+            2)
+                cd "$docker_workdir"
+                manage_compose pull && manage_compose start
+
+                clear
+                _green "$docker_name更新完成"
+                display_docker_access
+                echo ""
+                "$docker_exec_command"
+                "$docker_password"
+                ;;
+            3)
+                cd "$docker_workdir"
+
+                vim docker-compose.yml
+                manage_compose start
+
+                if [ "$?" -eq 0 ]; then
+                    _green "$docker_name重启成功"
+                else
+                    _red "$docker_name重启失败"
+                fi
+                ;;
+            4)
+                cd "$docker_workdir"
+                manage_compose down_all
+                [ -d "$docker_workdir" ] && rm -fr "${docker_workdir}"
+                _green "${docker_name}应用已卸载"
+                break
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
     done
 }
 
@@ -283,9 +416,9 @@ panel_manage() {
                 docker_name="poste"
                 docker_workdir="/data/docker_data/$docker_name"
                 while true; do
-                    check_docker_status
+                    check_dockerapp_status
                     clear
-                    echo -e "邮局服务 $check_docker"
+                    echo -e "邮局服务 $dockerapp_status"
                     echo "Poste.io是一个开源的邮件服务器解决方案"
                     echo ""
                     echo "端口检测"
@@ -455,9 +588,9 @@ panel_manage() {
                 docker_name="safeline-mgt"
                 docker_port_1=9443
                 while true; do
-                    check_docker_status
+                    check_dockerapp_status
                     clear
-                    echo -e "雷池服务 $check_docker"
+                    echo -e "雷池服务 $dockerapp_status"
                     echo "雷池是长亭科技开发的WAF站点防火墙程序面板,可以反代站点进行自动化防御"
 
                     if docker inspect "$docker_name" &>/dev/null; then
