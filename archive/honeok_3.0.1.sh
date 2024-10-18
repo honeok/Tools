@@ -242,19 +242,12 @@ system_info(){
     fi
 
     # 获取运营商信息
-    local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}')
-    # 检查是否获取到信息，如果没有则使用备用命令
-    if [ -z "$isp_info" ]; then
-        isp_info=$(curl -s ping0.cc/geo | tail -n 1)
-    fi
+    local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}' || curl -s http://ip-api.com/line | tail -n 2 | head -n 1)
 
     ip_address
 
     # 获取地理位置
-    local location=$(curl -s ipinfo.io/city)
-    if [ -z "$location" ]; then
-        location=$(curl -s https://api.db-ip.com/v2/free/self/city)
-    fi
+    local location=$(curl -s https://ipinfo.io/city || curl -s http://ip-api.com/line | head -n 2 | tail -n 1)
 
     # 获取系统时区
     local system_time
