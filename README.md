@@ -3,11 +3,11 @@
 在线执行
 
 ```shell
-bash <(wget -qO- github.com/honeok/shell/raw/main/honeok.sh)
+bash <(curl -sL github.com/honeok/shell/raw/main/honeok.sh)
 ```
 or 使用Github代理在线执行
 ```shell
-bash <(wget -qO- gh-proxy.com/github.com/honeok/shell/raw/main/honeok.sh)
+bash <(curl -sL gh-proxy.com/github.com/honeok/shell/raw/main/honeok.sh)
 ```
 
 下载本地执行
