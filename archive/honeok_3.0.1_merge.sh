@@ -3,7 +3,7 @@
 # Blog：www.honeok.com
 # Github：https://github.com/honeok/shell
 
-honeok_v="v3.0.1 (2024.10.17)"
+honeok_v="v3.0.1 (2024.10.20)"
 #export LANG=en_US.UTF-8
 
 yellow='\033[93m'        # 亮黄色
