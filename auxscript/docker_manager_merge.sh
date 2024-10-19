@@ -453,7 +453,7 @@ panel_manage() {
                     fi
 
                     echo "------------------------"
-                    echo "1. 安装     2. 更新     3. 卸载"
+                    echo "1. 安装           2. 更新           3. 卸载"
                     echo "------------------------"
                     echo "0. 返回上一级"
                     echo "------------------------"
@@ -463,7 +463,7 @@ panel_manage() {
 
                     case $choice in
                         1)
-                            echo -n "请设置邮箱域名,例如mail.google.com:"
+                            echo -n "请设置邮箱域名，例如mail.google.com:"
                             read -r domain
 
                             [ ! -d "$docker_workdir" ] && mkdir "$docker_workdir" -p
