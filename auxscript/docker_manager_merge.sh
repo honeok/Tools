@@ -609,7 +609,7 @@ panel_manage() {
                     check_dockerapp_status
                     clear
                     echo -e "雷池服务 $dockerapp_status"
-                    echo "雷池是长亭科技开发的WAF站点防火墙程序面板,可以反代站点进行自动化防御"
+                    echo "雷池是长亭科技开发的WAF站点防火墙程序面板，可以反代站点进行自动化防御"
 
                     if docker inspect "$docker_name" &>/dev/null; then
                     	display_docker_access
@@ -648,7 +648,7 @@ panel_manage() {
                     	4)
                     		cd /data/safeline
                     		manage_compose down_all
-                    		echo "如果你是默认安装目录那现在项目已经卸载,如果你是自定义安装目录你需要到安装目录下自行执行:"
+                    		echo "如果你是默认安装目录那现在项目已经卸载，如果你是自定义安装目录你需要到安装目录下自行执行:"
                     		echo "docker compose down --rmi all --volumes"
                     		;;
                     	0)
