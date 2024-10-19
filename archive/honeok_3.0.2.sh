@@ -2018,7 +2018,7 @@ manage_dockerapp() {
                     sed_commands="s#default_port_1#$docker_port_1#g;"
                     [ -n "$docker_port_2" ] && sed_commands+="s#default_port_2#$docker_port_2#g;"
                     [ -n "$docker_port_3" ] && sed_commands+="s#default_port_3#$docker_port_3#g;"
-                    [ -n "$random_password" ] && sed_commands+="s#random_password#$random_password#g;"
+                    [ -n "$random_password" ] && sed_commands+="s#example_password#$random_password#g;"
                     sed -i -e "$sed_commands" docker-compose.yml
                 fi
 
