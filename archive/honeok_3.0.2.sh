@@ -3,7 +3,7 @@
 # Blog：www.honeok.com
 # Github：https://github.com/honeok/shell
 
-honeok_v="v3.0.1 (2024.10.20)"
+honeok_v="v3.0.2 (2024.10.20)"
 #export LANG=en_US.UTF-8
 
 yellow='\033[93m'        # 亮黄色
@@ -7824,13 +7824,16 @@ node_create() {
         _yellow "单协议/XRAY面板及其他"
         echo "-------------------------------"
         echo "25. Brutal Reality一键脚本"
-        echo "26. Vaxilu X-UI面板一键脚本"
-        echo "27. FranzKafkaYu X-UI面板一键脚本"
-        echo "28. Alireza0 X-UI面板一键脚本"
-        echo "29. MHSanaei 3X-UI面板一键脚本"
+        echo "26. Vaxilu xui面板一键脚本"
+        echo "27. FranzKafkaYu xui面板一键脚本"
+        echo "28. Alireza0 xui面板一键脚本"
+        echo "29. MHSanaei 伊朗3xui面板一键脚本"
+        echo "30. Xeefei 中文版3xui面板一键脚本"
         echo "-------------------------------"
         echo "40. OpenVPN一键安装脚本"
         echo "41. 一键搭建TG代理"
+        echo "-------------------------------"
+        echo "50. Sub-Store节点订阅管理面板"
         echo "-------------------------------"
         echo "0. 返回主菜单"
         echo "-------------------------------"
@@ -7894,7 +7897,7 @@ node_create() {
                     sleep 2
                     honeok
                 else
-                    _yellow "当前系统内核版本 $current_kernel_version,符合安装要求"
+                    _yellow "当前系统内核版本 $current_kernel_version，符合安装要求"
                     sleep 1
                     bash <(curl -fsSL https://github.com/vveg26/sing-box-reality-hysteria2/raw/main/tcp-brutal-reality.sh)
                     sleep 1
@@ -7916,6 +7919,10 @@ node_create() {
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
                 ;;
+            30)
+                clear
+                bash <(curl -Ls https://raw.githubusercontent.com/xeefei/3x-ui/master/install.sh)
+                ;;
             40)
                 clear
                 install wget
@@ -7927,6 +7934,18 @@ node_create() {
                 mkdir /home/mtproxy && cd /home/mtproxy
                 curl -fsSL -o mtproxy.sh https://github.com/ellermister/mtproxy/raw/master/mtproxy.sh && chmod +x mtproxy.sh && bash mtproxy.sh
                 sleep 1
+                ;;
+            50)
+                docker_name="sub-store"
+                docker_workdir="/data/docker_data/$docker_name"
+                docker_describe="强大的节点管理工具！多机场订阅、自建节点的节点整理工具！"
+                docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store-Front-End https://github.com/sub-store-org/Sub-Store"
+                default_port_1=3001
+                random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
+                docker_exec_command="随机口令: $random_password"
+                docker_password=""
+                manage_dockerapp
                 ;;
             0)
                 honeok # 返回主菜单
