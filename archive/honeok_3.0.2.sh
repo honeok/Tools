@@ -7942,7 +7942,7 @@ node_create() {
                 docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store-Front-End https://github.com/sub-store-org/Sub-Store"
                 default_port_1=3001
                 random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
                 docker_exec_command="随机口令: $random_password"
                 docker_password=""
                 manage_dockerapp
