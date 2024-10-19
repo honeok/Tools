@@ -2003,7 +2003,7 @@ manage_dockerapp() {
 
         case $choice in
             1)
-                #install_docker
+                install_docker
                 [ ! -d "$docker_workdir" ] && mkdir -p "$docker_workdir"
                 cd "$docker_workdir"
 
