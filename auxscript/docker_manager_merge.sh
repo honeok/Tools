@@ -437,7 +437,7 @@ panel_manage() {
                     check_dockerapp_status
                     clear
                     echo -e "邮局服务 $dockerapp_status"
-                    echo "Poste.io是一个开源的邮件服务器解决方案"
+                    echo "Poste.io 是一个开源的邮件服务器解决方案"
                     echo ""
                     echo "端口检测"
                     if echo "quit" | timeout 3 telnet smtp.qq.com 25 | grep 'Connected'; then
@@ -468,18 +468,18 @@ panel_manage() {
 
                             [ ! -d "$docker_workdir" ] && mkdir "$docker_workdir" -p
                             echo "$domain" > "$docker_workdir/mail.txt"
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
 
                             echo "------------------------"
                             ip_address
                             echo "先解析这些DNS记录"
-                            echo "A         mail        $ipv4_address"
-                            echo "CNAME     imap        $domain"
-                            echo "CNAME     pop         $domain"
-                            echo "CNAME     smtp        $domain"
-                            echo "MX        @           $domain"
-                            echo "TXT       @           v=spf1 mx ~all"
-                            echo "TXT       ?           ?"
+                            echo "A           mail          $ipv4_address"
+                            echo "CNAME       imap          $domain"
+                            echo "CNAME       pop           $domain"
+                            echo "CNAME       smtp          $domain"
+                            echo "MX          @             $domain"
+                            echo "TXT         @             v=spf1 mx ~all"
+                            echo "TXT         ?             ?"
                             echo ""
                             echo "------------------------"
                             _yellow "按任意键继续"
@@ -498,7 +498,7 @@ panel_manage() {
                             echo ""
                             ;;
                         2)
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
                             manage_compose pull && manage_compose start
                             echo "poste.io更新完成"
                             echo "------------------------"
@@ -506,7 +506,7 @@ panel_manage() {
                             echo "https://$domain"
                             ;;
                         3)
-                            cd "$docker_workdir" || { _red "无法进入目录$docker_workdir"; return 1; }
+                            cd "$docker_workdir"
                             manage_compose down_all
                             [ -d "$docker_workdir" ] && rm -fr "$docker_workdir"
                             _green "Poste卸载完成"
