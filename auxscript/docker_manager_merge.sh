@@ -697,7 +697,7 @@ panel_manage() {
             23)
                 docker_name="memeos"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Memos是一款轻量级,自托管的备忘录中心"
+                docker_describe="Memos是一款轻量级，自托管的备忘录中心"
                 docker_url="官网介绍: https://github.com/usememos/memos"
                 default_port_1=5230
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/memeos-docker-compose.yml)
@@ -708,7 +708,7 @@ panel_manage() {
             24)
                 docker_name="webtop"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="webtop基于Alpine,Ubuntu,Fedora和Arch的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
+                docker_describe="webtop基于Alpine、Ubuntu、Fedora和Arch的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-docker-compose.yml)
@@ -719,7 +719,7 @@ panel_manage() {
             25)
                 docker_name="nextcloud"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Nextcloud拥有超过400,000个部署,是您可以下载的最受欢迎的本地内容协作平台"
+                docker_describe="Nextcloud拥有超过400,000个部署，是您可以下载的最受欢迎的本地内容协作平台"
                 docker_url="官网介绍: https://nextcloud.com/"
                 default_port_1=8080
                 random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
