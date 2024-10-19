@@ -7939,11 +7939,11 @@ node_create() {
                 docker_name="sub-store"
                 docker_workdir="/data/docker_data/$docker_name"
                 docker_describe="强大的节点管理工具！多机场订阅、自建节点的节点整理工具！"
-                docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store-Front-End https://github.com/sub-store-org/Sub-Store"
+                docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store"
                 default_port_1=3001
                 random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
                 docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
-                docker_exec_command="随机口令: $random_password"
+                docker_exec_command="echo 随机口令: $random_password，请牢记！"
                 docker_password=""
                 manage_dockerapp
                 ;;
