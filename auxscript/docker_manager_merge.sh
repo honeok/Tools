@@ -335,6 +335,8 @@ panel_manage() {
         clear
         echo "▶ 面板工具"
         echo "------------------------"
+        echo "1. 宝塔面板官方版                      2. aaPanel宝塔国际版"
+        echo "3. 1Panel新一代管理面板                4. NginxProxyManager可视化面板"
         echo "5. AList多存储文件列表程序             6. Ubuntu远程桌面网页版"
         echo "7. 哪吒探针VPS监控面板                 8. QB离线BT磁力下载面板"
         echo "9. Poste.io邮件服务器程序"
@@ -355,7 +357,7 @@ panel_manage() {
         echo "33. Sun Panel导航面板                  34. Pingvin Share文件分享平台"
         echo "35. 极简朋友圈                         36. LobeChatAI聊天聚合网站"
         echo "37. MyIP工具箱                         38. 小雅Alist全家桶"
-        echo "39. Bililive直播录制工具"
+        echo "39. Bililive直播录制工具                40.  Webssh网页版SSH连接工具"
         echo "41. It-tools工具箱"
         echo "------------------------"
         echo "51. PVE开小鸡面板"
@@ -367,6 +369,50 @@ panel_manage() {
         read -r choice
 
         case $choice in
+            4)
+                docker_name="npm"
+                docker_workdir="/data/docker_data/$docker_name"
+                docker_describe="如果您已经安装了其他面板工具或者LDNMP建站环境，建议先卸载，再安装npm！"
+                docker_url="官网介绍: https://nginxproxymanager.com/"
+                docker_port_1=81
+
+                if ! docker inspect "$docker_name" >/dev/null 2>&1; then
+                    while true;do
+                        echo "------------------------"
+                        echo "1. 完整安装npm，基于mariadb（默认）"
+                        echo "2. 精简安装npm，基于SQLlite"
+                        echo "------------------------"
+                        echo "0. 返回上一级"
+                        echo "------------------------"
+                        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值：完整安装）:${white}"
+
+                        # 重置choice变量
+                        choice=""
+                        read -r choice
+
+                        case $choice in
+                            1|"")
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/npm/docker-compose-latest.yml)
+                                break
+                                ;;
+                            2)
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker_app/npm-docker-compose.yml)
+                                break
+                                ;;
+                            0)
+                                panel_manage # 返回面板管理界面
+                                ;;
+                            *)
+                                _red "无效选项，请重新输入"
+                                ;;
+                        esac
+                    done
+                fi
+
+                docker_exec_command="echo 初始用户名: admin@example.com"
+                docker_password="echo 初始密码: changeme"
+                manage_dockerapp
+                ;;
             5)
                 docker_name="alist"
                 docker_workdir="/data/docker_data/$docker_name"
