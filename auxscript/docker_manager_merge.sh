@@ -753,7 +753,7 @@ panel_manage() {
             28)
                 docker_name="speedtest"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="speedtest是用Javascript实现的轻量级速度测试工具,即开即用"
+                docker_describe="speedtest是用Javascript实现的轻量级速度测试工具，即开即用"
                 docker_url="官网介绍: https://github.com/librespeed/speedtest"
                 default_port_1=8080
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/speedtest-docker-compose.yml)
@@ -787,7 +787,7 @@ panel_manage() {
             31)
                 docker_name="s-pdf"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker,允许您对PDF文件执行各种操作,例如拆分合并,转换,重新组织,添加图像,旋转,压缩等"
+                docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker，允许您对PDF文件执行各种操作，例如拆分合并、转换、重新组织、添加图像、旋转、压缩等"
                 docker_url="官网介绍: https://github.com/Stirling-Tools/Stirling-PDF"
                 default_port_1=8080
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/s-pdf-docker-compose.yml)
@@ -798,7 +798,7 @@ panel_manage() {
             32)
                 docker_name="drawio"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="这是一个强大图表绘制软件,思维导图,拓扑图,流程图,都能画"
+                docker_describe="这是一个强大图表绘制软件，思维导图、拓扑图、流程图、都能画"
                 docker_url="官网介绍: https://www.drawio.com/"
                 default_port_1=8080
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/drawio-docker-compose.yml)
