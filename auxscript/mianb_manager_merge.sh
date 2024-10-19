@@ -1044,10 +1044,21 @@ linux_panel() {
 
                 if [ ! -d "$docker_workdir" ]; then
                     mkdir -p "$docker_workdir" > /dev/null 2>&1
-                    wget -qO "$docker_workdir/config.yml" "https://raw.githubusercontent.com/hr3lxphr6j/bililive-go/master/config.yml"
+                    wget -qO "$docker_workdir/config.yml" "${github_proxy}raw.githubusercontent.com/hr3lxphr6j/bililive-go/master/config.yml"
                 fi
 
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/bililive-docker-compose.yml)
+                docker_exec_command=""
+                docker_password=""
+                manage_dockerapp
+                ;;
+            40)
+                docker_name="webssh"
+                docker_workdir="/data/docker_data/$docker_name"
+                docker_describe="简易在线SSH和sftp工具，可在线敲命令和上传下载文件"
+                docker_url="官网介绍: https://github.com/Jrohy/webssh"
+                default_port_1=5032
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webssh-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
