@@ -809,7 +809,7 @@ panel_manage() {
             33)
                 docker_name="sun-panel"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Sun-Panel服务器,NAS导航面板,Homepage,浏览器首页"
+                docker_describe="Sun-Panel服务器，NAS导航面板、Homepage、浏览器首页"
                 docker_url="官网介绍: https://doc.sun-panel.top/zh_cn/"
                 default_port_1=3002
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sun-panel-docker-compose.yml)
@@ -820,7 +820,7 @@ panel_manage() {
             34)
                 docker_name="pingvin-share"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Pingvin Share是一个可自建的文件分享平台,是WeTransfer的一个替代品"
+                docker_describe="Pingvin Share是一个可自建的文件分享平台，是WeTransfer的一个替代品"
                 docker_url="官网介绍: https://github.com/stonith404/pingvin-share"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/pingvin-share-docker-compose.yml)
@@ -831,7 +831,7 @@ panel_manage() {
             35)
                 docker_name="moments"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="极简朋友圈,高仿微信朋友圈,记录你的美好生活"
+                docker_describe="极简朋友圈，高仿微信朋友圈，记录你的美好生活"
                 docker_url="官网介绍: https://github.com/kingwrcy/moments?tab=readme-ov-file"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/moments-docker-compose.yml)
@@ -842,7 +842,7 @@ panel_manage() {
             36)
                 docker_name="lobe-chat"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="LobeChat聚合市面上主流的AI大模型,ChatGPT/Claude/Gemini/Groq/Ollama"
+                docker_describe="LobeChat聚合市面上主流的AI大模型，ChatGPT/Claude/Gemini/Groq/Ollama"
                 docker_url="官网介绍: https://github.com/lobehub/lobe-chat"
                 default_port_1=3210
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/lobe-chat-docker-compose.yml)
