@@ -381,7 +381,7 @@ panel_manage() {
             6)
                 docker_name="webtop-ubuntu"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="webtop基于Ubuntu的容器,包含官方支持的完整桌面环境,可通过任何现代Web浏览器访问"
+                docker_describe="webtop基于Ubuntu的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-ubuntu-docker-compose.yml)
