@@ -558,7 +558,7 @@ panel_manage() {
             15)
                 docker_name="emby"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="emby是一个主从式架构的媒体服务器软件,可以用来整理服务器上的视频和音频,并将音频和视频流式传输到客户端设备"
+                docker_describe="emby是一个主从式架构的媒体服务器软件，可以用来整理服务器上的视频和音频，并将音频和视频流式传输到客户端设备"
                 docker_url="官网介绍: https://emby.media/"
                 default_port_1=8096
                 default_port_2=8920
@@ -570,7 +570,7 @@ panel_manage() {
             16)
                 docker_name="looking-glass"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="Speedtest测速面板是一个VPS网速测试工具,多项测试功能,还可以实时监控VPS进出站流量"
+                docker_describe="Speedtest测速面板是一个VPS网速测试工具，多项测试功能，还可以实时监控VPS进出站流量"
                 docker_url="官网介绍: https://github.com/wikihost-opensource/als"
                 default_port_1=8080
                 default_port_2=30000
@@ -582,7 +582,7 @@ panel_manage() {
             17)
                 docker_name="adguardhome"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件,未来将不止是一个DNS服务器"
+                docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件，未来将不止是一个DNS服务器"
                 docker_url="官网介绍: https://hub.docker.com/r/adguard/adguardhome"
                 default_port_1=3000
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/adguardhome-docker-compose.yml)
@@ -593,7 +593,7 @@ panel_manage() {
             18)
                 docker_name="onlyoffice"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="onlyoffice是一款开源的在线office工具,太强大了!"
+                docker_describe="onlyoffice是一款开源的在线office工具，太强大了！"
                 docker_url="官网介绍: https://www.onlyoffice.com/"
                 default_port_1=8080
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/onlyoffice-docker-compose.yml)
