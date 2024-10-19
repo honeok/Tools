@@ -515,11 +515,11 @@ linux_panel() {
 
                         case $choice in
                             1|"")
-                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/npm/docker-compose-latest.yml)
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/npm/latest-docker-compose.yml)
                                 break
                                 ;;
                             2)
-                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker_app/npm-docker-compose.yml)
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/npm-docker-compose.yml)
                                 break
                                 ;;
                             0)
