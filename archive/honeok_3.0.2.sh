@@ -7943,7 +7943,7 @@ node_create() {
                 default_port_1=3001
                 random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
                 docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
-                docker_exec_command="echo 随机口令: $random_password，请牢记！"
+                docker_exec_command="echo 随机口令: $random_password 请牢记！"
                 docker_password=""
                 manage_dockerapp
                 ;;
