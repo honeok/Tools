@@ -853,7 +853,7 @@ panel_manage() {
             37)
                 docker_name="myip"
                 docker_workdir="/data/docker_data/$docker_name"
-                docker_describe="是一个多功能IP工具箱,可以查看自己IP信息及连通性,用网页面板呈现"
+                docker_describe="是一个多功能IP工具箱，可以查看自己IP信息及连通性，用网页面板呈现"
                 docker_url="官网介绍: https://github.com/jason5ng32/MyIP/blob/main/README_ZH.md"
                 default_port_1=18966
                 docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/myip-docker-compose.yml)
