@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Author: honeok
-# Blog：www.honeok.com
-# Github：https://github.com/honeok/shell
+## Author: honeok
+## Blog：www.honeok.com
+## Github：https://github.com/honeok/shell
 
-honeok_v="v3.0.2 (2024.10.20)"
+honeok_v="v3.0.3 (2024.10.20)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -7832,6 +7832,7 @@ node_create() {
         echo "28. Alireza0 xui面板一键脚本"
         echo "29. MHSanaei 伊朗3xui面板一键脚本"
         echo "30. Xeefei 中文版3xui面板一键脚本"
+        echo "31. jonssonyan Hysteria2面板"
         echo "-------------------------------"
         echo "40. OpenVPN一键安装脚本"
         echo "41. 一键搭建TG代理"
@@ -7925,6 +7926,10 @@ node_create() {
             30)
                 clear
                 bash <(curl -Ls https://raw.githubusercontent.com/xeefei/3x-ui/master/install.sh)
+                ;;
+            31)
+                clear
+                bash <(curl -fsSL https://raw.githubusercontent.com/jonssonyan/h-ui/main/install.sh)
                 ;;
             40)
                 clear
