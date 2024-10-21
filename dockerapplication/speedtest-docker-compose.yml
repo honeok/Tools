@@ -1,0 +1,15 @@
+services:
+  speedtest:
+    image: ghcr.io/librespeed/speedtest
+    container_name: speedtest
+    ports:
+      - "default_port_1:80"
+    environment:
+      - MODE=standalone
+    restart: unless-stopped
+    networks:
+      - speedtest
+
+networks:
+  speedtest:
+    driver: bridge

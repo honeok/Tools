@@ -1,0 +1,28 @@
+services:
+  webtop:
+    image: lscr.io/linuxserver/webtop
+    container_name: webtop
+    security_opt:
+      - seccomp=unconfined
+    ports:
+      - "default_port_1:3000"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - SUBFOLDER=/
+      - TITLE=Webtop
+      - LC_ALL=zh_CN.UTF-8
+      - DOCKER_MODS=linuxserver/mods:universal-package-install
+      - INSTALL_PACKAGES=font-noto-cjk
+    volumes:
+      - ./config:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    shm_size: "1gb"
+    networks:
+      - webtop
+
+networks:
+  webtop:
+    driver: bridge

@@ -1,0 +1,17 @@
+services:
+  sun-panel:
+    image: hslr/sun-panel
+    container_name: sun-panel
+    ports:
+      - "default_port_1:3002"
+    volumes:
+      - ./conf:/app/conf
+      - ./uploads:/app/uploads
+      - ./database:/app/database
+    restart: unless-stopped
+    networks:
+      - sun-panel
+
+networks:
+  sun-panel:
+    driver: bridge

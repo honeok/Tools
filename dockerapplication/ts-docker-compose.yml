@@ -1,0 +1,48 @@
+services:
+  teamspeak:
+    image: teamspeak:3.13.7
+    container_name: teamspeak
+    restart: unless-stopped
+    ports:
+      - '9987:9987/udp'  # 语音服务
+      - '10011:10011'    # 服务器查询 raw(可选)
+      #- '10022:10022'   # 服务器查询 SSH(可选)
+      #- '10080:10080'   # 网络请求 http(可选)
+      #- '10443:10443'   # 网络请求 https(可选)
+      - '30033:30033'    # 文件传输
+      #- '41144:41144'    # DNS域名解析(可选)
+    volumes:
+      - ./ts3server:/var/ts3server
+    networks:
+      - teamspeak
+    environment:
+      - TS3SERVER_DB_PLUGIN=ts3db_mariadb
+      - TS3SERVER_DB_SQLCREATEPATH=create_mariadb
+      - TS3SERVER_DB_HOST=db
+      - TS3SERVER_DB_USER=root
+      - TS3SERVER_DB_PASSWORD=kv2k5s22J%dW6LNG
+      - TS3SERVER_DB_NAME=teamspeak
+      - TS3SERVER_DB_LOG_DAYS=30
+      - TS3SERVER_DB_WAITUNTILREADY=30
+      - TS3SERVER_DB_CLIENTKEEPDAYS=1
+      - TS3SERVER_LICENSE=accept
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:11.4.2
+    container_name: teamspeak_db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=kv2k5s22J%dW6LNG
+      - MYSQL_DATABASE=teamspeak
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    networks:
+      - teamspeak
+    command:
+      - "--character-set-server=utf8mb4"
+
+networks:
+  teamspeak:
+    driver: bridge

@@ -1,0 +1,23 @@
+services:
+  qbittorrent:
+    image: linuxserver/qbittorrent
+    container_name: qbittorrent
+    restart: unless-stopped
+    ports:
+      - "default_port_1:8081"
+      - "6881:6881"
+      - "6881:6881/udp"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+      - WEBUI_PORT=8081
+    volumes:
+      - ./config:/config
+      - ./downloads:/downloads
+    networks:
+      - qbittorrent
+
+networks:
+  qbittorrent:
+    driver: bridge

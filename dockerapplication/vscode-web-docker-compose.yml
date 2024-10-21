@@ -1,0 +1,15 @@
+services:
+  vscode-web:
+    image: codercom/code-server
+    container_name: vscode-web
+    ports:
+      - "default_port_1:8080"
+    volumes:
+      - ./vscode-web:/home/coder/.local/share/code-server
+    restart: unless-stopped
+    networks:
+      - vscode-web
+
+networks:
+  vscode-web:
+    driver: bridge

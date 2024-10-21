@@ -1,0 +1,16 @@
+services:
+  bililive:
+    image: chigusa/bililive-go
+    container_name: bililive
+    restart: unless-stopped
+    ports:
+      - "default_port_1:8080"
+    volumes:
+      - ./config.yml:/etc/bililive-go/config.yml
+      - ./videos:/srv/bililive
+    networks:
+      - bililive
+
+networks:
+  bililive:
+    driver: bridge

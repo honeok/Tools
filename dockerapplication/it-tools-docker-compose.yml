@@ -1,0 +1,13 @@
+services:
+  it-tools:
+    image: corentinth/it-tools
+    container_name: it-tools
+    restart: unless-stopped
+    ports:
+      - "default_port_1:80"
+    networks:
+      - it-tools
+
+networks:
+  it-tools:
+    driver: bridge

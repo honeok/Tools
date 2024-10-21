@@ -1,0 +1,15 @@
+services:
+  qd:
+    image: qdtoday/qd
+    container_name: qd
+    ports:
+      - "default_port_1:80"
+    volumes:
+      - ./config:/usr/src/app/config
+    restart: unless-stopped
+    networks:
+      - qd
+
+networks:
+  qd:
+    driver: bridge

@@ -1,0 +1,23 @@
+services:
+  looking-glass:
+    image: wikihostinc/looking-glass-server
+    container_name: looking-glass
+    restart: unless-stopped
+    ports:
+      - "default_port_1:80"
+      - "default_port_2:default_port_2"
+    environment:
+      - DISPLAY_TRAFFIC=true
+      - ENABLE_SPEEDTEST=true
+      - UTILITIES_PING=true
+      - UTILITIES_SPEEDTESTDOTNET=true
+      - UTILITIES_FAKESHELL=true
+      - UTILITIES_IPERF3=true
+      - UTILITIES_IPERF3_PORT_MIN=default_port_2
+      - UTILITIES_IPERF3_PORT_MAX=default_port_2
+    networks:
+      - looking-glass
+
+networks:
+  looking-glass:
+    driver: bridge

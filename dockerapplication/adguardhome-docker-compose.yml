@@ -1,0 +1,18 @@
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguardhome
+    restart: unless-stopped
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "default_port_1:3000/tcp"
+    volumes:
+      - ./work:/opt/adguardhome/work
+      - ./conf:/opt/adguardhome/conf
+    networks:
+      - adguardhome
+
+networks:
+  adguardhome:
+    driver: bridge

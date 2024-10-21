@@ -1,0 +1,15 @@
+services:
+  pingvin-share:
+    image: stonith404/pingvin-share
+    container_name: pingvin-share
+    ports:
+      - "default_port_1:3000"
+    volumes:
+      - ./data:/opt/app/backend/data
+    restart: unless-stopped
+    networks:
+      - share
+
+networks:
+  share:
+    driver: bridge

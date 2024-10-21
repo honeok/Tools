@@ -1,0 +1,23 @@
+services:
+  emby:
+    image: linuxserver/emby
+    container_name: emby
+    restart: unless-stopped
+    ports:
+      - "default_port_1:8096"
+      - "default_port_2:8920"
+    environment:
+      - UID=1000
+      - GID=100
+      - GIDLIST=100
+    volumes:
+      - ./config:/config
+      - ./share1:/mnt/share1
+      - ./share2:/mnt/share2
+      - ./notify:/mnt/notify
+    networks:
+      - emby
+
+networks:
+  emby:
+    driver: bridge

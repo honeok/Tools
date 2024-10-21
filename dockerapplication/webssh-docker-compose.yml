@@ -1,0 +1,15 @@
+services:
+  webssh:
+    image: jrohy/webssh
+    container_name: webssh
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - default_port_1:5032
+    networks:
+      - webssh
+
+networks:
+  webssh:
+    driver: bridge

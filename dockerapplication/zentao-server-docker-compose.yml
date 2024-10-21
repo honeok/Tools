@@ -1,0 +1,22 @@
+services:
+  zentao-server:
+    image: idoop/zentao
+    container_name: zentao-server
+    restart: unless-stopped
+    ports:
+      - "default_port_1:80"
+      - "default_port_2:3306"
+    environment:
+      - ADMINER_USER=root
+      - ADMINER_PASSWD=123456
+      - BIND_ADDRESS=false
+    volumes:
+      - ./zentao-server/:/opt/zbox/
+    extra_hosts:
+      - "smtp.exmail.qq.com:163.177.90.125"
+    networks:
+      - zentao
+
+networks:
+  zentao:
+    driver: bridge

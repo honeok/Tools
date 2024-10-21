@@ -1,0 +1,16 @@
+services:
+  memos:
+    image: neosmemo/memos
+    restart: unless-stopped
+    container_name: memeos
+    hostname: memeos
+    ports:
+      - "default_port_1:5230"
+    volumes:
+      - ./memos:/var/opt/memos
+    networks:
+      - memeos
+
+networks:
+  memeos:
+    driver: bridge

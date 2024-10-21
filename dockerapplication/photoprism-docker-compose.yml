@@ -1,0 +1,22 @@
+services:
+  photoprism:
+    image: photoprism/photoprism
+    container_name: photoprism
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    ports:
+      - "default_port_1:2342"
+    environment:
+      - PHOTOPRISM_UPLOAD_NSFW=true
+      - PHOTOPRISM_ADMIN_PASSWORD=example_password
+    volumes:
+      - ./storage:/photoprism/storage
+      - ./Pictures:/photoprism/originals
+    restart: unless-stopped
+    networks:
+      - photoprism
+
+networks:
+  photoprism:
+    driver: bridge

@@ -1,0 +1,16 @@
+services:
+  qinglong:
+    image: whyour/qinglong
+    container_name: qinglong
+    restart: unless-stopped
+    hostname: qinglong
+    ports:
+      - "default_port_1:5700"
+    volumes:
+      - ./data:/ql/data
+    networks:
+      - qinglong
+
+networks:
+  qinglong:
+    driver: bridge

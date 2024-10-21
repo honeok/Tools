@@ -1,0 +1,13 @@
+services:
+  lobe-chat:
+    image: lobehub/lobe-chat
+    container_name: lobe-chat
+    restart: unless-stopped
+    ports:
+      - "default_port_1:3210"
+    networks:
+      - lobe-chat
+
+networks:
+  lobe-chat:
+    driver: bridge

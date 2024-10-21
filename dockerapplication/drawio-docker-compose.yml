@@ -1,0 +1,15 @@
+services:
+  drawio:
+    image: jgraph/drawio
+    container_name: drawio
+    restart: unless-stopped
+    ports:
+      - "default_port_1:8080"
+    volumes:
+      - ./drawio:/var/lib/drawio
+    networks:
+      - drawio
+
+networks:
+  drawio:
+    driver: bridge

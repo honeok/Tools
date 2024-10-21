@@ -1,0 +1,20 @@
+services:
+  alist:
+    image: xhofe/alist
+    container_name: alist
+    restart: unless-stopped
+    ports:
+      - default_port_1:5244
+    volumes:
+      - ./config:/opt/alist/data
+    environment:
+      - PUID=0
+      - PGID=0
+      - UMASK=022
+      - TZ=Asia/Shanghai
+    networks:
+      - alist
+
+networks:
+  alist:
+    driver: bridge

@@ -1,0 +1,16 @@
+services:
+  onlyoffice:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice
+    ports:
+      - "default_port_1:80"
+    volumes:
+      - ./logs:/var/log/onlyoffice
+      - ./data:/var/www/onlyoffice/Data
+    restart: unless-stopped
+    networks:
+      - onlyoffice
+
+networks:
+  onlyoffice:
+    driver: bridge

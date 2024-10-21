@@ -1,0 +1,11 @@
+services:
+  mailserver:
+    image: analogic/poste.io
+    container_name: poste
+    hostname: "${domain}"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    network_mode: host

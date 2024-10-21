@@ -1,0 +1,20 @@
+services:
+  easyimage:
+    image: ddsderek/easyimage
+    container_name: easyimage
+    restart: unless-stopped
+    ports:
+      - "default_port_1:80"
+    environment:
+      - TZ=Asia/Shanghai
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./config:/app/web/config
+      - ./i:/app/web/i
+    networks:
+      - easyimage
+
+networks:
+  easyimage:
+    driver: bridge

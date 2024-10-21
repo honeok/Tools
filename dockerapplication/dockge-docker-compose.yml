@@ -1,0 +1,19 @@
+services:
+  dockge:
+    image: louislam/dockge
+    container_name: dockge
+    restart: unless-stopped
+    ports:
+      - "default_port_1:5001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./data:/app/data
+      - ./stacks:/data/docker_data/dockge/stacks
+    environment:
+      - DOCKGE_STACKS_DIR=/data/docker_data/dockge/stacks
+    networks:
+      - dockge
+
+networks:
+  dockge:
+    driver: bridge
