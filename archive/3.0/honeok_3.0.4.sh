@@ -2933,7 +2933,7 @@ ldnmp_install_certbot() {
 
     if [ -z "$existing_cron" ]; then
         # 下载并使脚本可执行
-        curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/Tools/raw/main/callscript/docker_certbot.sh"
+        curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/Tools/raw/main/InvScripts/docker_certbot.sh"
         chmod +x cert_renewal.sh
 
         # 添加定时任务
@@ -4307,7 +4307,7 @@ linux_ldnmp() {
 
                 [ ! -d /data/script ] && mkdir -p /data/script
                 cd /data/script || { _red "进入目录/data/script失败"; return 1; }
-                curl -fsSL -o "${useip}_backup.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/web_backup.sh"
+                curl -fsSL -o "${useip}_backup.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/web_backup.sh"
                 chmod +x "${useip}_backup.sh"
 
                 sed -i "s/0.0.0.0/$useip/g" "${useip}_backup.sh"
@@ -5449,13 +5449,13 @@ xanmod_bbr3() {
                     remove 'linux-*xanmod1*'
                     update-grub
                     # wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-                    wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+                    wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
                     # 添加存储库
                     echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
                     # kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-                    local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+                    local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
                     install linux-xanmod-x64v"$kernel_version"
 
@@ -5519,13 +5519,13 @@ xanmod_bbr3() {
                 install wget gnupg
 
                 # wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-                wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+                wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
                 # 添加存储库
                 echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
                 # kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-                local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+                local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
                 install linux-xanmod-x64v"$kernel_version"
 
@@ -5851,7 +5851,7 @@ telegram_bot(){
                 chmod +x "${globle_script_dir}/TG-check-notify.sh"
                 vim "${globle_script_dir}/TG-check-notify.sh"
             else
-                curl -fsSL -o "${globle_script_dir}/TG-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/TG-check-notify.sh"
+                curl -fsSL -o "${globle_script_dir}/TG-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/TG-check-notify.sh"
                 # 计算文件哈希
                 TG_check_notify=$(sha256sum "${globle_script_dir}/TG-check-notify.sh" | awk '{ print $1 }')
 
@@ -5872,7 +5872,7 @@ telegram_bot(){
             crontab -l | grep -v "${globle_script_dir}/TG-check-notify.sh" | crontab - > /dev/null 2>&1
             (crontab -l ; echo "@reboot tmux new -d -s TG-check-notify '${globle_script_dir}/TG-check-notify.sh'") | crontab - > /dev/null 2>&1
 
-            curl -fsSL -o "${globle_script_dir}/TG-SSH-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/TG-SSH-check-notify.sh"
+            curl -fsSL -o "${globle_script_dir}/TG-SSH-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/TG-SSH-check-notify.sh"
             # 计算文件哈希
             TG_SSH_check_notify=$(sha256sum "${globle_script_dir}/TG-SSH-check-notify.sh" | awk '{ print $1 }')
 
@@ -6734,7 +6734,7 @@ cloudflare_ddns() {
                 read -r CFTTL
                 CFTTL=${CFTTL:-60}
 
-                curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/cf-v4-ddns.sh"
+                curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/cf-v4-ddns.sh"
                 # 计算文件哈希
                 FILE_HASH=$(sha256sum ~/cf-v4-ddns.sh | awk '{ print $1 }')
 
@@ -7750,7 +7750,7 @@ EOF
                             cz_day=${cz_day:-1}
 
                             cd ~
-                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/Limiting_Shut_down1.sh"
+                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
                             chmod +x ~/Limiting_Shut_down.sh
                             sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
                             sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
@@ -7801,7 +7801,7 @@ EOF
             26)
                 need_root
                 cd ~
-                curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/upgrade_openssh9.8p1.sh"
+                curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/upgrade_openssh9.8p1.sh"
                 chmod +x "~/upgrade_openssh.sh"
                 ~/upgrade_openssh.sh
                 rm -f ~/upgrade_openssh.sh
@@ -8633,7 +8633,7 @@ palworld_script() {
         case $choice in
             1)
                 cd ~
-                curl -fsSL -o ./palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/palworld.sh
+                curl -fsSL -o ./palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/palworld.sh
                 chmod a+x ./palworld.sh
                 ;;
             2)
@@ -8648,7 +8648,7 @@ palworld_script() {
                 if [ -f ~/palworld.sh ]; then
                     bash ~/palworld.sh
                 else
-                    curl -fsSL -o palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/palworld.sh
+                    curl -fsSL -o palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/palworld.sh
                     chmod a+x palworld.sh
                     bash palworld.sh
                 fi
