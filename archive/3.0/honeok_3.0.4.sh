@@ -6239,7 +6239,7 @@ file_manage() {
         echo "文件管理器"
         echo "------------------------"
         echo "当前路径"
-        ${PWD}
+        echo "$(dirname "$(realpath "$0")")"
         echo "------------------------"
         ls --color=auto -x
         echo "------------------------"
