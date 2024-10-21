@@ -2238,7 +2238,7 @@ linux_panel() {
                                 break
                                 ;;
                             2)
-                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/npm-docker-compose.yml)
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/npm-docker-compose.yml)
                                 break
                                 ;;
                             0)
@@ -2261,7 +2261,7 @@ linux_panel() {
                 docker_describe="一个支持多种存储，支持网页浏览和WebDAV的文件列表程序，由gin和Solidjs驱动"
                 docker_url="官网介绍: https://alist.nn.ci/zh/"
                 default_port_1=5244
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/alist-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/alist-docker-compose.yml)
                 docker_exec_command="docker exec -it alist ./alist admin random"
                 docker_password=""
                 manage_dockerapp
@@ -2272,7 +2272,7 @@ linux_panel() {
                 docker_describe="webtop基于Ubuntu的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-ubuntu-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webtop-ubuntu-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2311,7 +2311,7 @@ linux_panel() {
                 docker_describe="qbittorrent离线BT磁力下载服务"
                 docker_url="官网介绍: https://hub.docker.com/r/linuxserver/qbittorrent"
                 default_port_1=8081
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qbittorrent-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qbittorrent-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker logs qbittorrent"
                 manage_dockerapp
@@ -2374,7 +2374,7 @@ linux_panel() {
                             read -n 1 -s -r -p ""
 
                             install_docker
-                            docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/poste-docker-compose.yml)
+                            docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/poste-docker-compose.yml)
                             echo "$docker_compose_content" > docker-compose.yml
                             sed -i "s/\${domain}/$domain/g" docker-compose.yml
 
@@ -2416,7 +2416,7 @@ linux_panel() {
                 docker_url="官网介绍: https://www.zentao.net/"
                 default_port_1=8080
                 default_port_2=3306
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/zentao-server-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/zentao-server-docker-compose.yml)
                 docker_exec_command="echo 初始用户名: admin"
                 docker_password="echo 初始密码: 123456"
                 manage_dockerapp
@@ -2427,7 +2427,7 @@ linux_panel() {
                 docker_describe="青龙面板是一个定时任务管理平台"
                 docker_url="官网介绍: https://github.com/whyour/qinglong"
                 default_port_1=5700
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qinglong-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qinglong-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2438,7 +2438,7 @@ linux_panel() {
                 docker_describe="简单图床是一个简单的图床程序"
                 docker_url="官网介绍: https://github.com/icret/EasyImages2.0"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/easyimage-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/easyimage-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2450,7 +2450,7 @@ linux_panel() {
                 docker_url="官网介绍: https://emby.media/"
                 default_port_1=8096
                 default_port_2=8920
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/emby-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/emby-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2462,7 +2462,7 @@ linux_panel() {
                 docker_url="官网介绍: https://github.com/wikihost-opensource/als"
                 default_port_1=8080
                 default_port_2=30000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/looking-glass-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/looking-glass-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2473,7 +2473,7 @@ linux_panel() {
                 docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件，未来将不止是一个DNS服务器"
                 docker_url="官网介绍: https://hub.docker.com/r/adguard/adguardhome"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/adguardhome-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/adguardhome-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2484,7 +2484,7 @@ linux_panel() {
                 docker_describe="onlyoffice是一款开源的在线office工具，太强大了！"
                 docker_url="官网介绍: https://www.onlyoffice.com/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/onlyoffice-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/onlyoffice-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2555,7 +2555,7 @@ linux_panel() {
                 docker_describe="portainer是一个轻量级的docker容器管理面板"
                 docker_url="官网介绍: https://www.portainer.io/"
                 default_port_1=9000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/portainer-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/portainer-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2566,7 +2566,7 @@ linux_panel() {
                 docker_describe="VScode是一款强大的在线代码编写工具"
                 docker_url="官网介绍: https://github.com/coder/code-server"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/vscode-web-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/vscode-web-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
                 manage_dockerapp
@@ -2577,7 +2577,7 @@ linux_panel() {
                 docker_describe="uptimekuma易于使用的自托管监控工具"
                 docker_url="官网介绍: https://github.com/louislam/uptime-kuma"
                 default_port_1=3001
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/uptimekuma-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/uptimekuma-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2588,7 +2588,7 @@ linux_panel() {
                 docker_describe="Memos是一款轻量级，自托管的备忘录中心"
                 docker_url="官网介绍: https://github.com/usememos/memos"
                 default_port_1=5230
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/memeos-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/memeos-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2599,7 +2599,7 @@ linux_panel() {
                 docker_describe="webtop基于Alpine、Ubuntu、Fedora和Arch的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webtop-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2611,7 +2611,7 @@ linux_panel() {
                 docker_url="官网介绍: https://nextcloud.com/"
                 default_port_1=8080
                 random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/nextcloud-simple-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/nextcloud-simple-docker-compose.yml)
                 docker_exec_command="echo 账号: nextcloud  密码: $random_password"
                 docker_password=""
                 manage_dockerapp
@@ -2622,7 +2622,7 @@ linux_panel() {
                 docker_describe="QD-Today是一个HTTP请求定时任务自动执行框架"
                 docker_url="官网介绍: https://qd-today.github.io/qd/zh_CN/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qd-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qd-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2633,7 +2633,7 @@ linux_panel() {
                 docker_describe="dockge是一个可视化的docker-compose容器管理面板"
                 docker_url="官网介绍: https://github.com/louislam/dockge"
                 default_port_1=5001
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/dockge-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/dockge-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2644,7 +2644,7 @@ linux_panel() {
                 docker_describe="speedtest是用Javascript实现的轻量级速度测试工具，即开即用"
                 docker_url="官网介绍: https://github.com/librespeed/speedtest"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/speedtest-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/speedtest-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2655,7 +2655,7 @@ linux_panel() {
                 docker_describe="searxng是一个私有且隐私的搜索引擎站点"
                 docker_url="官网介绍: https://hub.docker.com/r/alandoyle/searxng"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/searxng-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/searxng-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2667,7 +2667,7 @@ linux_panel() {
                 docker_url="官网介绍: https://www.photoprism.app/"
                 default_port_1=2342
                 random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/photoprism-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/photoprism-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: $random_password"
                 docker_password=""
                 manage_dockerapp
@@ -2678,7 +2678,7 @@ linux_panel() {
                 docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker，允许您对PDF文件执行各种操作，例如拆分合并、转换、重新组织、添加图像、旋转、压缩等"
                 docker_url="官网介绍: https://github.com/Stirling-Tools/Stirling-PDF"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/s-pdf-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/s-pdf-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2689,7 +2689,7 @@ linux_panel() {
                 docker_describe="这是一个强大图表绘制软件，思维导图、拓扑图、流程图、都能画"
                 docker_url="官网介绍: https://www.drawio.com/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/drawio-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/drawio-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2700,7 +2700,7 @@ linux_panel() {
                 docker_describe="Sun-Panel服务器，NAS导航面板、Homepage、浏览器首页"
                 docker_url="官网介绍: https://doc.sun-panel.top/zh_cn/"
                 default_port_1=3002
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sun-panel-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/sun-panel-docker-compose.yml)
                 docker_exec_command="echo 账号: admin@sun.cc  密码: 12345678"
                 docker_password=""
                 manage_dockerapp
@@ -2711,7 +2711,7 @@ linux_panel() {
                 docker_describe="Pingvin Share是一个可自建的文件分享平台，是WeTransfer的一个替代品"
                 docker_url="官网介绍: https://github.com/stonith404/pingvin-share"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/pingvin-share-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/pingvin-share-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2722,7 +2722,7 @@ linux_panel() {
                 docker_describe="极简朋友圈，高仿微信朋友圈，记录你的美好生活"
                 docker_url="官网介绍: https://github.com/kingwrcy/moments?tab=readme-ov-file"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/moments-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/moments-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: a123456"
                 docker_password=""
                 manage_dockerapp
@@ -2733,7 +2733,7 @@ linux_panel() {
                 docker_describe="LobeChat聚合市面上主流的AI大模型，ChatGPT/Claude/Gemini/Groq/Ollama"
                 docker_url="官网介绍: https://github.com/lobehub/lobe-chat"
                 default_port_1=3210
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/lobe-chat-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/lobe-chat-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2744,7 +2744,7 @@ linux_panel() {
                 docker_describe="是一个多功能IP工具箱，可以查看自己IP信息及连通性，用网页面板呈现"
                 docker_url="官网介绍: https://github.com/jason5ng32/MyIP/blob/main/README_ZH.md"
                 default_port_1=18966
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/myip-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/myip-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2766,7 +2766,7 @@ linux_panel() {
                     wget -qO "$docker_workdir/config.yml" "${github_proxy}raw.githubusercontent.com/hr3lxphr6j/bililive-go/master/config.yml"
                 fi
 
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/bililive-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/bililive-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2777,7 +2777,7 @@ linux_panel() {
                 docker_describe="简易在线SSH和sftp工具，可在线敲命令和上传下载文件"
                 docker_url="官网介绍: https://github.com/Jrohy/webssh"
                 default_port_1=5032
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webssh-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webssh-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2788,7 +2788,7 @@ linux_panel() {
                 docker_describe="为方便开发人员提供的在线工具"
                 docker_url="官网介绍: https://github.com/CorentinTh/it-tools"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/it-tools-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/it-tools-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -8443,7 +8443,7 @@ node_create() {
                 docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store"
                 default_port_1=3001
                 random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
-                docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/Tools/main/dockerapplication/sub-store-docker-compose.yml)
                 docker_exec_command="echo 随机口令: $random_password 请牢记！"
                 docker_password=""
                 manage_dockerapp
