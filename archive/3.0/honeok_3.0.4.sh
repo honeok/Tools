@@ -3,7 +3,7 @@
 ## Blog：www.honeok.com
 ## Github：https://github.com/honeok/Tools
 
-honeok_v="v3.0.3 (2024.10.20)"
+honeok_v="v3.0.4 (2024.10.20)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -6227,6 +6227,200 @@ clamav_antivirus() {
                 ;;
             *)
                 break
+                ;;
+        esac
+    done
+}
+
+file_manage() {
+    need_root
+    while true; do
+        clear
+        echo "文件管理器"
+        echo "------------------------"
+        echo "当前路径"
+        ${PWD}
+        echo "------------------------"
+        ls --color=auto -x
+        echo "------------------------"
+        echo "1.  进入目录           2.  创建目录             3.  修改目录权限         4.  重命名目录"
+        echo "5.  删除目录           6.  返回上一级目录"
+        echo "------------------------"
+        echo "11. 创建文件           12. 编辑文件             13. 修改文件权限         14. 重命名文件"
+        echo "15. 删除文件"
+        echo "------------------------"
+        echo "21. 压缩文件目录       22. 解压文件目录         23. 移动文件目录         24. 复制文件目录"
+        echo "25. 传文件至其他服务器"
+        echo "------------------------"
+        echo "0.  返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)  # 进入目录
+                echo -n "请输入目录名:"
+                read -r dirname
+                cd "$dirname" 2>/dev/null || _red "无法进入目录"
+                ;;
+            2)  # 创建目录
+                echo -n "请输入要创建的目录名:"
+                read -r dirname
+                mkdir -p "$dirname" && _green "目录已创建" || _red "创建失败"
+                ;;
+            3)  # 修改目录权限
+                echo -n "请输入目录名:"
+                read -r dirname
+                echo -n "请输入权限（如755）:"
+                read -r perm
+                chmod "$perm" "$dirname" && _green "权限已修改" || _red "修改失败"
+                ;;
+            4)  # 重命名目录
+                echo -n "请输入当前目录名:"
+                read -r current_name
+                echo -n "请输入新目录名:"
+                read -r new_name
+                mv "$current_name" "$new_name" && _green "目录已重命名" || _red "重命名失败"
+                ;;
+            5)  # 删除目录
+                echo -n "请输入要删除的目录名:"
+                read -r dirname
+                rm -fr "$dirname" && _green "目录已删除" || _red "删除失败"
+                ;;
+            6)  # 返回上一级目录
+                cd ..
+                ;;
+            11) # 创建文件
+                echo -n "请输入要创建的文件名:"
+                read -r filename
+                touch "$filename" && _green "文件已创建" || _red "创建失败"
+                ;;
+            12) # 编辑文件
+                echo -n "请输入要编辑的文件名:"
+                read -r filename
+                install vim
+                vim "$filename"
+                ;;
+            13) # 修改文件权限
+                echo -n "请输入文件名:"
+                read -r filename
+                echo -n "请输入权限（如 755）:"
+                read -r perm
+                chmod "$perm" "$filename" && _green "权限已修改" || _red "修改失败"
+                ;;
+            14) # 重命名文件
+                echo -n "请输入当前文件名:"
+                read -r current_name
+                echo -n "请输入新文件名:"
+                read -r new_name
+                mv "$current_name" "$new_name" && _green "文件已重命名" || _red "重命名失败"
+                ;;
+            15) # 删除文件
+                echo -n "请输入要删除的文件名:"
+                read -r filename
+                rm -f "$filename" && _green "文件已删除" || _red "删除失败"
+                ;;
+            21) # 压缩文件/目录
+                echo -n "请输入要压缩的文件/目录名:"
+                read -r name
+                install tar
+                tar -czvf "$name.tar.gz" "$name" &&  _green "已压缩为 $name.tar.gz" || _red "压缩失败"
+                ;;
+            22) # 解压文件/目录
+                echo -n "请输入要解压的文件名（.tar.gz）:"
+                read -r filename
+                install tar
+                tar -xzvf "$filename" && _green "已解压 $filename" || _red "解压失败"
+                ;;
+            23) # 移动文件或目录
+                echo -n "请输入要移动的文件或目录路径:"
+                read -r src_path
+                if [ ! -e "$src_path" ]; then
+                    _red "错误：文件或目录不存在"
+                    continue
+                fi
+
+                echo -n "请输入目标路径（包括新文件名或目录名）:"
+                read -r dest_path
+                if [ -z "$dest_path" ]; then
+                    _red "错误：请输入目标路径"
+                    continue
+                fi
+
+                mv "$src_path" "$dest_path" && _green "文件或目录已移动到 $dest_path" || _red "移动文件或目录失败"
+                ;;
+            24) # 复制文件目录
+                echo -n "请输入要复制的文件或目录路径:"
+                read -r src_path
+                if [ ! -e "$src_path" ]; then
+                    _red "错误：文件或目录不存在"
+                    continue
+                fi
+
+                echo -n "请输入目标路径（包括新文件名或目录名）:"
+                read -r dest_path
+                if [ -z "$dest_path" ]; then
+                    _red "错误：请输入目标路径"
+                    continue
+                fi
+
+                # 使用 -r 选项以递归方式复制目录
+                cp -r "$src_path" "$dest_path" && _green "文件或目录已复制到 $dest_path" || _red "复制文件或目录失败"
+                ;;
+            25) # 传送文件至远端服务器
+                echo -n "请输入要传送的文件路径:"
+                read -r file_to_transfer
+                if [ ! -f "$file_to_transfer" ]; then
+                    _red "错误：文件不存在"
+                    continue
+                fi
+
+                echo -n "请输入远端服务器IP:"
+                read -r remote_ip
+                if [ -z "$remote_ip" ]; then
+                    _red "错误：请输入远端服务器IP"
+                    continue
+                fi
+
+                echo -n "请输入远端服务器用户名（默认root）:"
+                read -r remote_user
+                
+                remote_user=${remote_user:-root}
+
+                echo -n "请输入远端服务器密码:"
+                read -r -s remote_password
+                if [ -z "$remote_password" ]; then
+                    _red "错误：请输入远端服务器密码"
+                    continue
+                fi
+
+                echo -n "请输入登录端口（默认22）:"
+                read -r remote_port
+                remote_port=${remote_port:-22}
+
+                # 清除已知主机的旧条目
+                ssh-keygen -f "/root/.ssh/known_hosts" -R "$remote_ip"
+                sleep 2
+
+                # 使用scp传输文件
+                scp -P "$remote_port" -o StrictHostKeyChecking=no "$file_to_transfer" "$remote_user@$remote_ip:/opt/" <<EOF
+$remote_password
+EOF
+
+                if [ $? -eq 0 ]; then
+                    _green "文件已传送至远程服务器/opt目录"
+                else
+                    _red "文件传送失败"
+                fi
+
+                end_of
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
                 ;;
         esac
     done
