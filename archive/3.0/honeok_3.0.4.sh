@@ -6426,6 +6426,40 @@ EOF
     done
 }
 
+linux_language() {
+    need_root
+    while true; do
+        echo "当前系统语言: $LANG"
+        echo "------------------------"
+        echo "1. 英文          2. 简体中文          3. 繁体中文"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                update_locale "en_US.UTF-8" "en_US.UTF-8"
+                ;;
+            2)
+                update_locale "zh_CN.UTF-8" "zh_CN.UTF-8"
+                ;;
+            3)
+                update_locale "zh_TW.UTF-8" "zh_TW.UTF-8"
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
 cloudflare_ddns() {
     need_root
 
@@ -7657,6 +7691,12 @@ EOF
                 ;;
             29)
                 clamav_antivirus
+                ;;
+            30)
+                file_manage
+                ;;
+            31)
+                linux_language
                 ;;
             50)
                 cloudflare_ddns
