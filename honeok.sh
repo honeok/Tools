@@ -3,7 +3,7 @@
 ## Blog：www.honeok.com
 ## Github：https://github.com/honeok/Tools
 
-honeok_v="v3.0.4 (2024.10.20)"
+honeok_v="v3.0.4 (2024.10.21)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
