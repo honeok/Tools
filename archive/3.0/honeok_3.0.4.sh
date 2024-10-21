@@ -7802,9 +7802,9 @@ EOF
                 need_root
                 cd ~
                 curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/upgrade_openssh9.8p1.sh"
-                chmod +x "~/upgrade_openssh.sh"
-                ~/upgrade_openssh.sh
-                rm -f ~/upgrade_openssh.sh
+                chmod +x upgrade_openssh.sh
+                ./upgrade_openssh.sh
+                rm -f upgrade_openssh.sh
                 ;;
             27)
                 redhat_kernel_update
