@@ -3388,7 +3388,7 @@ ldnmp_add_db() {
 
 reverse_proxy() {
     ip_address
-    curl -fsSL -o "$nginx_dir/conf.d/$domain.conf" "${github_proxy}github.com/honeok/conf/raw/refs/heads/main/nginx/conf.d/reverse-proxy.conf"
+    curl -fsSL -o "$nginx_dir/conf.d/$domain.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/nginx/conf.d/reverse-proxy.conf"
     sed -i "s/domain.com/$yuming/g" "$nginx_dir/conf.d/$domain.conf"
     sed -i "s/0.0.0.0/$ipv4_address/g" "$nginx_dir/conf.d/$domain.conf"
     sed -i "s/0000/$duankou/g" "$nginx_dir/conf.d/$domain.conf"
