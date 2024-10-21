@@ -6427,6 +6427,40 @@ EOF
 }
 
 linux_language() {
+    update_locale() {
+        local lang=$1
+        local locale_file=$2
+
+        if [ -f /etc/os-release ]; then
+            . /etc/os-release
+            case $ID in
+                debian|ubuntu|kali)
+                    install locales
+                    sed -i "s/^\s*#\?\s*${locale_file}/${locale_file}/" /etc/locale.gen
+                    locale-gen
+                    echo "LANG=${lang}" > /etc/default/locale
+                    export LANG=${lang}
+                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    end_of
+                    ;;
+                centos|rhel|almalinux|rocky|fedora)
+                    install glibc-langpack-zh
+                    localectl set-locale LANG=${lang}
+                    echo "LANG=${lang}" | tee /etc/locale.conf
+                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    end_of
+                    ;;
+                *)
+                    _red "不支持的系统: $ID"
+                    end_of
+                    ;;
+            esac
+        else
+            _red "不支持的系统，无法识别系统类型"
+            end_of
+        fi
+    }
+
     need_root
     while true; do
         echo "当前系统语言: $LANG"
