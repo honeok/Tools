@@ -1117,7 +1117,7 @@ generate_docker_config() {
     fi
 
     # 获取 registry mirrors 内容
-    registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
+    registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
 
     # 判断操作系统是否为 Alpine
     if grep -q 'Alpine' /etc/issue; then
