@@ -3,7 +3,7 @@
 ## Blog：www.honeok.com
 ## Github：https://github.com/honeok/Tools
 
-honeok_v="v3.0.3 (2024.10.20)"
+honeok_v="v3.0.4 (2024.10.20)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -1117,7 +1117,7 @@ generate_docker_config() {
     fi
 
     # 获取 registry mirrors 内容
-    registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/conf/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
+    registry_mirrors=$(curl -fsSL "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/docker/registry_mirrors.txt" | grep -v '^#' | sed '/^$/d')
 
     # 判断操作系统是否为 Alpine
     if grep -q 'Alpine' /etc/issue; then
@@ -2238,7 +2238,7 @@ linux_panel() {
                                 break
                                 ;;
                             2)
-                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/npm-docker-compose.yml)
+                                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/npm-docker-compose.yml)
                                 break
                                 ;;
                             0)
@@ -2261,7 +2261,7 @@ linux_panel() {
                 docker_describe="一个支持多种存储，支持网页浏览和WebDAV的文件列表程序，由gin和Solidjs驱动"
                 docker_url="官网介绍: https://alist.nn.ci/zh/"
                 default_port_1=5244
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/alist-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/alist-docker-compose.yml)
                 docker_exec_command="docker exec -it alist ./alist admin random"
                 docker_password=""
                 manage_dockerapp
@@ -2272,7 +2272,7 @@ linux_panel() {
                 docker_describe="webtop基于Ubuntu的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-ubuntu-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webtop-ubuntu-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2311,7 +2311,7 @@ linux_panel() {
                 docker_describe="qbittorrent离线BT磁力下载服务"
                 docker_url="官网介绍: https://hub.docker.com/r/linuxserver/qbittorrent"
                 default_port_1=8081
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qbittorrent-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qbittorrent-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker logs qbittorrent"
                 manage_dockerapp
@@ -2374,7 +2374,7 @@ linux_panel() {
                             read -n 1 -s -r -p ""
 
                             install_docker
-                            docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/poste-docker-compose.yml)
+                            docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/poste-docker-compose.yml)
                             echo "$docker_compose_content" > docker-compose.yml
                             sed -i "s/\${domain}/$domain/g" docker-compose.yml
 
@@ -2416,7 +2416,7 @@ linux_panel() {
                 docker_url="官网介绍: https://www.zentao.net/"
                 default_port_1=8080
                 default_port_2=3306
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/zentao-server-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/zentao-server-docker-compose.yml)
                 docker_exec_command="echo 初始用户名: admin"
                 docker_password="echo 初始密码: 123456"
                 manage_dockerapp
@@ -2427,7 +2427,7 @@ linux_panel() {
                 docker_describe="青龙面板是一个定时任务管理平台"
                 docker_url="官网介绍: https://github.com/whyour/qinglong"
                 default_port_1=5700
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qinglong-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qinglong-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2438,7 +2438,7 @@ linux_panel() {
                 docker_describe="简单图床是一个简单的图床程序"
                 docker_url="官网介绍: https://github.com/icret/EasyImages2.0"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/easyimage-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/easyimage-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2450,7 +2450,7 @@ linux_panel() {
                 docker_url="官网介绍: https://emby.media/"
                 default_port_1=8096
                 default_port_2=8920
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/emby-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/emby-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2462,7 +2462,7 @@ linux_panel() {
                 docker_url="官网介绍: https://github.com/wikihost-opensource/als"
                 default_port_1=8080
                 default_port_2=30000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/looking-glass-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/looking-glass-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2473,7 +2473,7 @@ linux_panel() {
                 docker_describe="AdGuardHome是一款全网广告拦截与反跟踪软件，未来将不止是一个DNS服务器"
                 docker_url="官网介绍: https://hub.docker.com/r/adguard/adguardhome"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/adguardhome-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/adguardhome-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2484,7 +2484,7 @@ linux_panel() {
                 docker_describe="onlyoffice是一款开源的在线office工具，太强大了！"
                 docker_url="官网介绍: https://www.onlyoffice.com/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/onlyoffice-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/onlyoffice-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2555,7 +2555,7 @@ linux_panel() {
                 docker_describe="portainer是一个轻量级的docker容器管理面板"
                 docker_url="官网介绍: https://www.portainer.io/"
                 default_port_1=9000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/portainer-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/portainer-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2566,7 +2566,7 @@ linux_panel() {
                 docker_describe="VScode是一款强大的在线代码编写工具"
                 docker_url="官网介绍: https://github.com/coder/code-server"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/vscode-web-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/vscode-web-docker-compose.yml)
                 docker_exec_command="sleep 3"
                 docker_password="docker exec vscode-web cat /home/coder/.config/code-server/config.yaml"
                 manage_dockerapp
@@ -2577,7 +2577,7 @@ linux_panel() {
                 docker_describe="uptimekuma易于使用的自托管监控工具"
                 docker_url="官网介绍: https://github.com/louislam/uptime-kuma"
                 default_port_1=3001
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/uptimekuma-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/uptimekuma-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2588,7 +2588,7 @@ linux_panel() {
                 docker_describe="Memos是一款轻量级，自托管的备忘录中心"
                 docker_url="官网介绍: https://github.com/usememos/memos"
                 default_port_1=5230
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/memeos-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/memeos-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2599,7 +2599,7 @@ linux_panel() {
                 docker_describe="webtop基于Alpine、Ubuntu、Fedora和Arch的容器，包含官方支持的完整桌面环境，可通过任何现代Web浏览器访问"
                 docker_url="官网介绍: https://docs.linuxserver.io/images/docker-webtop/"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webtop-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webtop-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2611,7 +2611,7 @@ linux_panel() {
                 docker_url="官网介绍: https://nextcloud.com/"
                 default_port_1=8080
                 random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/nextcloud-simple-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/nextcloud-simple-docker-compose.yml)
                 docker_exec_command="echo 账号: nextcloud  密码: $random_password"
                 docker_password=""
                 manage_dockerapp
@@ -2622,7 +2622,7 @@ linux_panel() {
                 docker_describe="QD-Today是一个HTTP请求定时任务自动执行框架"
                 docker_url="官网介绍: https://qd-today.github.io/qd/zh_CN/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/qd-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/qd-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2633,7 +2633,7 @@ linux_panel() {
                 docker_describe="dockge是一个可视化的docker-compose容器管理面板"
                 docker_url="官网介绍: https://github.com/louislam/dockge"
                 default_port_1=5001
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/dockge-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/dockge-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2644,7 +2644,7 @@ linux_panel() {
                 docker_describe="speedtest是用Javascript实现的轻量级速度测试工具，即开即用"
                 docker_url="官网介绍: https://github.com/librespeed/speedtest"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/speedtest-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/speedtest-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2655,7 +2655,7 @@ linux_panel() {
                 docker_describe="searxng是一个私有且隐私的搜索引擎站点"
                 docker_url="官网介绍: https://hub.docker.com/r/alandoyle/searxng"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/searxng-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/searxng-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2667,7 +2667,7 @@ linux_panel() {
                 docker_url="官网介绍: https://www.photoprism.app/"
                 default_port_1=2342
                 random_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16)
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/photoprism-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/photoprism-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: $random_password"
                 docker_password=""
                 manage_dockerapp
@@ -2678,7 +2678,7 @@ linux_panel() {
                 docker_describe="这是一个强大的本地托管基于Web的PDF操作工具使用docker，允许您对PDF文件执行各种操作，例如拆分合并、转换、重新组织、添加图像、旋转、压缩等"
                 docker_url="官网介绍: https://github.com/Stirling-Tools/Stirling-PDF"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/s-pdf-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/s-pdf-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2689,7 +2689,7 @@ linux_panel() {
                 docker_describe="这是一个强大图表绘制软件，思维导图、拓扑图、流程图、都能画"
                 docker_url="官网介绍: https://www.drawio.com/"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/drawio-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/drawio-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2700,7 +2700,7 @@ linux_panel() {
                 docker_describe="Sun-Panel服务器，NAS导航面板、Homepage、浏览器首页"
                 docker_url="官网介绍: https://doc.sun-panel.top/zh_cn/"
                 default_port_1=3002
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/sun-panel-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/sun-panel-docker-compose.yml)
                 docker_exec_command="echo 账号: admin@sun.cc  密码: 12345678"
                 docker_password=""
                 manage_dockerapp
@@ -2711,7 +2711,7 @@ linux_panel() {
                 docker_describe="Pingvin Share是一个可自建的文件分享平台，是WeTransfer的一个替代品"
                 docker_url="官网介绍: https://github.com/stonith404/pingvin-share"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/pingvin-share-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/pingvin-share-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2722,7 +2722,7 @@ linux_panel() {
                 docker_describe="极简朋友圈，高仿微信朋友圈，记录你的美好生活"
                 docker_url="官网介绍: https://github.com/kingwrcy/moments?tab=readme-ov-file"
                 default_port_1=3000
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/moments-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/moments-docker-compose.yml)
                 docker_exec_command="echo 账号: admin  密码: a123456"
                 docker_password=""
                 manage_dockerapp
@@ -2733,7 +2733,7 @@ linux_panel() {
                 docker_describe="LobeChat聚合市面上主流的AI大模型，ChatGPT/Claude/Gemini/Groq/Ollama"
                 docker_url="官网介绍: https://github.com/lobehub/lobe-chat"
                 default_port_1=3210
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/lobe-chat-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/lobe-chat-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2744,7 +2744,7 @@ linux_panel() {
                 docker_describe="是一个多功能IP工具箱，可以查看自己IP信息及连通性，用网页面板呈现"
                 docker_url="官网介绍: https://github.com/jason5ng32/MyIP/blob/main/README_ZH.md"
                 default_port_1=18966
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/myip-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/myip-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2766,7 +2766,7 @@ linux_panel() {
                     wget -qO "$docker_workdir/config.yml" "${github_proxy}raw.githubusercontent.com/hr3lxphr6j/bililive-go/master/config.yml"
                 fi
 
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/bililive-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/bililive-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2777,7 +2777,7 @@ linux_panel() {
                 docker_describe="简易在线SSH和sftp工具，可在线敲命令和上传下载文件"
                 docker_url="官网介绍: https://github.com/Jrohy/webssh"
                 default_port_1=5032
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/webssh-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/webssh-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2788,7 +2788,7 @@ linux_panel() {
                 docker_describe="为方便开发人员提供的在线工具"
                 docker_url="官网介绍: https://github.com/CorentinTh/it-tools"
                 default_port_1=8080
-                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/conf/main/dockerapp/it-tools-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/dockerapplication/it-tools-docker-compose.yml)
                 docker_exec_command=""
                 docker_password=""
                 manage_dockerapp
@@ -2933,7 +2933,7 @@ ldnmp_install_certbot() {
 
     if [ -z "$existing_cron" ]; then
         # 下载并使脚本可执行
-        curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/Tools/raw/main/callscript/docker_certbot.sh"
+        curl -fsSL -o "cert_renewal.sh" "${github_proxy}github.com/honeok/Tools/raw/main/InvScripts/docker_certbot.sh"
         chmod +x cert_renewal.sh
 
         # 添加定时任务
@@ -3388,7 +3388,7 @@ ldnmp_add_db() {
 
 reverse_proxy() {
     ip_address
-    curl -fsSL -o "$nginx_dir/conf.d/$domain.conf" "${github_proxy}github.com/honeok/conf/raw/refs/heads/main/nginx/conf.d/reverse-proxy.conf"
+    curl -fsSL -o "$nginx_dir/conf.d/$domain.conf" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/nginx/conf.d/reverse-proxy.conf"
     sed -i "s/domain.com/$yuming/g" "$nginx_dir/conf.d/$domain.conf"
     sed -i "s/0.0.0.0/$ipv4_address/g" "$nginx_dir/conf.d/$domain.conf"
     sed -i "s/0000/$duankou/g" "$nginx_dir/conf.d/$domain.conf"
@@ -3480,7 +3480,7 @@ fail2ban_install_sshd() {
     [ ! -d "$fail2ban_dir" ] && mkdir -p "$fail2ban_dir"
     cd "$fail2ban_dir"
 
-    curl -fsSL -o "docker-compose.yml" "${github_proxy}github.com/honeok/conf/raw/refs/heads/main/fail2ban/fail2ban-docker-compose.yml"
+    curl -fsSL -o "docker-compose.yml" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/fail2ban/ldnmp-docker-compose.yml"
 
     manage_compose start
 
@@ -4307,7 +4307,7 @@ linux_ldnmp() {
 
                 [ ! -d /data/script ] && mkdir -p /data/script
                 cd /data/script || { _red "进入目录/data/script失败"; return 1; }
-                curl -fsSL -o "${useip}_backup.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/web_backup.sh"
+                curl -fsSL -o "${useip}_backup.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/web_backup.sh"
                 chmod +x "${useip}_backup.sh"
 
                 sed -i "s/0.0.0.0/$useip/g" "${useip}_backup.sh"
@@ -5449,13 +5449,13 @@ xanmod_bbr3() {
                     remove 'linux-*xanmod1*'
                     update-grub
                     # wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-                    wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+                    wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
                     # 添加存储库
                     echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
                     # kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-                    local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+                    local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
                     install linux-xanmod-x64v"$kernel_version"
 
@@ -5519,13 +5519,13 @@ xanmod_bbr3() {
                 install wget gnupg
 
                 # wget -qO - https://dl.xanmod.org/archive.key | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
-                wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
+                wget -qO - "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/archive.key" | gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg --yes
 
                 # 添加存储库
                 echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | tee /etc/apt/sources.list.d/xanmod-release.list
 
                 # kernel_version=$(wget -q https://dl.xanmod.org/check_x86-64_psabi.sh && chmod +x check_x86-64_psabi.sh && ./check_x86-64_psabi.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
-                local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
+                local kernel_version=$(curl -fsSL -o xanmod_check.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/check_x86-64_psabi.sh && chmod +x xanmod_check.sh && ./xanmod_check.sh | grep -oP 'x86-64-v\K\d+|x86-64-v\d+')
 
                 install linux-xanmod-x64v"$kernel_version"
 
@@ -5851,7 +5851,7 @@ telegram_bot(){
                 chmod +x "${globle_script_dir}/TG-check-notify.sh"
                 vim "${globle_script_dir}/TG-check-notify.sh"
             else
-                curl -fsSL -o "${globle_script_dir}/TG-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/TG-check-notify.sh"
+                curl -fsSL -o "${globle_script_dir}/TG-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/TG-check-notify.sh"
                 # 计算文件哈希
                 TG_check_notify=$(sha256sum "${globle_script_dir}/TG-check-notify.sh" | awk '{ print $1 }')
 
@@ -5872,7 +5872,7 @@ telegram_bot(){
             crontab -l | grep -v "${globle_script_dir}/TG-check-notify.sh" | crontab - > /dev/null 2>&1
             (crontab -l ; echo "@reboot tmux new -d -s TG-check-notify '${globle_script_dir}/TG-check-notify.sh'") | crontab - > /dev/null 2>&1
 
-            curl -fsSL -o "${globle_script_dir}/TG-SSH-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/TG-SSH-check-notify.sh"
+            curl -fsSL -o "${globle_script_dir}/TG-SSH-check-notify.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/TG-SSH-check-notify.sh"
             # 计算文件哈希
             TG_SSH_check_notify=$(sha256sum "${globle_script_dir}/TG-SSH-check-notify.sh" | awk '{ print $1 }')
 
@@ -6232,6 +6232,420 @@ clamav_antivirus() {
     done
 }
 
+file_manage() {
+    need_root
+    while true; do
+        clear
+        echo "文件管理器"
+        echo "------------------------"
+        echo "当前路径"
+        echo "$(dirname "$(realpath "$0")")"
+        echo "------------------------"
+        ls --color=auto -x
+        echo "------------------------"
+        echo "1.  进入目录           2.  创建目录             3.  修改目录权限         4.  重命名目录"
+        echo "5.  删除目录           6.  返回上一级目录"
+        echo "------------------------"
+        echo "11. 创建文件           12. 编辑文件             13. 修改文件权限         14. 重命名文件"
+        echo "15. 删除文件"
+        echo "------------------------"
+        echo "21. 压缩文件目录       22. 解压文件目录         23. 移动文件目录         24. 复制文件目录"
+        echo "25. 传文件至其他服务器"
+        echo "------------------------"
+        echo "0.  返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)  # 进入目录
+                echo -n "请输入目录名:"
+                read -r dirname
+                cd "$dirname" 2>/dev/null || _red "无法进入目录"
+                ;;
+            2)  # 创建目录
+                echo -n "请输入要创建的目录名:"
+                read -r dirname
+                mkdir -p "$dirname" && _green "目录已创建" || _red "创建失败"
+                ;;
+            3)  # 修改目录权限
+                echo -n "请输入目录名:"
+                read -r dirname
+                echo -n "请输入权限（如755）:"
+                read -r perm
+                chmod "$perm" "$dirname" && _green "权限已修改" || _red "修改失败"
+                ;;
+            4)  # 重命名目录
+                echo -n "请输入当前目录名:"
+                read -r current_name
+                echo -n "请输入新目录名:"
+                read -r new_name
+                mv "$current_name" "$new_name" && _green "目录已重命名" || _red "重命名失败"
+                ;;
+            5)  # 删除目录
+                echo -n "请输入要删除的目录名:"
+                read -r dirname
+                rm -fr "$dirname" && _green "目录已删除" || _red "删除失败"
+                ;;
+            6)  # 返回上一级目录
+                cd ..
+                ;;
+            11) # 创建文件
+                echo -n "请输入要创建的文件名:"
+                read -r filename
+                touch "$filename" && _green "文件已创建" || _red "创建失败"
+                ;;
+            12) # 编辑文件
+                echo -n "请输入要编辑的文件名:"
+                read -r filename
+                install vim
+                vim "$filename"
+                ;;
+            13) # 修改文件权限
+                echo -n "请输入文件名:"
+                read -r filename
+                echo -n "请输入权限（如 755）:"
+                read -r perm
+                chmod "$perm" "$filename" && _green "权限已修改" || _red "修改失败"
+                ;;
+            14) # 重命名文件
+                echo -n "请输入当前文件名:"
+                read -r current_name
+                echo -n "请输入新文件名:"
+                read -r new_name
+                mv "$current_name" "$new_name" && _green "文件已重命名" || _red "重命名失败"
+                ;;
+            15) # 删除文件
+                echo -n "请输入要删除的文件名:"
+                read -r filename
+                rm -f "$filename" && _green "文件已删除" || _red "删除失败"
+                ;;
+            21) # 压缩文件/目录
+                echo -n "请输入要压缩的文件/目录名:"
+                read -r name
+                install tar
+                tar -czvf "$name.tar.gz" "$name" &&  _green "已压缩为 $name.tar.gz" || _red "压缩失败"
+                ;;
+            22) # 解压文件/目录
+                echo -n "请输入要解压的文件名（.tar.gz）:"
+                read -r filename
+                install tar
+                tar -xzvf "$filename" && _green "已解压 $filename" || _red "解压失败"
+                ;;
+            23) # 移动文件或目录
+                echo -n "请输入要移动的文件或目录路径:"
+                read -r src_path
+                if [ ! -e "$src_path" ]; then
+                    _red "错误：文件或目录不存在"
+                    continue
+                fi
+
+                echo -n "请输入目标路径（包括新文件名或目录名）:"
+                read -r dest_path
+                if [ -z "$dest_path" ]; then
+                    _red "错误：请输入目标路径"
+                    continue
+                fi
+
+                mv "$src_path" "$dest_path" && _green "文件或目录已移动到 $dest_path" || _red "移动文件或目录失败"
+                ;;
+            24) # 复制文件目录
+                echo -n "请输入要复制的文件或目录路径:"
+                read -r src_path
+                if [ ! -e "$src_path" ]; then
+                    _red "错误：文件或目录不存在"
+                    continue
+                fi
+
+                echo -n "请输入目标路径（包括新文件名或目录名）:"
+                read -r dest_path
+                if [ -z "$dest_path" ]; then
+                    _red "错误：请输入目标路径"
+                    continue
+                fi
+
+                # 使用 -r 选项以递归方式复制目录
+                cp -r "$src_path" "$dest_path" && _green "文件或目录已复制到 $dest_path" || _red "复制文件或目录失败"
+                ;;
+            25) # 传送文件至远端服务器
+                echo -n "请输入要传送的文件路径:"
+                read -r file_to_transfer
+                if [ ! -f "$file_to_transfer" ]; then
+                    _red "错误：文件不存在"
+                    continue
+                fi
+
+                echo -n "请输入远端服务器IP:"
+                read -r remote_ip
+                if [ -z "$remote_ip" ]; then
+                    _red "错误：请输入远端服务器IP"
+                    continue
+                fi
+
+                echo -n "请输入远端服务器用户名（默认root）:"
+                read -r remote_user
+                
+                remote_user=${remote_user:-root}
+
+                echo -n "请输入远端服务器密码:"
+                read -r -s remote_password
+                if [ -z "$remote_password" ]; then
+                    _red "错误：请输入远端服务器密码"
+                    continue
+                fi
+
+                echo -n "请输入登录端口（默认22）:"
+                read -r remote_port
+                remote_port=${remote_port:-22}
+
+                # 清除已知主机的旧条目
+                ssh-keygen -f "/root/.ssh/known_hosts" -R "$remote_ip"
+                sleep 2
+
+                # 使用scp传输文件
+                scp -P "$remote_port" -o StrictHostKeyChecking=no "$file_to_transfer" "$remote_user@$remote_ip:/opt/" <<EOF
+$remote_password
+EOF
+
+                if [ $? -eq 0 ]; then
+                    _green "文件已传送至远程服务器/opt目录"
+                else
+                    _red "文件传送失败"
+                fi
+
+                end_of
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+    done
+}
+
+linux_language() {
+    update_locale() {
+        local lang=$1
+        local locale_file=$2
+
+        if [ -f /etc/os-release ]; then
+            . /etc/os-release
+            case $ID in
+                debian|ubuntu|kali)
+                    install locales
+                    sed -i "s/^\s*#\?\s*${locale_file}/${locale_file}/" /etc/locale.gen
+                    locale-gen
+                    echo "LANG=${lang}" > /etc/default/locale
+                    export LANG=${lang}
+                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    end_of
+                    ;;
+                centos|rhel|almalinux|rocky|fedora)
+                    install glibc-langpack-zh
+                    localectl set-locale LANG=${lang}
+                    echo "LANG=${lang}" | tee /etc/locale.conf
+                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    end_of
+                    ;;
+                *)
+                    _red "不支持的系统: $ID"
+                    end_of
+                    ;;
+            esac
+        else
+            _red "不支持的系统，无法识别系统类型"
+            end_of
+        fi
+    }
+
+    need_root
+    while true; do
+        echo "当前系统语言: $LANG"
+        echo "------------------------"
+        echo "1. 英文          2. 简体中文          3. 繁体中文"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                update_locale "en_US.UTF-8" "en_US.UTF-8"
+                ;;
+            2)
+                update_locale "zh_CN.UTF-8" "zh_CN.UTF-8"
+                ;;
+            3)
+                update_locale "zh_TW.UTF-8" "zh_TW.UTF-8"
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
+shell_colorchange(){
+    shell_colorchange_profile() {
+
+    if command -v dnf &>/dev/null || command -v yum &>/dev/null; then
+        sed -i '/^PS1=/d' ~/.bashrc
+        echo "${colorchange}" >> ~/.bashrc
+        # source ~/.bashrc
+    else
+        sed -i '/^PS1=/d' ~/.profile
+        echo "${colorchange}" >> ~/.profile
+        # source ~/.profile
+    fi
+
+    _green "变更完成！重新连接SSH后可查看变化！"
+    hash -r
+    end_of
+    }
+
+    need_root
+    while true; do
+        clear
+        echo "命令行美化工具"
+        echo "------------------------"
+        echo -e "1. \033[1;32mroot \033[1;34mlocalhost \033[1;31m~ \033[0m${white}#"
+        echo -e "2. \033[1;35mroot \033[1;36mlocalhost \033[1;33m~ \033[0m${white}#"
+        echo -e "3. \033[1;31mroot \033[1;32mlocalhost \033[1;34m~ \033[0m${white}#"
+        echo -e "4. \033[1;36mroot \033[1;33mlocalhost \033[1;37m~ \033[0m${white}#"
+        echo -e "5. \033[1;37mroot \033[1;31mlocalhost \033[1;32m~ \033[0m${white}#"
+        echo -e "6. \033[1;33mroot \033[1;34mlocalhost \033[1;35m~ \033[0m${white}#"
+        echo -e "7. root localhost ~ #"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                colorchange="PS1='\[\033[1;32m\]\u\[\033[0m\]@\[\033[1;34m\]\h\[\033[0m\] \[\033[1;31m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            2)
+                colorchange="PS1='\[\033[1;35m\]\u\[\033[0m\]@\[\033[1;36m\]\h\[\033[0m\] \[\033[1;33m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            3)
+                colorchange="PS1='\[\033[1;31m\]\u\[\033[0m\]@\[\033[1;32m\]\h\[\033[0m\] \[\033[1;34m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            4)
+                colorchange="PS1='\[\033[1;36m\]\u\[\033[0m\]@\[\033[1;33m\]\h\[\033[0m\] \[\033[1;37m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            5)
+                colorchange="PS1='\[\033[1;37m\]\u\[\033[0m\]@\[\033[1;31m\]\h\[\033[0m\] \[\033[1;32m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            6)
+                colorchange="PS1='\[\033[1;33m\]\u\[\033[0m\]@\[\033[1;34m\]\h\[\033[0m\] \[\033[1;35m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            7)
+                colorchange=""
+                shell_colorchange_profile
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
+linux_trash() {
+    need_root
+
+    local bashrc_profile="/root/.bashrc"
+    local TRASH_DIR="$HOME/.local/share/Trash/files"
+
+    while true; do
+        local trash_status
+        if ! grep -q "trash-put" "$bashrc_profile"; then
+            trash_status="${yellow}未启用${white}"
+        else
+            trash_status="${green}已启用${white}"
+        fi
+
+        clear
+        echo -e "当前回收站 ${trash_status}"
+        echo "启用后rm删除的文件先进入回收站，防止误删重要文件！"
+        echo "------------------------------------------------"
+        ls -l --color=auto "$TRASH_DIR" 2>/dev/null || echo "回收站为空"
+        echo "------------------------"
+        echo "1. 启用回收站          2. 关闭回收站"
+        echo "3. 还原内容            4. 清空回收站"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                install trash-cli
+                sed -i '/alias rm/d' "$bashrc_profile"
+                echo "alias rm='trash-put'" >> "$bashrc_profile"
+                source "$bashrc_profile"
+                echo "回收站已启用，删除的文件将移至回收站"
+                sleep 2
+                ;;
+            2)
+                remove trash-cli
+                sed -i '/alias rm/d' "$bashrc_profile"
+                echo "alias rm='rm -i'" >> "$bashrc_profile"
+                source "$bashrc_profile"
+                echo "回收站已关闭，文件将直接删除"
+                sleep 2
+                ;;
+            3)
+                echo -n "输入要还原的文件名:"
+                read -r file_to_restore
+                if [ -e "$TRASH_DIR/$file_to_restore" ]; then
+                    mv "$TRASH_DIR/$file_to_restore" "$HOME/"
+                    echo -n -e "$file_to_restore ${green}已还原到主目录${white}"
+                else
+                    _red "文件不存在"
+                fi
+                ;;
+            4)
+                echo -n "确认清空回收站?[y/n]:"
+                read -r confirm
+                if [[ "$confirm" == "y" ]]; then
+                    trash-empty
+                    _green "回收站已清空"
+                fi
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
 cloudflare_ddns() {
     need_root
 
@@ -6244,7 +6658,7 @@ cloudflare_ddns() {
         clear
         echo "Cloudflare ddns解析"
         echo "-------------------------"
-        if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ~/cf-v4-ddns.sh ]; then
+        if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
             echo -e "${white}Cloudflare ddns：${green}已安装${white}"
             crontab -l | grep "/usr/local/bin/cf-ddns.sh"
         else
@@ -6254,7 +6668,7 @@ cloudflare_ddns() {
         echo "公网IPV4地址: ${ipv4_address}"
         echo "公网IPV6地址: ${ipv6_address}"
         echo "-------------------------"
-        echo "1. 设置DDNS动态域名解析    2. 删除DDNS动态域名解析"
+        echo "1. 设置DDNS动态域名解析     2. 删除DDNS动态域名解析"
         echo "-------------------------"
         echo "0. 返回上一级"
         echo "-------------------------"
@@ -6298,7 +6712,7 @@ cloudflare_ddns() {
                         _red "无效的域名格式,请重新输入"
                     fi
                 done
-                
+
                 # 获取CFRECORD_NAME
                 while true; do
                     echo -n "请输入你的主机名（如ddns.honeok.com）:"
@@ -6320,10 +6734,10 @@ cloudflare_ddns() {
                 read -r CFTTL
                 CFTTL=${CFTTL:-60}
 
-                curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/cf-v4-ddns.sh"
+                curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/cf-v4-ddns.sh"
                 # 计算文件哈希
                 FILE_HASH=$(sha256sum ~/cf-v4-ddns.sh | awk '{ print $1 }')
-                
+
                 # 校验哈希值
                 if [ "$FILE_HASH" != "$EXPECTED_HASH" ]; then
                     _red "文件哈希校验失败，脚本可能被篡改"
@@ -6332,20 +6746,20 @@ cloudflare_ddns() {
                     linux_system_tools # 返回系统工具菜单
                 fi
 
-                sed -i "s/^CFKEY=honeok$/CFKEY=$CFKEY/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFUSER=honeok@gmail.com$/CFUSER=$CFUSER/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFZONE_NAME=honeok.com$/CFZONE_NAME=$CFZONE_NAME/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFRECORD_NAME=honeok$/CFRECORD_NAME=$CFRECORD_NAME/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFRECORD_TYPE=A$/CFRECORD_TYPE=$CFRECORD_TYPE/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFTTL=60$/CFTTL=$CFTTL/" ~/cf-v4-ddns.sh
+                sed -i "s/^CFKEY=honeok$/CFKEY=$CFKEY/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFUSER=honeok@gmail.com$/CFUSER=$CFUSER/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFZONE_NAME=honeok.com$/CFZONE_NAME=$CFZONE_NAME/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFRECORD_NAME=honeok$/CFRECORD_NAME=$CFRECORD_NAME/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFRECORD_TYPE=A$/CFRECORD_TYPE=$CFRECORD_TYPE/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFTTL=60$/CFTTL=$CFTTL/" ${globle_script_dir}/cf-v4-ddns.sh
 
                 # 复制脚本并设置权限
-                cp ~/cf-v4-ddns.sh /usr/local/bin/cf-ddns.sh && chmod a+x /usr/local/bin/cf-ddns.sh
+                cp ${globle_script_dir}/cf-v4-ddns.sh /usr/local/bin/cf-ddns.sh && chmod a+x /usr/local/bin/cf-ddns.sh
 
                 check_crontab_installed
 
                 if ! (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1") | crontab -; then
-                    _red "无法自动添加Cron任务，请手动添加以下行到Crontab:"
+                    _red "无法自动添加Cron任务，请手动添加以下行到Crontab"
                     _yellow "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1"
                     _yellow "按任意键继续"
                     read -n 1 -s -r -p ""
@@ -6373,8 +6787,8 @@ cloudflare_ddns() {
                     _red "定时任务中未找到与 '/usr/local/bin/cf-ddns.sh' 相关的任务"
                 fi
 
-                if [ -f ~/cf-v4-ddns.sh ]; then
-                    rm ~/cf-v4-ddns.sh
+                if [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
+                    rm ${globle_script_dir}/cf-v4-ddns.sh
                 fi
 
                 _green "Cloudflare ddns卸载完成"
@@ -7336,7 +7750,7 @@ EOF
                             cz_day=${cz_day:-1}
 
                             cd ~
-                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/Limiting_Shut_down1.sh"
+                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
                             chmod +x ~/Limiting_Shut_down.sh
                             sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
                             sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
@@ -7387,7 +7801,7 @@ EOF
             26)
                 need_root
                 cd ~
-                curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/upgrade_openssh9.8p1.sh"
+                curl -fsSL -o "upgrade_openssh.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/upgrade_openssh9.8p1.sh"
                 chmod +x "~/upgrade_openssh.sh"
                 ~/upgrade_openssh.sh
                 rm -f ~/upgrade_openssh.sh
@@ -7464,8 +7878,88 @@ EOF
             29)
                 clamav_antivirus
                 ;;
+            30)
+                file_manage
+                ;;
+            31)
+                linux_language
+                ;;
+            32)
+                shell_colorchange
+                ;;
+            33)
+                linux_trash
+                ;;
             50)
                 cloudflare_ddns
+                ;;
+            51)
+                need_root
+                echo "一条龙系统调优"
+                echo "------------------------------------------------"
+                echo "将对以下内容进行操作与优化"
+                echo "1. 更新系统到最新"
+                echo "2. 清理系统垃圾文件"
+                echo -e "3. 设置虚拟内存${yellow}1G${white}"
+                echo -e "4. 设置SSH端口号为${yellow}22166${white}"
+                echo -e "5. 开放所有端口"
+                echo -e "6. 开启${yellow}BBR${white}加速"
+                echo -e "7. 设置时区到${yellow}上海${white}"
+                echo -e "8. 自动优化DNS地址${yellow}海外: 1.1.1.1 8.8.8.8  国内: 223.5.5.5 ${white}"
+                echo -e "9. 安装常用工具${yellow}docker wget sudo tar unzip socat btop nano vim${white}"
+                echo -e "10. Linux系统内核参数优化切换到${yellow}均衡优化模式${white}"
+                echo "------------------------------------------------"
+
+                echo -n -e "${yellow}确定一键调优吗?[y/n]${white}"
+                read -r choice
+
+                case "$choice" in
+                    [Yy])
+                        clear
+                        echo "------------------------------------------------"
+                        linux_update
+                        echo -e "[${green}OK${white}] 1/10. 更新系统到最新"
+                        echo "------------------------------------------------"
+                        linux_clean
+                        echo -e "[${green}OK${white}] 2/10. 清理系统垃圾文件"
+                        echo "------------------------------------------------"
+                        new_swap=1024
+                        add_swap
+                        echo -e "[${green}OK${white}] 3/10. 设置虚拟内存${yellow}1G${white}"
+                        echo "------------------------------------------------"
+                        new_port=22166
+                        new_ssh_port
+                        echo -e "[${green}OK${white}] 4/10. 设置SSH端口号为${yellow}${new_port}${white}"
+                        echo "------------------------------------------------"
+                        iptables_open
+                        remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
+                        echo -e "[${green}OK${white}] 5/10. 开放所有端口"
+                        echo "------------------------------------------------"
+                        bbr_on
+                        echo -e "[${green}OK${white}] 6/10. 开启${yellow}BBR${white}加速"
+                        echo "------------------------------------------------"
+                        set_timedate Asia/Shanghai
+                        echo -e "[${green}OK${white}] 7/10. 设置时区到${yellow}上海${white}"
+                        echo "------------------------------------------------"
+                        bak_dns
+                        set_dns
+                        echo -e "[${gl_lv}OK${gl_bai}] 8/10. 自动优化DNS地址${gl_huang}${gl_bai}"
+                        echo "------------------------------------------------"
+                        install_docker
+                        install wget sudo tar unzip socat btop nano vim
+                        echo -e "[${gl_lv}OK${gl_bai}] 9/10. 安装常用工具${gl_huang}docker wget sudo tar unzip socat btop${gl_bai}"
+                        echo "------------------------------------------------"
+                        optimize_balanced
+                        echo -e "[${gl_lv}OK${gl_bai}] 10/10. Linux系统内核参数优化"
+                        echo -e "${gl_lv}一条龙系统调优已完成${gl_bai}"
+                        ;;
+                    [Nn])
+                        echo "已取消"
+                        ;;
+                    *)
+                        _red "无效选项，请重新输入"
+                        ;;
+                esac
                 ;;
             99)
                 clear
@@ -7812,8 +8306,7 @@ node_create() {
         clear
         echo "▶ 节点搭建脚本合集"
         echo "-------------------------------"
-        _yellow "Sing-box多合一/Argo-tunnel"
-        echo "-------------------------------"
+        _yellow "Sing-box多合一脚本/Argo隧道"
         echo "1. Fscarmen Sing-box一键脚本"
         echo "3. FranzKafkaYu Sing-box一键脚本"
         echo "5. 233boy Sing-box一键脚本"
@@ -7824,8 +8317,7 @@ node_create() {
         echo "10. 甬哥 Sing-box一键四协议共存脚本"
         echo "11. Multi EasyGost一键脚本"
         echo "-------------------------------"
-        _yellow "单协议/XRAY面板及其他"
-        echo "-------------------------------"
+        _yellow "单协议/面板及其他"
         echo "25. Brutal Reality一键脚本"
         echo "26. Vaxilu xui面板一键脚本"
         echo "27. FranzKafkaYu xui面板一键脚本"
@@ -7837,6 +8329,7 @@ node_create() {
         echo "40. OpenVPN一键安装脚本"
         echo "41. 一键搭建TG代理"
         echo "-------------------------------"
+        _yellow "节点汇总管理"
         echo "50. Sub-Store节点订阅管理面板"
         echo "-------------------------------"
         echo "0. 返回主菜单"
@@ -7950,7 +8443,7 @@ node_create() {
                 docker_url="官网介绍: https://github.com/sub-store-org/Sub-Store"
                 default_port_1=3001
                 random_password=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 20)
-                docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/conf/main/dockerapp/sub-store-docker-compose.yml)
+                docker_compose_content=$(curl -fsSL raw.githubusercontent.com/honeok/Tools/main/dockerapplication/sub-store-docker-compose.yml)
                 docker_exec_command="echo 随机口令: $random_password 请牢记！"
                 docker_password=""
                 manage_dockerapp
@@ -8140,7 +8633,7 @@ palworld_script() {
         case $choice in
             1)
                 cd ~
-                curl -fsSL -o ./palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/palworld.sh
+                curl -fsSL -o ./palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/palworld.sh
                 chmod a+x ./palworld.sh
                 ;;
             2)
@@ -8155,7 +8648,7 @@ palworld_script() {
                 if [ -f ~/palworld.sh ]; then
                     bash ~/palworld.sh
                 else
-                    curl -fsSL -o palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/palworld.sh
+                    curl -fsSL -o palworld.sh ${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/palworld.sh
                     chmod a+x palworld.sh
                     bash palworld.sh
                 fi
