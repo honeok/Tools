@@ -6494,6 +6494,158 @@ linux_language() {
     done
 }
 
+shell_colorchange(){
+    shell_colorchange_profile() {
+
+    if command -v dnf &>/dev/null || command -v yum &>/dev/null; then
+        sed -i '/^PS1=/d' ~/.bashrc
+        echo "${colorchange}" >> ~/.bashrc
+        # source ~/.bashrc
+    else
+        sed -i '/^PS1=/d' ~/.profile
+        echo "${colorchange}" >> ~/.profile
+        # source ~/.profile
+    fi
+
+    _green "变更完成！重新连接SSH后可查看变化！"
+    hash -r
+    end_of
+    }
+
+    need_root
+    while true; do
+        clear
+        echo "命令行美化工具"
+        echo "------------------------"
+        echo -e "1. \033[1;32mroot \033[1;34mlocalhost \033[1;31m~ \033[0m${white}#"
+        echo -e "2. \033[1;35mroot \033[1;36mlocalhost \033[1;33m~ \033[0m${white}#"
+        echo -e "3. \033[1;31mroot \033[1;32mlocalhost \033[1;34m~ \033[0m${white}#"
+        echo -e "4. \033[1;36mroot \033[1;33mlocalhost \033[1;37m~ \033[0m${white}#"
+        echo -e "5. \033[1;37mroot \033[1;31mlocalhost \033[1;32m~ \033[0m${white}#"
+        echo -e "6. \033[1;33mroot \033[1;34mlocalhost \033[1;35m~ \033[0m${white}#"
+        echo -e "7. root localhost ~ #"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                colorchange="PS1='\[\033[1;32m\]\u\[\033[0m\]@\[\033[1;34m\]\h\[\033[0m\] \[\033[1;31m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            2)
+                colorchange="PS1='\[\033[1;35m\]\u\[\033[0m\]@\[\033[1;36m\]\h\[\033[0m\] \[\033[1;33m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            3)
+                colorchange="PS1='\[\033[1;31m\]\u\[\033[0m\]@\[\033[1;32m\]\h\[\033[0m\] \[\033[1;34m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            4)
+                colorchange="PS1='\[\033[1;36m\]\u\[\033[0m\]@\[\033[1;33m\]\h\[\033[0m\] \[\033[1;37m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            5)
+                colorchange="PS1='\[\033[1;37m\]\u\[\033[0m\]@\[\033[1;31m\]\h\[\033[0m\] \[\033[1;32m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            6)
+                colorchange="PS1='\[\033[1;33m\]\u\[\033[0m\]@\[\033[1;34m\]\h\[\033[0m\] \[\033[1;35m\]\w\[\033[0m\] # '"
+                shell_colorchange_profile
+                ;;
+            7)
+                colorchange=""
+                shell_colorchange_profile
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
+linux_trash() {
+    need_root
+
+    local bashrc_profile="/root/.bashrc"
+    local TRASH_DIR="$HOME/.local/share/Trash/files"
+
+    while true; do
+        local trash_status
+        if ! grep -q "trash-put" "$bashrc_profile"; then
+            trash_status="${yellow}未启用${white}"
+        else
+            trash_status="${green}已启用${white}"
+        fi
+
+        clear
+        echo -e "当前回收站 ${trash_status}"
+        echo "启用后rm删除的文件先进入回收站，防止误删重要文件！"
+        echo "------------------------------------------------"
+        ls -l --color=auto "$TRASH_DIR" 2>/dev/null || echo "回收站为空"
+        echo "------------------------"
+        echo "1. 启用回收站          2. 关闭回收站"
+        echo "3. 还原内容            4. 清空回收站"
+        echo "------------------------"
+        echo "0. 返回上一级"
+        echo "------------------------"
+
+        echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+        read -r choice
+
+        case $choice in
+            1)
+                install trash-cli
+                sed -i '/alias rm/d' "$bashrc_profile"
+                echo "alias rm='trash-put'" >> "$bashrc_profile"
+                source "$bashrc_profile"
+                echo "回收站已启用，删除的文件将移至回收站"
+                sleep 2
+                ;;
+            2)
+                remove trash-cli
+                sed -i '/alias rm/d' "$bashrc_profile"
+                echo "alias rm='rm -i'" >> "$bashrc_profile"
+                source "$bashrc_profile"
+                echo "回收站已关闭，文件将直接删除"
+                sleep 2
+                ;;
+            3)
+                echo -n "输入要还原的文件名:"
+                read -r file_to_restore
+                if [ -e "$TRASH_DIR/$file_to_restore" ]; then
+                    mv "$TRASH_DIR/$file_to_restore" "$HOME/"
+                    echo -n -e "$file_to_restore ${green}已还原到主目录${white}"
+                else
+                    _red "文件不存在"
+                fi
+                ;;
+            4)
+                echo -n "确认清空回收站?[y/n]:"
+                read -r confirm
+                if [[ "$confirm" == "y" ]]; then
+                    trash-empty
+                    _green "回收站已清空"
+                fi
+                ;;
+            0)
+                break
+                ;;
+            *)
+                _red "无效选项，请重新输入"
+                ;;
+        esac
+        end_of
+    done
+}
+
 cloudflare_ddns() {
     need_root
 
@@ -6506,7 +6658,7 @@ cloudflare_ddns() {
         clear
         echo "Cloudflare ddns解析"
         echo "-------------------------"
-        if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ~/cf-v4-ddns.sh ]; then
+        if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
             echo -e "${white}Cloudflare ddns：${green}已安装${white}"
             crontab -l | grep "/usr/local/bin/cf-ddns.sh"
         else
@@ -6516,7 +6668,7 @@ cloudflare_ddns() {
         echo "公网IPV4地址: ${ipv4_address}"
         echo "公网IPV6地址: ${ipv6_address}"
         echo "-------------------------"
-        echo "1. 设置DDNS动态域名解析    2. 删除DDNS动态域名解析"
+        echo "1. 设置DDNS动态域名解析     2. 删除DDNS动态域名解析"
         echo "-------------------------"
         echo "0. 返回上一级"
         echo "-------------------------"
@@ -6560,7 +6712,7 @@ cloudflare_ddns() {
                         _red "无效的域名格式,请重新输入"
                     fi
                 done
-                
+
                 # 获取CFRECORD_NAME
                 while true; do
                     echo -n "请输入你的主机名（如ddns.honeok.com）:"
@@ -6585,7 +6737,7 @@ cloudflare_ddns() {
                 curl -fsSL -o ~/cf-v4-ddns.sh "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/callscript/cf-v4-ddns.sh"
                 # 计算文件哈希
                 FILE_HASH=$(sha256sum ~/cf-v4-ddns.sh | awk '{ print $1 }')
-                
+
                 # 校验哈希值
                 if [ "$FILE_HASH" != "$EXPECTED_HASH" ]; then
                     _red "文件哈希校验失败，脚本可能被篡改"
@@ -6594,20 +6746,20 @@ cloudflare_ddns() {
                     linux_system_tools # 返回系统工具菜单
                 fi
 
-                sed -i "s/^CFKEY=honeok$/CFKEY=$CFKEY/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFUSER=honeok@gmail.com$/CFUSER=$CFUSER/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFZONE_NAME=honeok.com$/CFZONE_NAME=$CFZONE_NAME/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFRECORD_NAME=honeok$/CFRECORD_NAME=$CFRECORD_NAME/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFRECORD_TYPE=A$/CFRECORD_TYPE=$CFRECORD_TYPE/" ~/cf-v4-ddns.sh
-                sed -i "s/^CFTTL=60$/CFTTL=$CFTTL/" ~/cf-v4-ddns.sh
+                sed -i "s/^CFKEY=honeok$/CFKEY=$CFKEY/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFUSER=honeok@gmail.com$/CFUSER=$CFUSER/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFZONE_NAME=honeok.com$/CFZONE_NAME=$CFZONE_NAME/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFRECORD_NAME=honeok$/CFRECORD_NAME=$CFRECORD_NAME/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFRECORD_TYPE=A$/CFRECORD_TYPE=$CFRECORD_TYPE/" ${globle_script_dir}/cf-v4-ddns.sh
+                sed -i "s/^CFTTL=60$/CFTTL=$CFTTL/" ${globle_script_dir}/cf-v4-ddns.sh
 
                 # 复制脚本并设置权限
-                cp ~/cf-v4-ddns.sh /usr/local/bin/cf-ddns.sh && chmod a+x /usr/local/bin/cf-ddns.sh
+                cp ${globle_script_dir}/cf-v4-ddns.sh /usr/local/bin/cf-ddns.sh && chmod a+x /usr/local/bin/cf-ddns.sh
 
                 check_crontab_installed
 
                 if ! (crontab -l 2>/dev/null; echo "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1") | crontab -; then
-                    _red "无法自动添加Cron任务，请手动添加以下行到Crontab:"
+                    _red "无法自动添加Cron任务，请手动添加以下行到Crontab"
                     _yellow "*/1 * * * * /usr/local/bin/cf-ddns.sh >/dev/null 2>&1"
                     _yellow "按任意键继续"
                     read -n 1 -s -r -p ""
@@ -6635,8 +6787,8 @@ cloudflare_ddns() {
                     _red "定时任务中未找到与 '/usr/local/bin/cf-ddns.sh' 相关的任务"
                 fi
 
-                if [ -f ~/cf-v4-ddns.sh ]; then
-                    rm ~/cf-v4-ddns.sh
+                if [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
+                    rm ${globle_script_dir}/cf-v4-ddns.sh
                 fi
 
                 _green "Cloudflare ddns卸载完成"
@@ -7732,8 +7884,82 @@ EOF
             31)
                 linux_language
                 ;;
+            32)
+                shell_colorchange
+                ;;
+            33)
+                linux_trash
+                ;;
             50)
                 cloudflare_ddns
+                ;;
+            51)
+                need_root
+                echo "一条龙系统调优"
+                echo "------------------------------------------------"
+                echo "将对以下内容进行操作与优化"
+                echo "1. 更新系统到最新"
+                echo "2. 清理系统垃圾文件"
+                echo -e "3. 设置虚拟内存${yellow}1G${white}"
+                echo -e "4. 设置SSH端口号为${yellow}22166${white}"
+                echo -e "5. 开放所有端口"
+                echo -e "6. 开启${yellow}BBR${white}加速"
+                echo -e "7. 设置时区到${yellow}上海${white}"
+                echo -e "8. 自动优化DNS地址${yellow}海外: 1.1.1.1 8.8.8.8  国内: 223.5.5.5 ${white}"
+                echo -e "9. 安装常用工具${yellow}docker wget sudo tar unzip socat btop nano vim${white}"
+                echo -e "10. Linux系统内核参数优化切换到${yellow}均衡优化模式${white}"
+                echo "------------------------------------------------"
+
+                echo -n -e "${yellow}确定一键调优吗?[y/n]${white}"
+                read -r choice
+
+                case "$choice" in
+                    [Yy])
+                        clear
+                        echo "------------------------------------------------"
+                        linux_update
+                        echo -e "[${green}OK${white}] 1/10. 更新系统到最新"
+                        echo "------------------------------------------------"
+                        linux_clean
+                        echo -e "[${green}OK${white}] 2/10. 清理系统垃圾文件"
+                        echo "------------------------------------------------"
+                        new_swap=1024
+                        add_swap
+                        echo -e "[${green}OK${white}] 3/10. 设置虚拟内存${yellow}1G${white}"
+                        echo "------------------------------------------------"
+                        new_port=22166
+                        new_ssh_port
+                        echo -e "[${green}OK${white}] 4/10. 设置SSH端口号为${yellow}${new_port}${white}"
+                        echo "------------------------------------------------"
+                        iptables_open
+                        remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
+                        echo -e "[${green}OK${white}] 5/10. 开放所有端口"
+                        echo "------------------------------------------------"
+                        bbr_on
+                        echo -e "[${green}OK${white}] 6/10. 开启${yellow}BBR${white}加速"
+                        echo "------------------------------------------------"
+                        set_timedate Asia/Shanghai
+                        echo -e "[${green}OK${white}] 7/10. 设置时区到${yellow}上海${white}"
+                        echo "------------------------------------------------"
+                        bak_dns
+                        set_dns
+                        echo -e "[${gl_lv}OK${gl_bai}] 8/10. 自动优化DNS地址${gl_huang}${gl_bai}"
+                        echo "------------------------------------------------"
+                        install_docker
+                        install wget sudo tar unzip socat btop nano vim
+                        echo -e "[${gl_lv}OK${gl_bai}] 9/10. 安装常用工具${gl_huang}docker wget sudo tar unzip socat btop${gl_bai}"
+                        echo "------------------------------------------------"
+                        optimize_balanced
+                        echo -e "[${gl_lv}OK${gl_bai}] 10/10. Linux系统内核参数优化"
+                        echo -e "${gl_lv}一条龙系统调优已完成${gl_bai}"
+                        ;;
+                    [Nn])
+                        echo "已取消"
+                        ;;
+                    *)
+                        _red "无效选项，请重新输入"
+                        ;;
+                esac
                 ;;
             99)
                 clear
