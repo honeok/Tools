@@ -3480,7 +3480,7 @@ fail2ban_install_sshd() {
     [ ! -d "$fail2ban_dir" ] && mkdir -p "$fail2ban_dir"
     cd "$fail2ban_dir"
 
-    curl -fsSL -o "docker-compose.yml" "${github_proxy}github.com/honeok/conf/raw/refs/heads/main/fail2ban/fail2ban-docker-compose.yml"
+    curl -fsSL -o "docker-compose.yml" "${github_proxy}raw.githubusercontent.com/honeok/conf/main/fail2ban/ldnmp-docker-compose.yml"
 
     manage_compose start
 
