@@ -6848,7 +6848,7 @@ linux_system_tools() {
         clear
         echo "▶ 系统工具"
         echo "------------------------"
-        echo "1. 设置脚本启动快捷键                  2. 修改登录密码"
+        echo "2. 修改登录密码"
         echo "3. ROOT密码登录模式                    4. 安装Python指定版本"
         echo "5. 开放所有端口                        6. 修改SSH连接端口"
         echo "7. 优化DNS地址                         8. 一键重装系统"
@@ -6882,44 +6882,6 @@ linux_system_tools() {
         read -r choice
 
         case $choice in
-            1)
-                need_root
-                while true; do
-                    clear
-                    echo -n -e "${yellow}请输入你的快捷按键（0退出）:${white}"
-                    read -r quick
-
-                    if [ "${quick}" == "0" ]; then
-                        end_of
-                        linux_system_tools
-                    fi
-
-                    # 检查 ~/.bashrc 文件中是否有本脚本相关的快捷键
-                    if ! grep -q "alias .*='h'" ~/.bashrc; then
-                        # 检查home目录下是否有honeok.sh脚本
-                        if [ ! -f ~/honeok.sh ]; then
-                            _yellow "未找到honeok.sh脚本，正在下载"
-                            curl -fsSL -o ~/honeok.sh "${github_proxy}github.com/honeok/Tools/raw/main/honeok.sh"
-                        fi
-
-                        # 复制honeok.sh到/usr/local/bin并命名为h
-                        cp ~/honeok.sh /usr/local/bin/h && chmod +x /usr/local/bin/h
-
-                        # 在~/.bashrc中添加快捷键alias
-                        echo "alias ${quick}='h'" >> ~/.bashrc
-                        _green "快捷键已设置为 => ${quick}"
-                    else
-                        _red "本脚本相关的快捷键已存在"
-                    fi
-
-                    # 重新加载 ~/.bashrc
-                    sleep 1
-                    source ~/.bashrc
-                    _green "配置已更新"
-                    end_of
-                    linux_system_tools
-                done
-                ;;
             2)
                 _yellow "设置你的登录密码"
                 passwd
