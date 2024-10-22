@@ -3,7 +3,7 @@
 ## Blog：www.honeok.com
 ## Github：https://github.com/honeok/Tools
 
-honeok_v="v3.0.4 (2024.10.21)"
+honeok_v="v3.0.5 (2024.10.21)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -5357,8 +5357,9 @@ set_default_qdisc() {
     while true; do
         echo "请选择要设置的队列规则"
         echo "-------------------------"
-        echo "1. fq （默认）"
-        echo "2. fq_pie"
+        echo "1. fq （默认值）: 基本的公平排队算法，旨在确保每个流获得公平的带宽分配，防止某个流占用过多带宽"
+        echo "2. fq_pie      : 将FQ和PI（Proportional Integral）控制结合在一起，旨在改善延迟和带宽利用率"
+        echo "3. fq_codel    : 结合了公平排队和控制延迟的算法，通过主动丢包和公平分配带宽来减少延迟并提高多流的性能"
         echo "-------------------------"
 
         echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值:fq）:${white}"
@@ -5372,6 +5373,9 @@ set_default_qdisc() {
             2)
                 chosen_qdisc="fq_pie"
                 break
+                ;;
+            3)
+                chosen_qdisc="fq_codel"
                 ;;
             *)
                 _red "无效选项，请重新输入"
