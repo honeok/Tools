@@ -6903,16 +6903,17 @@ linux_system_tools() {
                         fi
 
                         # 复制honeok.sh到/usr/local/bin并命名为h
-                        cp -p ~/honeok.sh /usr/local/bin/h && chmod +x /usr/local/bin/h
+                        cp ~/honeok.sh /usr/local/bin/h && chmod +x /usr/local/bin/h
 
                         # 在~/.bashrc中添加快捷键alias
                         echo "alias ${quick}='h'" >> ~/.bashrc
-                        _green "快捷键已设置为 ${quick}"
+                        _green "快捷键已设置为 => ${quick}"
                     else
                         _red "本脚本相关的快捷键已存在"
                     fi
 
                     # 重新加载 ~/.bashrc
+                    sleep 1
                     source ~/.bashrc
                     _green "配置已更新"
                     end_of
