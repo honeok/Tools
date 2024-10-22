@@ -29,6 +29,7 @@ _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 
 cd /root >/dev/null 2>&1
+
 # =============== Logo ==============
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
@@ -40,6 +41,7 @@ echo -e "${yellow}   __                      __     💀
     local os_text="当前操作系统: ${os_info}"
     _green "${os_text}"
 }
+
 # =============== 系统信息START ===============
 # 查看系统信息
 # 菜单排版参考: https://github.com/spiritLHLS/ecs
