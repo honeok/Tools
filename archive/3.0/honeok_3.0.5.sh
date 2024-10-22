@@ -4978,6 +4978,24 @@ rollbak_dns() {
     fi
 }
 
+lock_dns() {
+    chattr +i /etc/resolv.conf
+    _green "DNS 文件已锁定，防止其他服务修改"
+}
+
+unlock_dns() {
+    chattr -i /etc/resolv.conf
+    _green "DNS文件已解锁，可以被修改"
+}
+
+lock_dns_status() {
+    if lsattr /etc/resolv.conf | grep -qi 'i'; then
+        echo -e -n "${green}已锁定${white}"
+    else
+        echo -e -n "${yellow}已解锁${white}"
+    fi
+}
+
 reinstall_system() {
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
     local os_text="当前操作系统: ${os_info}"
@@ -7009,6 +7027,7 @@ EOF
                     echo "1. 设置DNS优化"
                     echo "2. 恢复DNS原有配置"
                     echo "3. 手动编辑DNS配置"
+                    echo -e "4. 锁定/解锁DNS文件 当前状态$(lock_dns_status)"
                     echo "------------------------"
                     echo "0. 返回上一级"
                     echo "------------------------"
@@ -7029,6 +7048,13 @@ EOF
                                 vim /etc/resolv.conf
                             else
                                 vi /etc/resolv.conf
+                            fi
+                            ;;
+                        4)
+                            if lsattr /etc/resolv.conf | grep -qi 'i'; then
+                                unlock_dns
+                            else
+                                lock_dns
                             fi
                             ;;
                         0)
