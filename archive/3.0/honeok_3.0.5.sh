@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 ## Author: honeok
-## Blog：www.honeok.com
-## Github：https://github.com/honeok/Tools
+## Blog: www.honeok.com
+## Github: https://github.com/honeok/Tools
 
-honeok_v="v3.0.5 (2024.10.21)"
+honeok_v="v3.0.5 (2024.10.22)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -40,7 +40,7 @@ echo -e "${yellow}   __                      __     💀
 }
 #################### 系统信息START ####################
 # 查看系统信息
-# 菜单排版参考：https://github.com/spiritLHLS/ecs
+# 菜单排版参考: https://github.com/spiritLHLS/ecs
 system_info(){
     # 获取CPU型号
     local cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
@@ -565,7 +565,7 @@ end_of() {
 # 检查用户是否为root
 need_root() {
     clear
-    [ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
+    [ "$(id -u)" -ne "0" ] && _red "提示: 该功能需要root用户才能运行！" && end_of && honeok
 }
 
 # 获取公网IP地址
@@ -2226,7 +2226,7 @@ linux_panel() {
                         echo "------------------------"
                         echo "0. 返回上一级"
                         echo "------------------------"
-                        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值：完整安装）:${white}"
+                        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值: 完整安装）:${white}"
 
                         # 重置choice变量
                         choice=""
@@ -3298,7 +3298,7 @@ iptables_open() {
     local table
     for table in iptables ip6tables; do
         if ! command -v $table &> /dev/null; then
-            _red "错误：$table 命令未找到，跳过相关操作"
+            _red "错误: $table 命令未找到，跳过相关操作"
             continue
         fi
 
@@ -5946,13 +5946,13 @@ redhat_kernel_update() {
         os_name=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
         # 确保支持的操作系统上运行
         if [[ "$os_name" != *"Red Hat"* && "$os_name" != *"AlmaLinux"* && "$os_name" != *"Rocky"* && "$os_name" != *"Oracle"* && "$os_name" != *"CentOS"* ]]; then
-            _red "不支持的操作系统：$os_name"
+            _red "不支持的操作系统: $os_name"
             end_of
             linux_system_tools
         fi
 
         # 打印检测到的操作系统信息
-        _yellow "检测到的操作系统：$os_name $os_version"
+        _yellow "检测到的操作系统: $os_name $os_version"
 
         # 根据系统版本安装对应的 ELRepo 仓库配置
         if [[ "$os_version" == 8 ]]; then
@@ -5981,7 +5981,7 @@ redhat_kernel_update() {
             clear
             kernel_version=$(uname -r)
             echo "您已安装elrepo内核"
-            echo "当前内核版本：$kernel_version"
+            echo "当前内核版本: $kernel_version"
 
             echo ""
             echo "内核管理"
@@ -6362,14 +6362,14 @@ file_manage() {
                 echo -n "请输入要移动的文件或目录路径:"
                 read -r src_path
                 if [ ! -e "$src_path" ]; then
-                    _red "错误：文件或目录不存在"
+                    _red "错误: 文件或目录不存在"
                     continue
                 fi
 
                 echo -n "请输入目标路径（包括新文件名或目录名）:"
                 read -r dest_path
                 if [ -z "$dest_path" ]; then
-                    _red "错误：请输入目标路径"
+                    _red "错误: 请输入目标路径"
                     continue
                 fi
 
@@ -6379,14 +6379,14 @@ file_manage() {
                 echo -n "请输入要复制的文件或目录路径:"
                 read -r src_path
                 if [ ! -e "$src_path" ]; then
-                    _red "错误：文件或目录不存在"
+                    _red "错误: 文件或目录不存在"
                     continue
                 fi
 
                 echo -n "请输入目标路径（包括新文件名或目录名）:"
                 read -r dest_path
                 if [ -z "$dest_path" ]; then
-                    _red "错误：请输入目标路径"
+                    _red "错误: 请输入目标路径"
                     continue
                 fi
 
@@ -6397,14 +6397,14 @@ file_manage() {
                 echo -n "请输入要传送的文件路径:"
                 read -r file_to_transfer
                 if [ ! -f "$file_to_transfer" ]; then
-                    _red "错误：文件不存在"
+                    _red "错误: 文件不存在"
                     continue
                 fi
 
                 echo -n "请输入远端服务器IP:"
                 read -r remote_ip
                 if [ -z "$remote_ip" ]; then
-                    _red "错误：请输入远端服务器IP"
+                    _red "错误: 请输入远端服务器IP"
                     continue
                 fi
 
@@ -6416,7 +6416,7 @@ file_manage() {
                 echo -n "请输入远端服务器密码:"
                 read -r -s remote_password
                 if [ -z "$remote_password" ]; then
-                    _red "错误：请输入远端服务器密码"
+                    _red "错误: 请输入远端服务器密码"
                     continue
                 fi
 
@@ -6465,14 +6465,14 @@ linux_language() {
                     locale-gen
                     echo "LANG=${lang}" > /etc/default/locale
                     export LANG=${lang}
-                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    echo -e "${green}系统语言已经修改为: $lang 重新连接SSH生效${white}"
                     end_of
                     ;;
                 centos|rhel|almalinux|rocky|fedora)
                     install glibc-langpack-zh
                     localectl set-locale LANG=${lang}
                     echo "LANG=${lang}" | tee /etc/locale.conf
-                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    echo -e "${green}系统语言已经修改为: $lang 重新连接SSH生效${white}"
                     end_of
                     ;;
                 *)
@@ -6684,10 +6684,10 @@ cloudflare_ddns() {
         echo "Cloudflare ddns解析"
         echo "-------------------------"
         if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
-            echo -e "${white}Cloudflare ddns：${green}已安装${white}"
+            echo -e "${white}Cloudflare ddns: ${green}已安装${white}"
             crontab -l | grep "/usr/local/bin/cf-ddns.sh"
         else
-            echo -e "${white}Cloudflare ddns：${yellow}未安装${white}"
+            echo -e "${white}Cloudflare ddns: ${yellow}未安装${white}"
             echo "使用动态解析之前请解析一个域名，如ddns.honeok.com到你的当前公网IP"
         fi
         echo "公网IPV4地址: ${ipv4_address}"
@@ -6900,13 +6900,13 @@ linux_system_tools() {
                 echo "------------------------"
                 echo "该功能可无缝安装Python官方支持的任何版本！"
                 VERSION=$(python3 -V 2>&1 | awk '{print $2}')
-                echo -e "当前python版本号：${yellow}$VERSION${white}"
+                echo -e "当前python版本号: ${yellow}$VERSION${white}"
                 echo "------------------------"
                 echo "推荐版本:  3.12    3.11    3.10    3.9    3.8    2.7"
-                echo "查询更多版本：https://www.python.org/downloads/"
+                echo "查询更多版本: https://www.python.org/downloads/"
                 echo "------------------------"
 
-                echo -n -e "${yellow}请输入选项并按回车键确认(0退出):${white}"
+                echo -n -e "${yellow}请输入选项并按回车键确认（0退出）:${white}"
                 read -r py_new_v
 
                 if [[ "$py_new_v" == "0" ]]; then
@@ -6968,7 +6968,7 @@ EOF
                 rm -fr $(pyenv root)/cache/*
 
                 VERSION=$(python -V 2>&1 | awk '{print $2}')
-                echo -e "当前Python版本号：${yellow}$VERSION${white}"
+                echo -e "当前Python版本号: ${yellow}$VERSION${white}"
                 ;;
             5)
                 iptables_open
@@ -6987,7 +6987,7 @@ EOF
                     current_port=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
 
                     # 打印当前的SSH端口号
-                    echo -e "当前的SSH端口号是：${yellow}$current_port${white}"
+                    echo -e "当前的SSH端口号是: ${yellow}$current_port${white}"
                     echo "------------------------"
                     echo "端口号范围10000到65535之间的数字（按0退出）"
 
@@ -7166,7 +7166,7 @@ EOF
                     swap_total=$(free -m | awk 'NR==3{print $2}')
                     swap_info=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
 
-                    _yellow "当前虚拟内存：${swap_info}"
+                    _yellow "当前虚拟内存: ${swap_info}"
                     echo "------------------------"
                     echo "1. 分配1024MB     2. 分配2048MB     3. 自定义大小（建议为内存的2倍！）     0. 退出"
                     echo "------------------------"
@@ -7231,7 +7231,7 @@ EOF
 
                     case $choice in
                         1)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r new_username
 
                             useradd -m -s /bin/bash "$new_username" && \
@@ -7239,7 +7239,7 @@ EOF
                             _green "普通账户创建完成"
                             ;;
                         2)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r new_username
 
                             useradd -m -s /bin/bash "$new_username" && \
@@ -7248,7 +7248,7 @@ EOF
                             _green "高级账户创建完成"
                             ;;
                         3)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r username
 
                             echo "$username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
@@ -7265,7 +7265,7 @@ EOF
                             fi
                             ;;
                         5)
-                            echo -n "请输入要删除的用户名："
+                            echo -n "请输入要删除的用户名:"
                             read -r username
 
                             # 删除用户及其主目录
@@ -7571,7 +7571,7 @@ EOF
                 while true; do
                     clear
                     current_hostname=$(hostname)
-                    echo -e "当前主机名：$current_hostname"
+                    echo -e "当前主机名: $current_hostname"
                     echo "------------------------"
                     echo -n "请输入新的主机名（输入0退出）:"
                     read -r new_hostname
@@ -7600,7 +7600,7 @@ EOF
                             echo "::1             $new_hostname localhost localhost.localdomain ipv6-localhost ipv6-loopback" >> /etc/hosts
                         fi
 
-                        echo "主机名已更改为：$new_hostname"
+                        echo "主机名已更改为: $new_hostname"
                         sleep 1
                     else
                         _yellow "已退出，未更改主机名"
@@ -7758,8 +7758,8 @@ EOF
                         # 获取 threshold_gb 的值
                         rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
                         tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                        echo "当前设置的进站限流阈值为：${rx_threshold_gb}GB"
-                        echo "当前设置的出站限流阈值为：${tx_threshold_gb}GB"
+                        echo "当前设置的进站限流阈值为: ${rx_threshold_gb}GB"
+                        echo "当前设置的出站限流阈值为: ${tx_threshold_gb}GB"
                     else
                         echo "当前未启用限流关机功能"
                     fi
@@ -8049,9 +8049,9 @@ linux_workspace() {
     while true; do
         clear
         echo "▶ 我的工作区"
-        echo "系统将为你提供可以后台常驻运行的工作区,你可以用来执行长时间的任务"
-        echo "即使你断开SSH,工作区中的任务也不会中断,后台常驻任务"
-        echo "提示: 进入工作区后使用Ctrl+b再单独按d,退出工作区!"
+        echo "系统将为你提供可以后台常驻运行的工作区，你可以用来执行长时间的任务"
+        echo "即使你断开SSH，工作区中的任务也不会中断，后台常驻任务"
+        echo "提示: 进入工作区后使用Ctrl+b再单独按d，退出工作区！"
         echo "------------------------"
         echo "1. 1号工作区"
         echo "2. 2号工作区"
@@ -8064,6 +8064,7 @@ linux_workspace() {
         echo "9. 9号工作区"
         echo "10. 10号工作区"
         echo "------------------------"
+        echo "98. SSH常驻模式"
         echo "99. 工作区管理"
         echo "------------------------"
         echo "0. 返回主菜单"
@@ -8133,6 +8134,46 @@ linux_workspace() {
                 session_name="work10"
                 tmux_run
                 ;;
+            98)
+                while true; do
+                    clear
+                    if grep -q 'tmux attach-session -t sshd || tmux new-session -s sshd' ~/.bashrc; then
+                        tmux_sshd_status="${green}开启${white}"
+                    else
+                        tmux_sshd_status="${gray}关闭${white}"
+                    fi
+                    echo -e "SSH常驻模式 ${tmux_sshd_status}"
+                    echo "开启后SSH连接后会直接进入常驻模式，直接回到之前的工作状态"
+                    echo "------------------------"
+                    echo "1. 开启            2. 关闭"
+                    echo "------------------------"
+                    echo "0. 返回上一级"
+                    echo "------------------------"
+
+                    echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+                    read -r gongzuoqu_del
+
+                    case "$gongzuoqu_del" in
+                        1)
+                            install tmux
+                            session_name="sshd"
+                            grep -q "tmux attach-session -t sshd" ~/.bashrc || echo -e "\n# 自动进入 tmux 会话\nif [[ -z \"\$TMUX\" ]]; then\n    tmux attach-session -t sshd || tmux new-session -s sshd\nfi" >> ~/.bashrc
+                            source ~/.bashrc
+                            tmux_run
+                            ;;
+                        2)
+                            sed -i '/# 自动进入 tmux 会话/,+4d' ~/.bashrc
+                            tmux kill-window -t sshd
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
+                    esac
+                done
+                ;;
             99)
                 while true; do
                     clear
@@ -8152,12 +8193,12 @@ linux_workspace() {
 
                     case "$gongzuoqu_del" in
                         1)
-                            echo -n "请输入你创建或进入的工作区名称,如1001 honeok work1:"
+                            echo -n "请输入你创建或进入的工作区名称，如1001 honeok work1:"
                             read -r session_name
                             tmux_run
                             ;;
                         2)
-                            echo -n "请输入你要后台执行的命令,如:curl -fsSL https://get.docker.com | sh:"
+                            echo -n "请输入你要后台执行的命令，如: curl -fsSL https://get.docker.com | sh:"
                             read -r tmuxd
                             tmux_run_d
                             ;;
@@ -8517,7 +8558,7 @@ oracle_script() {
         case $choice in
             1)
                 clear
-                _yellow "活跃脚本：CPU占用10-20% 内存占用20%"
+                _yellow "活跃脚本: CPU占用10-20% 内存占用20%"
                 echo -n -e "${yellow}确定安装吗?(y/n):${white}"
                 read -r ins
                 
@@ -8575,7 +8616,7 @@ oracle_script() {
                 clear
                 _yellow "重装系统"
                 echo "-------------------------"
-                _yellow "注意：重装有风险失联，不放心者慎用，重装预计花费15分钟，请提前备份数据！"
+                _yellow "注意: 重装有风险失联，不放心者慎用，重装预计花费15分钟，请提前备份数据！"
                 
                 echo -n -e "${yellow}确定继续吗?(y/n):${white}"
                 read -r choice
@@ -8719,11 +8760,11 @@ honeok_update() {
 
     # 检查版本号并更新脚本
     if [[ "$remote_version" != "$local_version" ]]; then
-        echo -e "${white}远程版本：${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
         curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
-        echo -e "${white}脚本已更新到最新版本：${yellow}$remote_version${white}"
+        echo -e "${white}脚本已更新到最新版本: ${yellow}$remote_version${white}"
     else
-        echo -e "${white}脚本已是最新版本：${yellow}$local_version${white}"
+        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
     fi
 }
 #################### 脚本更新END ####################
