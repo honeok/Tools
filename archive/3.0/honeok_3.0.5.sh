@@ -27,7 +27,8 @@ _cyan() { echo -e ${cyan}$@${white}; }
 _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
-########################################
+
+# =============== Logo ==============
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
 echo -e "${yellow}   __                      __     💀
@@ -38,7 +39,7 @@ echo -e "${yellow}   __                      __     💀
     local os_text="当前操作系统: ${os_info}"
     _green "${os_text}"
 }
-#################### 系统信息START ####################
+# =============== 系统信息START ===============
 # 查看系统信息
 # 菜单排版参考: https://github.com/spiritLHLS/ecs
 system_info(){
@@ -299,9 +300,8 @@ system_info(){
     echo "-------------------------"
     echo
 }
-#################### 系统信息END ####################
 
-#################### 通用函数START ####################
+# =============== 通用函数START ===============
 # 设置地区相关的Github代理配置
 set_region_config() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
@@ -605,9 +605,8 @@ set_script_dir() {
         globle_script_dir="$script_dir"
     fi
 }
-#################### 通用函数END ####################
 
-#################### 系统更新START ####################
+# =============== 系统更新START ===============
 wait_for_lock() {
     local timeout=300  # 设置超时时间为300秒(5分钟)
     local waited=0
@@ -649,9 +648,8 @@ linux_update() {
     fi
     return 0
 }
-#################### 系统更新END ####################
 
-#################### 系统清理START ####################
+# =============== 系统清理START ===============
 linux_clean() {
     _yellow "正在系统清理"
 
@@ -692,9 +690,8 @@ linux_clean() {
     fi
     return 0
 }
-#################### 系统清理END ####################
 
-#################### 常用工具START ####################
+# =============== 常用工具START ===============
 linux_tools() {
     while true; do
         clear
@@ -905,9 +902,8 @@ linux_tools() {
         end_of
     done
 }
-#################### 常用工具END ####################
 
-#################### BBR START ####################
+# =============== BBR START ===============
 linux_bbr() {
     clear
     if [ -f "/etc/alpine-release" ]; then
@@ -957,9 +953,8 @@ linux_bbr() {
         rm tcpx.sh
     fi
 }
-#################### BBR END ####################
 
-#################### Docker START ####################
+# =============== Docker START ===============
 install_docker() {
     if ! command -v docker >/dev/null 2>&1; then
         install_add_docker
@@ -2807,9 +2802,8 @@ linux_panel() {
         end_of
     done
 }
-#################### Docker END ####################
 
-#################### LDNMP建站START ####################
+# =============== LDNMP建站START ===============
 manage_compose() {
     local compose_cmd
     # 检查 docker compose 版本
@@ -4864,9 +4858,8 @@ linux_ldnmp() {
         end_of
     done
 }
-#################### LDNMP建站END ####################
 
-#################### 系统工具START ####################
+# =============== 系统工具START ===============
 restart_ssh() {
     restart sshd ssh > /dev/null 2>&1
 }
@@ -8011,9 +8004,8 @@ EOF
         end_of
     done
 }
-#################### 系统工具END ####################
 
-#################### 工作区START ####################
+# =============== 工作区START ===============
 tmux_run() {
     # 检查会话是否已经存在
     tmux has-session -t $session_name 2>/dev/null
@@ -8226,9 +8218,8 @@ linux_workspace() {
         end_of
     done
 }
-#################### 工作区END ####################
 
-#################### VPS测试脚本START ####################
+# =============== VPS测试脚本START ===============
 servertest_script() {
     local choice
     while true; do
@@ -8363,9 +8354,8 @@ servertest_script() {
         end_of
     done
 }
-#################### VPS测试脚本 END ####################
 
-#################### 节点搭建脚本START ####################
+# =============== 节点搭建脚本START ===============
 node_create() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
         clear
@@ -8532,9 +8522,8 @@ node_create() {
         end_of
     done
 }
-#################### 节点搭建脚本END ####################
 
-#################### 甲骨文START ####################
+# =============== 甲骨文START ===============
 oracle_script() {
     while true; do
         clear
@@ -8678,9 +8667,8 @@ oracle_script() {
         end_of
     done
 }
-#################### 甲骨文END ####################
 
-#################### 幻兽帕鲁START ####################
+# =============== 幻兽帕鲁START ===============
 palworld_script() {
     need_root
     while true; do
@@ -8736,9 +8724,8 @@ palworld_script() {
         esac
     done
 }
-#################### 幻兽帕鲁END ####################
 
-#################### 脚本更新START ####################
+# =============== 脚本更新START ===============
 honeok_update() {
     local remote_script_url="${github_proxy}raw.githubusercontent.com/honeok/Tools/main/honeok.sh"
     local local_script_path="$HOME/honeok.sh"
@@ -8767,7 +8754,8 @@ honeok_update() {
         echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
     fi
 }
-#################### 脚本更新END ####################
+
+# =============== Main ===============
 honeok() {
     local choice
 
