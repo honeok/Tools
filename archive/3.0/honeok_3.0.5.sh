@@ -3295,15 +3295,18 @@ add_domain() {
 }
 
 iptables_open() {
-    iptables -P INPUT ACCEPT
-    iptables -P FORWARD ACCEPT
-    iptables -P OUTPUT ACCEPT
-    iptables -F
+    local table
+    for table in iptables ip6tables; do
+        if ! command -v $table &> /dev/null; then
+            _red "错误：$table 命令未找到，跳过相关操作"
+            continue
+        fi
 
-    ip6tables -P INPUT ACCEPT
-    ip6tables -P FORWARD ACCEPT
-    ip6tables -P OUTPUT ACCEPT
-    ip6tables -F
+        $table -P INPUT ACCEPT
+        $table -P FORWARD ACCEPT
+        $table -P OUTPUT ACCEPT
+        $table -F
+    done
 }
 
 ldnmp_install_ssltls() {
