@@ -255,7 +255,7 @@ system_info(){
     ip_address
 
     # 获取地理位置
-    local location=$(curl -s https://ipinfo.io/city || curl -s http://ip-api.com/line | head -n 2 | tail -n 1)
+    local location=$(curl -s https://ipinfo.io/city || curl -s https://ipapi.co/json | grep -i "\"city" | awk -F':' '{gsub(/,/, "", $2); print $2}' | sed 's/"/ /g' | xargs)
 
     # 获取系统时区
     local system_time
