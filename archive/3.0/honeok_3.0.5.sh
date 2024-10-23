@@ -239,9 +239,17 @@ system_info(){
         kernel_version=$(uname -r)
     fi
 
-    # 获取网络拥塞控制算法和队列算法
-    local congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
-    local queue_algorithm=$(sysctl -n net.core.default_qdisc)
+    # 获取网络拥塞控制算法
+    local congestion_algorithm=""
+    if command -v sysctl >/dev/null 2>&1; then
+        congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control 2>/dev/null)
+    fi
+
+    # 获取队列算法
+    local queue_algorithm=""
+    if command -v sysctl >/dev/null 2>&1; then
+        queue_algorithm=$(sysctl -n net.core.default_qdisc 2>/dev/null)
+    fi
 
     # 将字节数转换为GB（获取出网入网数据）
     bytes_to_gb() {
