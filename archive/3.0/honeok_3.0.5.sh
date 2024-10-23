@@ -9,6 +9,8 @@ honeok_v="v3.0.5 (2024.10.22)"
 ## fork from kejilion shell script.
 ## Blog: https://blog.kejilion.pro
 
+## fork from https://github.com/ylx2016
+
 yellow='\033[93m'        # 亮黄色
 red='\033[91m'           # 亮红色
 green='\033[92m'         # 亮绿色
@@ -30,7 +32,7 @@ _orange() { echo -e ${orange}$@${white}; }
 
 cd /root >/dev/null 2>&1
 
-# =============== Logo ==============
+## =================== Logo ==================
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
 echo -e "${yellow}   __                      __     💀
@@ -43,6 +45,8 @@ echo -e "${yellow}   __                      __     💀
 }
 
 # =============== 系统信息START ===============
+## 获取虚拟化类型
+## 项目地址: https://github.com/ylx2016/Linux-NetSpeed，感谢ylx2016开源
 virt_check() {
     local processor_type=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
     local kernel_logs=$(dmesg) 2>/dev/null
@@ -93,8 +97,8 @@ virt_check() {
     fi
 }
 
-# 查看系统信息
-# 菜单排版参考: https://github.com/spiritLHLS/ecs
+## 查看系统信息
+## 菜单排版参考: https://github.com/spiritLHLS/ecs
 system_info(){
     # 获取CPU型号
     local cpu_model=$(grep -i 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}')
@@ -282,22 +286,6 @@ system_info(){
             total_sent_bytes=$((total_sent_bytes + sent_bytes))
         fi
     done < /proc/net/dev
-
-    # 获取虚拟化类型
-    # local virt_type
-    # if [ -f "/etc/alpine-release" ]; then
-    #     virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
-    # else
-    #    virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
-    # fi
-    # 如果lscpu没有捕捉到虚拟化类型，尝试使用hostnamectl
-    # if [ -z "$virt_type" ]; then
-    #    virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print toupper($2)}')
-    # fi
-    # 检查是否为空，空则认为是物理机
-    # if [ -z "$virt_type" ]; then
-    #    virt_type="Physical Machine"
-    # fi
 
     virt_check
 
