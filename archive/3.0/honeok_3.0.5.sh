@@ -619,6 +619,20 @@ set_script_dir() {
     fi
 }
 
+# 检查容器虚拟化类型
+# 如果系统基于OpenVZ或LXC容器，则返回错误信息并退出
+container_vir_exit() {
+    if [[ -d "/proc/vz" ]]; then
+        _red "您的VPS基于OpenVZ，不受支持！"
+        return 1
+    fi
+
+    if [[ $(cat /proc/1/environ | tr '\0' '\n' | grep -i '^container=' | awk -F'=' '{print $2}') =~ ^[lL][xX][cC]$ ]]; then
+        _red "您的VPS基于LXC容器，不受支持！"
+        return 1
+    fi
+}
+
 # =============== 系统更新START ===============
 wait_for_lock() {
     local timeout=300  # 设置超时时间为300秒(5分钟)
@@ -5295,10 +5309,7 @@ check_swap() {
 add_swap() {
     local new_swap=$1
 
-    if [[ -d "/proc/vz" ]]; then
-        _red "您的VPS基于OpenVZ，不受支持！"
-        return 1
-    fi
+    container_vir_exit
 
     # 获取当前系统中所有的swap分区
     local swap_partitions
