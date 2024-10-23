@@ -166,14 +166,15 @@ system_info(){
     fi
 
     # 获取并格式化磁盘空间使用情况
-    local disk_info=$(df -h --output=source,size,used,pcent | grep -E "^/dev/" | grep -vE "tmpfs|devtmpfs|overlay|swap|loop")
+    local disk_info=$(df -h | grep -E "^/dev/" | grep -vE "tmpfs|devtmpfs|overlay|swap|loop")
     local disk_output=""
 
+    # 处理磁盘信息
     while read -r line; do
-        local disk=$(echo "$line" | awk '{print $1}')
-        local size=$(echo "$line" | awk '{print $2}')
-        local used=$(echo "$line" | awk '{print $3}')
-        local percent=$(echo "$line" | awk '{print $4}')
+        local disk=$(echo "$line" | awk '{print $1}')      # 设备名称
+        local size=$(echo "$line" | awk '{print $2}')      # 总大小
+        local used=$(echo "$line" | awk '{print $3}')      # 已使用
+        local percent=$(echo "$line" | awk '{print $5}')   # 使用百分比（需要是第五个字段）
 
         # 拼接磁盘信息
         disk_output+="${disk} ${used}/${size} (${percent})  "
@@ -187,7 +188,7 @@ system_info(){
     local uptime_str=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days %d hour %d min\n",a,b,c)}' /proc/uptime)
 
     # 获取负载平均值
-    local load_average=$(w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' || uptime | awk -F'load average:' '{ print $2 }' | awk '{ print $1, $2, $3 }')
+    local load_average=$(command -v w >/dev/null 2>&1 && w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' || uptime | awk -F'load average:' '{print $2}' | awk '{print $1, $2, $3}')
 
     # 计算CPU使用率，处理可能的除零错误
     local cpu_usage=$(awk -v OFMT='%0.2f' '
