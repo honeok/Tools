@@ -610,7 +610,13 @@ set_script_dir() {
 }
 
 # 终止信号捕获，意外中断时能优雅地处理
-trap '_red "检测到退出操作，脚本终止！"; exit 1' INT QUIT TERM
+trap _exit SIGINT SIGQUIT SIGTERM
+
+_exit() {
+    # 终止信号捕获 Ctrl+c
+    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
+    exit 1
+}
 
 # =============== 系统更新START ===============
 wait_for_lock() {
