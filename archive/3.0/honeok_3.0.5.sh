@@ -5396,6 +5396,7 @@ set_default_qdisc() {
                 ;;
             3)
                 chosen_qdisc="fq_codel"
+                break
                 ;;
             *)
                 _red "无效选项，请重新输入"
