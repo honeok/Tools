@@ -58,7 +58,7 @@ virt_check(){
         sys_product=""
         sys_ver=""
     fi
-        
+
     if grep docker /proc/1/cgroup -qa; then
         virt_type="Docker"
     elif grep lxc /proc/1/cgroup -qa; then
