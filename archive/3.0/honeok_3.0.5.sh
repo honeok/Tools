@@ -234,20 +234,72 @@ system_info(){
     done < /proc/net/dev
 
     # 获取虚拟化类型
-    local virt_type
-    if [ -f "/etc/alpine-release" ]; then
-        virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
-    else
-        virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
-    fi
+    # local virt_type
+    # if [ -f "/etc/alpine-release" ]; then
+    #     virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
+    # else
+    #    virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
+    # fi
     # 如果lscpu没有捕捉到虚拟化类型，尝试使用hostnamectl
-    if [ -z "$virt_type" ]; then
-        virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print toupper($2)}')
-    fi
+    # if [ -z "$virt_type" ]; then
+    #    virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print toupper($2)}')
+    # fi
     # 检查是否为空，空则认为是物理机
-    if [ -z "$virt_type" ]; then
-        virt_type="Physical Machine"
-    fi
+    # if [ -z "$virt_type" ]; then
+    #    virt_type="Physical Machine"
+    # fi
+
+    virt_check(){
+        # if hash ifconfig 2>/dev/null; then
+            # eth=$(ifconfig)
+        # fi
+
+        virtualx=$(dmesg) 2>/dev/null
+
+        if  [ $(which dmidecode) ]; then
+            sys_manu=$(dmidecode -s system-manufacturer) 2>/dev/null
+            sys_product=$(dmidecode -s system-product-name) 2>/dev/null
+            sys_ver=$(dmidecode -s system-version) 2>/dev/null
+        else
+            sys_manu=""
+            sys_product=""
+            sys_ver=""
+        fi
+        
+        if grep docker /proc/1/cgroup -qa; then
+            virtual="Docker"
+        elif grep lxc /proc/1/cgroup -qa; then
+            virtual="Lxc"
+        elif grep -qa container=lxc /proc/1/environ; then
+            virtual="Lxc"
+        elif [[ -f /proc/user_beancounters ]]; then
+            virtual="OpenVZ"
+        elif [[ "$virtualx" == *kvm-clock* ]]; then
+            virtual="KVM"
+        elif [[ "$cname" == *KVM* ]]; then
+            virtual="KVM"
+        elif [[ "$cname" == *QEMU* ]]; then
+            virtual="KVM"
+        elif [[ "$virtualx" == *"VMware Virtual Platform"* ]]; then
+            virtual="VMware"
+        elif [[ "$virtualx" == *"Parallels Software International"* ]]; then
+            virtual="Parallels"
+        elif [[ "$virtualx" == *VirtualBox* ]]; then
+            virtual="VirtualBox"
+        elif [[ -e /proc/xen ]]; then
+            virtual="Xen"
+        elif [[ "$sys_manu" == *"Microsoft Corporation"* ]]; then
+            if [[ "$sys_product" == *"Virtual Machine"* ]]; then
+                if [[ "$sys_ver" == *"7.0"* || "$sys_ver" == *"Hyper-V" ]]; then
+                    virtual="Hyper-V"
+                else
+                    virtual="Microsoft Virtual Machine"
+                fi
+            fi
+        else
+            virtual="Dedicated母鸡"
+        fi
+    }
 
     # 获取运营商信息
     local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}' || curl -s http://ip-api.com/line | tail -n 2 | head -n 1)
