@@ -609,6 +609,9 @@ set_script_dir() {
     fi
 }
 
+# 终止信号捕获，意外中断时能优雅地处理
+trap '_red "检测到退出操作，脚本终止！"; exit 1' INT QUIT TERM
+
 # =============== 系统更新START ===============
 wait_for_lock() {
     local timeout=300  # 设置超时时间为300秒(5分钟)
