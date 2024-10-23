@@ -46,7 +46,7 @@ echo -e "${yellow}   __                      __     💀
 
 # =============== 系统信息START ===============
 ## 获取虚拟化类型
-## 项目地址: https://github.com/ylx2016/Linux-NetSpeed，感谢ylx2016开源
+## 项目地址: https://github.com/ylx2016/Linux-NetSpeed 感谢ylx2016开源
 virt_check() {
     local processor_type=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
     local kernel_logs=$(dmesg) 2>/dev/null
@@ -287,11 +287,13 @@ system_info(){
         fi
     done < /proc/net/dev
 
+    # 获取虚拟化类型
     virt_check
 
     # 获取运营商信息
     local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}' || curl -s http://ip-api.com/line | tail -n 2 | head -n 1)
 
+    # 获取IP地址
     ip_address
 
     # 获取地理位置
