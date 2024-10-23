@@ -571,6 +571,15 @@ need_root() {
     [ "$(id -u)" -ne "0" ] && _red "提示: 该功能需要root用户才能运行！" && end_of && honeok
 }
 
+# 终止信号捕获，意外中断时能优雅地处理
+trap _exit SIGINT SIGQUIT SIGTERM
+
+_exit() {
+    # 终止信号捕获 Ctrl+c
+    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
+    exit 1
+}
+
 # 获取公网IP地址
 ip_address() {
     local ipv4_services=("ipv4.ip.sb" "api.ipify.org" "checkip.amazonaws.com" "ipinfo.io/ip")
@@ -607,15 +616,6 @@ set_script_dir() {
     else
         globle_script_dir="$script_dir"
     fi
-}
-
-# 终止信号捕获，意外中断时能优雅地处理
-trap _exit SIGINT SIGQUIT SIGTERM
-
-_exit() {
-    # 终止信号捕获 Ctrl+c
-    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
-    exit 1
 }
 
 # =============== 系统更新START ===============
