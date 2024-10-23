@@ -357,9 +357,9 @@ set_region_config() {
         local best_time=9999  # 设置一个较大的初始延迟值
         local ping_time=""
 
-        # 对每个代理进行 ping 测试，选出延迟最短的代理
+        # 对每个代理进行ping测试，选出延迟最短的代理
         for proxy in "${github_cdn[@]}"; do
-            # 进行两次 ping 测试并提取平均时间，如果 ping 失败则设为9999
+            # 进行两次ping测试并提取平均时间，如果ping失败则设为9999
             ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
 
             # 使用整数比较
