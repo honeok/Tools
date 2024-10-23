@@ -43,20 +43,19 @@ echo -e "${yellow}   __                      __     💀
 }
 
 # =============== 系统信息START ===============
-virt_check(){
+virt_check() {
     local processor_type=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
-    local virt_type=$(dmesg) 2>/dev/null
-
-    local sys_manu sys_product sys_ver
+    local kernel_logs=$(dmesg) 2>/dev/null
+    local system_manufacturer system_product_name system_version
 
     if [ $(which dmidecode) ]; then
-        sys_manu=$(dmidecode -s system-manufacturer) 2>/dev/null
-        sys_product=$(dmidecode -s system-product-name) 2>/dev/null
-        sys_ver=$(dmidecode -s system-version) 2>/dev/null
+        system_manufacturer=$(dmidecode -s system-manufacturer) 2>/dev/null
+        system_product_name=$(dmidecode -s system-product-name) 2>/dev/null
+        system_version=$(dmidecode -s system-version) 2>/dev/null
     else
-        sys_manu=""
-        sys_product=""
-        sys_ver=""
+        system_manufacturer=""
+        system_product_name=""
+        system_version=""
     fi
 
     if grep docker /proc/1/cgroup -qa; then
@@ -67,23 +66,23 @@ virt_check(){
         virt_type="Lxc"
     elif [[ -f /proc/user_beancounters ]]; then
         virt_type="OpenVZ"
-    elif [[ "$virt_type" == *kvm-clock* ]]; then
+    elif [[ "$kernel_logs" == *kvm-clock* ]]; then
         virt_type="KVM"
     elif [[ "$processor_type" == *KVM* ]]; then
         virt_type="KVM"
     elif [[ "$processor_type" == *QEMU* ]]; then
         virt_type="KVM"
-    elif [[ "$virt_type" == *"VMware Virtual Platform"* ]]; then
+    elif [[ "$kernel_logs" == *"VMware Virtual Platform"* ]]; then
         virt_type="VMware"
-    elif [[ "$virt_type" == *"Parallels Software International"* ]]; then
+    elif [[ "$kernel_logs" == *"Parallels Software International"* ]]; then
         virt_type="Parallels"
-    elif [[ "$virt_type" == *VirtualBox* ]]; then
+    elif [[ "$kernel_logs" == *VirtualBox* ]]; then
         virt_type="VirtualBox"
     elif [[ -e /proc/xen ]]; then
         virt_type="Xen"
-    elif [[ "$sys_manu" == *"Microsoft Corporation"* ]]; then
-        if [[ "$sys_product" == *"Virtual Machine"* ]]; then
-            if [[ "$sys_ver" == *"7.0"* || "$sys_ver" == *"Hyper-V" ]]; then
+    elif [[ "$system_manufacturer" == *"Microsoft Corporation"* ]]; then
+        if [[ "$system_product_name" == *"Virtual Machine"* ]]; then
+            if [[ "$system_version" == *"7.0"* || "$system_version" == *"Hyper-V" ]]; then
                 virt_type="Hyper-V"
             else
                 virt_type="Microsoft Virtual Machine"
@@ -8857,7 +8856,6 @@ honeok() {
         echo "15. VPS测试脚本合集 ▶"
         echo "16. 节点搭建脚本合集 ▶"
         echo "17. 甲骨文云脚本合集 ▶"
-        echo "18. 常用环境管理 ▶"
         echo "------------------------"
         echo "99. 幻兽帕鲁开服脚本 ▶"
         echo "------------------------"
@@ -8917,9 +8915,6 @@ honeok() {
                 ;;
             17)
                 oracle_script
-                ;;
-            18)
-                echo "敬请期待"
                 ;;
             99)
                 palworld_script
