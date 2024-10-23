@@ -122,11 +122,11 @@ system_info(){
 
     # 检查AES-NI指令集支持
     local aes_ni
-    # 尝试使用 lscpu 检查 AES-NI 支持
-    if lscpu | grep -q 'aes'; then
+    # 尝试使用lscpu检查AES-NI支持
+    if command -v lscpu >/dev/null 2>&1 && lscpu | grep -q 'aes'; then
         aes_ni="✔ Enabled"
     else
-        # 如果lscpu未找到，尝试使用 /proc/cpuinfo
+        # 如果lscpu未找到，尝试使用/proc/cpuinfo
         if grep -iq 'aes' /proc/cpuinfo; then
             aes_ni="✔ Enabled"
         else
@@ -136,20 +136,21 @@ system_info(){
 
     # 检查VM-x/AMD-V支持
     local vm_support
-    # 检查是否支持Intel的VM-x
-    if lscpu | grep -iq 'vmx'; then
+    # 尝试使用lscpu检查Intel的VM-x支持
+    if command -v lscpu >/dev/null 2>&1 && lscpu | grep -iq 'vmx'; then
         vm_support="✔ VM-x Enabled"
     # 检查是否支持AMD的AMD-V
-    elif lscpu | grep -iq 'svm'; then
+    elif command -v lscpu >/dev/null 2>&1 && lscpu | grep -iq 'svm'; then
         vm_support="✔ AMD-V Enabled"
-    # 如果lscpu没有找到，使用/proc/cpuinfo进行检查
-    elif grep -iq 'vmx' /proc/cpuinfo; then
-        vm_support="✔ VM-x Enabled"
-    elif grep -iq 'svm' /proc/cpuinfo; then
-        vm_support="✔ AMD-V Enabled"
-    # 如果两者都不支持
-    else	
-        vm_support="❌ Disabled"
+    else
+        # lscpu未找到，使用/proc/cpuinfo进行检查
+        if grep -iq 'vmx' /proc/cpuinfo; then
+            vm_support="✔ VM-x Enabled"
+        elif grep -iq 'svm' /proc/cpuinfo; then
+            vm_support="✔ AMD-V Enabled"
+        else	
+            vm_support="❌ Disabled"
+        fi
     fi
 
     # 内存
