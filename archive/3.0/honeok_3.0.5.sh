@@ -3,7 +3,7 @@
 ## Blog: www.honeok.com
 ## Github: https://github.com/honeok/Tools
 
-honeok_v="v3.0.5 (2024.10.22)"
+honeok_v="v3.0.5 (2024.10.24)"
 ## export LANG=en_US.UTF-8
 
 ## fork from kejilion shell script.
@@ -108,36 +108,17 @@ system_info(){
     fi
 
     # 获取核心数
-    local cpu_cores=$(grep -c '^processor' /proc/cpuinfo)
+    local cpu_cores=$(awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo || grep -c '^processor' /proc/cpuinfo)
     # 如果第一种方法未能获取到CPU核心数，则使用第二种方法
     if [[ "$cpu_cores" -eq 0 ]]; then
         cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
     fi
 
     # 获取CPU频率
-    local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
+    local cpu_frequency=$(awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' || grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
 
     # 获取CPU缓存大小
-    local get_cpu_cache cpu_cache_info
-    get_cpu_cache() {
-        local cpu_cache_l1=$(lscpu | grep 'L1d cache' | awk '{print $3, $4}')
-        local cpu_cache_l2=$(lscpu | grep 'L2 cache' | awk '{print $3, $4}')
-
-        # 检查是否存在L3缓存
-        local cpu_cache_l3=""
-        if lscpu | grep -q 'L3 cache'; then
-            cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
-        fi
-
-        # 格式化输出
-        if [[ -n "$cpu_cache_l3" ]]; then
-            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
-        else
-            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
-        fi
-    }
-    # 捕获get_cpu_cache的输出存储变量
-    cpu_cache_info=$(get_cpu_cache)
+    cpu_cache_info=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
 
     # 检查AES-NI指令集支持
     local aes_ni
@@ -203,10 +184,10 @@ system_info(){
     local boot_partition=$(mount | grep ' / ' | awk '{print $1}')
 
     # 系统在线时间
-    local uptime_str=$(cat /proc/uptime | awk -F. '{run_days=int($1 / 86400);run_hours=int(($1 % 86400) / 3600);run_minutes=int(($1 % 3600) / 60); if (run_days > 0) printf("%d天 ", run_days); if (run_hours > 0) printf("%d时 ", run_hours); printf("%d分\n", run_minutes)}')
+    local uptime_str=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days %d hour %d min\n",a,b,c)}' /proc/uptime)
 
     # 获取负载平均值
-    local load_average=$(uptime | awk -F'load average:' '{ print $2 }' | awk '{ print $1, $2, $3 }')
+    local load_average=$(w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' || uptime | awk -F'load average:' '{ print $2 }' | awk '{ print $1, $2, $3 }')
 
     # 计算CPU使用率，处理可能的除零错误
     local cpu_usage=$(awk -v OFMT='%0.2f' '
@@ -227,9 +208,15 @@ system_info(){
     # 获取操作系统版本信息
     local os_release
     if command -v lsb_release >/dev/null 2>&1; then
-        os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs)
+        os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs | sed 's/ (.*)//')
+    elif [ -f /etc/redhat-release ]; then
+        os_release=$(awk '{print ($1, $3~/^[0-9]/ ? $3 : $4)}' /etc/redhat-release)
+    elif [ -f /etc/os-release ]; then
+        os_release=$(awk -F'[= "]' '/PRETTY_NAME/{print $3, $4, $5}' /etc/os-release)
+    elif [ -f /etc/lsb-release ]; then
+        os_release=$(awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release)
     else
-        os_release=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
+        os_release="Unknown OS"
     fi
 
     # 获取CPU架构
@@ -8886,7 +8873,8 @@ honeok() {
                 wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [license/url/token]
                 ;;
             8)
-                linux_ldnmp
+                #linux_ldnmp
+                _orange "修复中，敬请期待！"
                 ;;
             12)
                 linux_panel
