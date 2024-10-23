@@ -348,7 +348,7 @@ system_info(){
 # 设置地区相关的Github代理配置
 set_region_config() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-        _yellow "检测到当前IP为中国，正在分配最佳GitHub代理"
+        _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
         execute_commands=0  # 0 表示允许执行命令
 
         # 定义局部变量，GitHub代理均为双栈兼容IPv4和IPv6
