@@ -161,7 +161,7 @@ system_info(){
     swap_status=$(free -m | awk 'NR==3')
     # 检查是否存在交换分区
     if [[ -z "$swap_status" || "$swap_status" == *"0 "* ]]; then
-        swap_usage="No Swap Partition"
+        swap_usage="No Swap"
     else
         swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
     fi
