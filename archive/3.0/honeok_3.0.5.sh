@@ -45,7 +45,9 @@ echo -e "${yellow}   __                      __     💀
 # =============== 系统信息START ===============
 virt_check(){
     local processor_type=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
-    virt_type=$(dmesg) 2>/dev/null
+    local virt_type=$(dmesg) 2>/dev/null
+
+    local sys_manu sys_product sys_ver
 
     if [ $(which dmidecode) ]; then
         sys_manu=$(dmidecode -s system-manufacturer) 2>/dev/null
