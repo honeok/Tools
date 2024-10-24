@@ -1025,7 +1025,21 @@ linux_bbr() {
     fi
 }
 
-# =============== Docker START ===============
+## =============== Docker START ===============
+
+# Docker全局状态显示
+docker_global_status() {
+    local container_count=$(docker ps -a -q 2>/dev/null | wc -l)
+    local image_count=$(docker images -q 2>/dev/null | wc -l)
+    local network_count=$(docker network ls -q 2>/dev/null | wc -l)
+    local volume_count=$(docker volume ls -q 2>/dev/null | wc -l)
+
+    if command -v docker &> /dev/null; then
+        _cyan "------------------------"
+        echo -e "${green}环境已经安装${white}  容器: ${green}$container_count${white}  镜像: ${green}$image_count${white}  网络: ${green}$network_count${white}  卷: ${green}$volume_count${white}"
+    fi
+}
+
 install_docker() {
     if ! command -v docker >/dev/null 2>&1; then
         install_add_docker
@@ -1608,6 +1622,7 @@ docker_manager(){
     while true; do
         clear
         echo "▶ Docker管理"
+        docker_global_status
         echo "-------------------------"
         echo "1. 安装更新Docker环境"
         echo "-------------------------"
@@ -1631,7 +1646,7 @@ docker_manager(){
         echo "------------------------"
         echo "0. 返回主菜单"
         echo "------------------------"
-        
+
         echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
         read -r choice
 
@@ -8063,15 +8078,15 @@ EOF
                         echo "------------------------------------------------"
                         bak_dns
                         set_dns
-                        echo -e "[${gl_lv}OK${gl_bai}] 8/10. 自动优化DNS地址${gl_huang}${gl_bai}"
+                        echo -e "[${green}OK${white}] 8/10. 自动优化DNS地址${yellow}${white}"
                         echo "------------------------------------------------"
                         install_docker
                         install wget sudo tar unzip socat btop nano vim
-                        echo -e "[${gl_lv}OK${gl_bai}] 9/10. 安装常用工具${gl_huang}docker wget sudo tar unzip socat btop${gl_bai}"
+                        echo -e "[${green}OK${white}] 9/10. 安装常用工具${yellow}docker wget sudo tar unzip socat btop${white}"
                         echo "------------------------------------------------"
                         optimize_balanced
-                        echo -e "[${gl_lv}OK${gl_bai}] 10/10. Linux系统内核参数优化"
-                        echo -e "${gl_lv}一条龙系统调优已完成${gl_bai}"
+                        echo -e "[${green}OK${white}] 10/10. Linux系统内核参数优化"
+                        echo -e "${green}一条龙系统调优已完成${white}"
                         ;;
                     [Nn])
                         echo "已取消"
