@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 ## Author: honeok
-## Blog：www.honeok.com
-## Github：https://github.com/honeok/Tools
+## Blog: www.honeok.com
+## Github: https://github.com/honeok/Tools
 
-honeok_v="v3.0.4 (2024.10.21)"
+honeok_v="v3.0.5 (2024.10.24)"
 ## export LANG=en_US.UTF-8
 
-## fork from kejilion shell script.
-## Blog: https://blog.kejilion.pro
+## set -x
+
+## fork from https://github.com/kejilion
+## fork from https://github.com/ylx2016
 
 yellow='\033[93m'        # 亮黄色
 red='\033[91m'           # 亮红色
@@ -17,7 +19,7 @@ cyan='\033[96m'          # 亮青色
 purple='\033[95m'        # 亮紫色
 gray='\033[37m'          # 亮灰色
 orange='\033[38;5;214m'  # 亮橙色
-white='\033[0m'          # 重置为默认颜色
+white='\033[0m'          # 重置
 
 _yellow() { echo -e ${yellow}$@${white}; }
 _red() { echo -e ${red}$@${white}; }
@@ -27,7 +29,19 @@ _cyan() { echo -e ${cyan}$@${white}; }
 _purple() { echo -e ${purple}$@${white}; }
 _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
-########################################
+
+cd /root >/dev/null 2>&1
+honeok_pid="/tmp/honeok.pid"
+
+if [ -f "$honeok_pid" ] && kill -0 $(cat "$honeok_pid") 2>/dev/null; then
+    echo -e "${red}脚本已经在运行！如误判烦请反馈问题至:${white} https://github.com/honeok/Tools/issues"
+    exit 1
+fi
+
+## 将当前进程的PID写入文件
+echo $$ > "$honeok_pid"
+
+## =================== Logo ==================
 print_logo(){
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
 echo -e "${yellow}   __                      __     💀
@@ -38,56 +52,85 @@ echo -e "${yellow}   __                      __     💀
     local os_text="当前操作系统: ${os_info}"
     _green "${os_text}"
 }
-#################### 系统信息START ####################
-# 查看系统信息
-# 菜单排版参考：https://github.com/spiritLHLS/ecs
+
+# =============== 系统信息START ===============
+## 获取虚拟化类型
+## 项目地址: https://github.com/ylx2016/Linux-NetSpeed 感谢ylx2016开源
+virt_check() {
+    local processor_type=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
+    local kernel_logs=$(dmesg) 2>/dev/null
+    local system_manufacturer system_product_name system_version
+
+    if [ $(which dmidecode) ]; then
+        system_manufacturer=$(dmidecode -s system-manufacturer) 2>/dev/null
+        system_product_name=$(dmidecode -s system-product-name) 2>/dev/null
+        system_version=$(dmidecode -s system-version) 2>/dev/null
+    else
+        system_manufacturer=""
+        system_product_name=""
+        system_version=""
+    fi
+
+    if grep docker /proc/1/cgroup -qa; then
+        virt_type="Docker"
+    elif grep lxc /proc/1/cgroup -qa; then
+        virt_type="Lxc"
+    elif grep -qa container=lxc /proc/1/environ; then
+        virt_type="Lxc"
+    elif [[ -f /proc/user_beancounters ]]; then
+        virt_type="OpenVZ"
+    elif [[ "$kernel_logs" == *kvm-clock* ]]; then
+        virt_type="KVM"
+    elif [[ "$processor_type" == *KVM* ]]; then
+        virt_type="KVM"
+    elif [[ "$processor_type" == *QEMU* ]]; then
+        virt_type="KVM"
+    elif [[ "$kernel_logs" == *"VMware Virtual Platform"* ]]; then
+        virt_type="VMware"
+    elif [[ "$kernel_logs" == *"Parallels Software International"* ]]; then
+        virt_type="Parallels"
+    elif [[ "$kernel_logs" == *VirtualBox* ]]; then
+        virt_type="VirtualBox"
+    elif [[ -e /proc/xen ]]; then
+        virt_type="Xen"
+    elif [[ "$system_manufacturer" == *"Microsoft Corporation"* ]]; then
+        if [[ "$system_product_name" == *"Virtual Machine"* ]]; then
+            if [[ "$system_version" == *"7.0"* || "$system_version" == *"Hyper-V" ]]; then
+                virt_type="Hyper-V"
+            else
+                virt_type="Microsoft Virtual Machine"
+            fi
+        fi
+    else
+        virt_type="Physical Machine"
+    fi
+}
+
+## 查看系统信息
+## 菜单排版参考: https://github.com/spiritLHLS/ecs
 system_info(){
     # 获取CPU型号
-    local cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
-    # 如果第一种方法未能获取到CPU型号，则使用第二种方法
-    if [[ -z "$cpu_model" ]]; then
-        cpu_model=$(grep 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}')
-    fi
+    local cpu_model=$(grep -i 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}' || \
+                    lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
 
     # 获取核心数
-    local cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
-    # 如果第一种方法未能获取到CPU核心数，则使用第二种方法
-    if [[ -z "$cpu_cores" ]]; then
-        cpu_cores=$(grep -c '^processor' /proc/cpuinfo)
-    fi
+    local cpu_cores=$(awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo 2>/dev/null || \
+                    grep -c '^processor' /proc/cpuinfo || \
+                    lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
 
     # 获取CPU频率
-    local cpu_frequency=$(grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
+    local cpu_frequency=$(awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' || grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
 
     # 获取CPU缓存大小
-    local get_cpu_cache cpu_cache_info
-    get_cpu_cache() {
-        local cpu_cache_l1=$(lscpu | grep 'L1d cache' | awk '{print $3, $4}')
-        local cpu_cache_l2=$(lscpu | grep 'L2 cache' | awk '{print $3, $4}')
-
-        # 检查是否存在L3缓存
-        local cpu_cache_l3=""
-        if lscpu | grep -q 'L3 cache'; then
-            cpu_cache_l3=$(lscpu | grep 'L3 cache' | awk '{print $3, $4}')
-        fi
-
-        # 格式化输出
-        if [[ -n "$cpu_cache_l3" ]]; then
-            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2} / L3: ${cpu_cache_l3}"
-        else
-            echo "L1: ${cpu_cache_l1} / L2: ${cpu_cache_l2}"
-        fi
-    }
-    # 捕获get_cpu_cache的输出存储变量
-    cpu_cache_info=$(get_cpu_cache)
+    local cpu_cache_info=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
 
     # 检查AES-NI指令集支持
     local aes_ni
-    # 尝试使用 lscpu 检查 AES-NI 支持
-    if lscpu | grep -q 'aes'; then
+    # 尝试使用lscpu检查AES-NI支持
+    if command -v lscpu >/dev/null 2>&1 && lscpu | grep -q 'aes'; then
         aes_ni="✔ Enabled"
     else
-        # 如果lscpu未找到，尝试使用 /proc/cpuinfo
+        # 如果lscpu未找到，尝试使用/proc/cpuinfo
         if grep -iq 'aes' /proc/cpuinfo; then
             aes_ni="✔ Enabled"
         else
@@ -97,57 +140,52 @@ system_info(){
 
     # 检查VM-x/AMD-V支持
     local vm_support
-    # 检查是否支持Intel的VM-x
-    if lscpu | grep -iq 'vmx'; then
+    # 尝试使用lscpu检查Intel的VM-x支持
+    if command -v lscpu >/dev/null 2>&1 && lscpu | grep -iq 'vmx'; then
         vm_support="✔ VM-x Enabled"
     # 检查是否支持AMD的AMD-V
-    elif lscpu | grep -iq 'svm'; then
+    elif command -v lscpu >/dev/null 2>&1 && lscpu | grep -iq 'svm'; then
         vm_support="✔ AMD-V Enabled"
-    # 如果lscpu没有找到，使用/proc/cpuinfo进行检查
-    elif grep -iq 'vmx' /proc/cpuinfo; then
-        vm_support="✔ VM-x Enabled"
-    elif grep -iq 'svm' /proc/cpuinfo; then
-        vm_support="✔ AMD-V Enabled"
-    # 如果两者都不支持
-    else	
-        vm_support="❌ Disabled"
+    else
+        # lscpu未找到，使用/proc/cpuinfo进行检查
+        if grep -iq 'vmx' /proc/cpuinfo; then
+            vm_support="✔ VM-x Enabled"
+        elif grep -iq 'svm' /proc/cpuinfo; then
+            vm_support="✔ AMD-V Enabled"
+        else	
+            vm_support="❌ Disabled"
+        fi
     fi
 
     # 内存
     local mem_usage=$(free -b | awk 'NR==2{printf "%.2f/%.2f MB (%.2f%%)", $3/1024/1024, $2/1024/1024, $3*100/$2}')
 
     # 交换分区
-    local swap_status swap_usage
-    swap_status=$(free -m | awk 'NR==3')
-    # 检查是否存在交换分区
-    if [[ -z "$swap_status" || "$swap_status" == *"0 "* ]]; then
-        swap_usage="No Swap Partition"
-    else
-        swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
-    fi
+    local swap_usage=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {print "No Swap"} else {percentage=used*100/total; printf "%dMB/%dMB (%d%%)", used, total, percentage}}')
 
     # 获取并格式化磁盘空间使用情况
-    local disk_info=$(df -h --output=source,size,used,pcent | grep -E "^/dev/" | grep -vE "tmpfs|devtmpfs|overlay|swap|loop")
+    local disk_info=$(df -h | grep -E "^/dev/" | grep -vE "tmpfs|devtmpfs|overlay|swap|loop")
     local disk_output=""
 
+    # 处理磁盘信息
     while read -r line; do
-        local disk=$(echo "$line" | awk '{print $1}')
-        local size=$(echo "$line" | awk '{print $2}')
-        local used=$(echo "$line" | awk '{print $3}')
-        local percent=$(echo "$line" | awk '{print $4}')
+        local disk=$(echo "$line" | awk '{print $1}')      # 设备名称
+        local size=$(echo "$line" | awk '{print $2}')      # 总大小
+        local used=$(echo "$line" | awk '{print $3}')      # 已使用
+        local percent=$(echo "$line" | awk '{print $5}')   # 使用百分比（需要是第五个字段）
 
         # 拼接磁盘信息
         disk_output+="${disk} ${used}/${size} (${percent})  "
     done <<< "$disk_info"
 
     # 启动盘路径
-    local boot_partition=$(findmnt -n -o SOURCE /)
+    local boot_partition=$(findmnt -n -o SOURCE / 2>/dev/null || mount | grep ' / ' | awk '{print $1}')
 
     # 系统在线时间
-    local uptime_str=$(cat /proc/uptime | awk -F. '{run_days=int($1 / 86400);run_hours=int(($1 % 86400) / 3600);run_minutes=int(($1 % 3600) / 60); if (run_days > 0) printf("%d天 ", run_days); if (run_hours > 0) printf("%d时 ", run_hours); printf("%d分\n", run_minutes)}')
+    local uptime_str=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days %d hour %d min\n",a,b,c)}' /proc/uptime)
 
     # 获取负载平均值
-    local load_average=$(uptime | awk -F'load average:' '{ print $2 }' | awk '{ print $1, $2, $3 }')
+    local load_average=$(command -v w >/dev/null 2>&1 && w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//' || uptime | awk -F'load average:' '{print $2}' | awk '{print $1, $2, $3}')
 
     # 计算CPU使用率，处理可能的除零错误
     local cpu_usage=$(awk -v OFMT='%0.2f' '
@@ -168,32 +206,34 @@ system_info(){
     # 获取操作系统版本信息
     local os_release
     if command -v lsb_release >/dev/null 2>&1; then
-        os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs)
+        os_release=$(lsb_release -d | awk -F: '{print $2}' | xargs | sed 's/ (.*)//')
+    elif [ -f /etc/redhat-release ]; then
+        os_release=$(awk '{print ($1, $3~/^[0-9]/ ? $3 : $4)}' /etc/redhat-release)
+    elif [ -f /etc/os-release ]; then
+        os_release=$(awk -F'[= "]' '/PRETTY_NAME/{print $3, $4, $5}' /etc/os-release)
+    elif [ -f /etc/lsb-release ]; then
+        os_release=$(awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release)
     else
-        os_release=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
+        os_release="Unknown OS"
     fi
 
     # 获取CPU架构
-    local cpu_architecture
-    if cpu_architecture=$(uname -m); then
-        :
-    elif cpu_architecture=$(lscpu | awk -F ': +' '/Architecture/{print $2}'); then
-        :
-    else
-        cpu_architecture="Full Unknown"
-    fi
+    local cpu_architecture=$(uname -m 2>/dev/null || lscpu | awk -F ': +' '/Architecture/{print $2}' || echo "Full Unknown")
 
     # 获取内核版本信息
-    local kernel_version
-    if command -v hostnamectl >/dev/null 2>&1; then
-        kernel_version=$(hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p')
-    else
-        kernel_version=$(uname -r)
+    local kernel_version=$(command -v hostnamectl >/dev/null 2>&1 && hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p' || uname -r)
+
+    # 获取网络拥塞控制算法
+    local congestion_algorithm=""
+    if command -v sysctl >/dev/null 2>&1; then
+        congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control 2>/dev/null)
     fi
 
-    # 获取网络拥塞控制算法和队列算法
-    local congestion_algorithm=$(sysctl -n net.ipv4.tcp_congestion_control)
-    local queue_algorithm=$(sysctl -n net.core.default_qdisc)
+    # 获取队列算法
+    local queue_algorithm=""
+    if command -v sysctl >/dev/null 2>&1; then
+        queue_algorithm=$(sysctl -n net.core.default_qdisc 2>/dev/null)
+    fi
 
     # 将字节数转换为GB（获取出网入网数据）
     bytes_to_gb() {
@@ -229,40 +269,22 @@ system_info(){
     done < /proc/net/dev
 
     # 获取虚拟化类型
-    local virt_type
-    if [ -f "/etc/alpine-release" ]; then
-        virt_type=$(lscpu | grep Hypervisor | awk '{print $3}')
-    else
-        virt_type=$(lscpu | grep -i 'hypervisor vendor' | awk '{print $NF}')
-    fi
-    # 如果lscpu没有捕捉到虚拟化类型，尝试使用hostnamectl
-    if [ -z "$virt_type" ]; then
-        virt_type=$(hostnamectl | grep -i 'virtualization' | awk '{print toupper($2)}')
-    fi
-    # 检查是否为空，空则认为是物理机
-    if [ -z "$virt_type" ]; then
-        virt_type="Physical Machine"
-    fi
+    virt_check
 
     # 获取运营商信息
     local isp_info=$(curl -s https://ipinfo.io | grep '"org":' | awk -F'"' '{print $4}' || curl -s http://ip-api.com/line | tail -n 2 | head -n 1)
 
+    # 获取IP地址
     ip_address
 
     # 获取地理位置
-    local location=$(curl -s https://ipinfo.io/city || curl -s http://ip-api.com/line | head -n 2 | tail -n 1)
+    local location=$(curl -s https://ipinfo.io/city || curl -s https://ipapi.co/json | grep -i "\"city" | awk -F':' '{gsub(/,/, "", $2); print $2}' | sed 's/"/ /g' | xargs)
 
     # 获取系统时区
-    local system_time
-    if grep -q 'Alpine' /etc/issue; then
-        system_time=$(date +"%Z %z")
-    elif command -v timedatectl >/dev/null 2>&1; then
-        system_time=$(timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
-    elif [ -f /etc/timezone ]; then
-        system_time=$(cat /etc/timezone)
-    else
-        system_time=$(date +"%Z %z")  # 如果其他方法失败，使用date作为默认选项
-    fi
+    local system_time=$(grep -q 'Alpine' /etc/issue && date +"%Z %z" || \
+                        command -v timedatectl >/dev/null 2>&1 && timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}' || \
+                        [ -f /etc/timezone ] && cat /etc/timezone || \
+                        date +"%Z %z")
 
     # 获取服务器当前时间
     local current_time=$(date +"%Y-%m-%d %H:%M:%S")
@@ -299,44 +321,64 @@ system_info(){
     echo "-------------------------"
     echo
 }
-#################### 系统信息END ####################
 
-#################### 通用函数START ####################
-# 设置地区相关的Github代理配置
-set_region_config() {
-    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
-        _yellow "检测到当前IP为中国，正在分配最佳GitHub代理"
-        execute_commands=0  # 0 表示允许执行命令
+## =============== 脚本退出执行相关 ===============
+# 终止信号捕获，意外中断时能优雅地处理
+trap _exit SIGINT SIGQUIT SIGTERM SIGHUP
 
-        # 定义局部变量，GitHub代理均为双栈，兼容IPv4和IPv6
-        local github_proxies=("gh-proxy.com" "gh.kejilion.pro" "github.moeyy.xyz" "ghproxy.1888866.xyz" "ghproxy.lvedong.eu.org")
-        local best_proxy=""
-        local best_time=9999  # 设置一个较大的初始延迟值
-        local ping_time=""
-		
-        # 对每个代理进行 ping 测试，选出延迟最短的代理
-        for proxy in "${github_proxies[@]}"; do
-            # 进行两次 ping 测试并提取平均时间，如果 ping 失败则设为9999
-            ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
+_exit() {
+    # 终止信号捕获 Ctrl+c
+    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
+    global_exit_action
+    exit 0
+}
 
-            # 使用整数比较
-            if (( $(echo "$ping_time" | awk '{print int($1+0.5)}') < $best_time )); then
-                best_time=$(echo "$ping_time" | awk '{print int($1+0.5)}')
-                best_proxy=$proxy
-            fi
-        done
-
-        # 设置找到的最佳代理
-        github_proxy="https://$best_proxy/"
-        _yellow "当前GitHub代理为: ${github_proxy}"
-        sleep 1s
-    else
-        execute_commands=1  # 1 表示不执行命令
-        github_proxy=""  # 不使用代理
+# 全局退出操作
+global_exit_action() {
+    # 删除PID文件，如果文件存在
+    if [ -f "$honeok_pid" ]; then
+        rm -f "$honeok_pid"
     fi
 }
 
-# 根据地区配置条件执行命令的函数
+## =============== 通用函数START ===============
+## 设置地区相关的Github代理配置
+set_region_config() {
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
+        _purple "鸣谢Github-Mirror: https://github-mirror.us.kg"
+        execute_commands=0  # 0 表示允许执行命令
+
+        # GitHub代理兼容IPv4和IPv6
+        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "ghpr.cc" "gh.hlg.us.kg" "git.669966.xyz" "gh.qninq.cn" "ghp.arslantu.xyz")
+        local best_proxy=""
+        local best_time=9999  # 设置一个较大的初始延迟值
+        local results
+
+        # 并行检测每个代理
+        results=$(printf "%s\n" "${github_cdn[@]}" | xargs -P 0 -I {} bash -c 'ping -c 2 -q "{}" | tail -n 1 | awk -F "/" "{print (\$5 ? \$5 : 9999) \" {}\"}"')
+
+        # 处理结果并找出最佳代理
+        while read -r line; do
+            local time=$(echo "$line" | awk '{print $1}')
+            local proxy=$(echo "$line" | awk '{print $2}')
+            if (( $(echo "$time" | awk '{print int($1+0.5)}') < best_time )); then
+                best_time=$(echo "$time" | awk '{print int($1+0.5)}')
+                best_proxy=$proxy
+            fi
+        done <<< "$results"
+
+        # 设置找到的最佳代理
+        github_proxy="https://$best_proxy/"
+        echo -e "${yellow}当前GitHub代理为:${white} ${cyan}${github_proxy}${white}"
+        sleep 2s
+    else
+        execute_commands=1  # 1 表示不执行命令
+        github_proxy=""     # 不使用代理
+    fi
+}
+
+## 根据地区配置条件执行命令的函数
 exec_cmd() {
     if [ "$execute_commands" -eq 0 ]; then  # 检查是否允许执行命令
         "$@"
@@ -370,11 +412,17 @@ install() {
             elif command -v apk &>/dev/null; then
                 apk update
                 apk add "$package"
+            elif command -v pacman &>/dev/null; then
+                pacman -Syu --noconfirm
+                pacman -S --noconfirm "$package"
+            elif command -v zypper &>/dev/null; then
+                zypper refresh
+                zypper install -y "$package"
             elif command -v opkg &>/dev/null; then
                 opkg update
                 opkg install "$package"
             else
-                _red "未知的包管理器"
+                _red "未知的包管理器！"
                 return 1
             fi
         else
@@ -401,6 +449,10 @@ remove() {
             dpkg -l | grep -qw "$package"
         elif command -v apk &>/dev/null; then
             apk info | grep -qw "$package"
+        elif command -v pacman &>/dev/null; then
+            pacman -Qi "$package" &>/dev/null
+        elif command -v zypper &>/dev/null; then
+            zypper se -i "$package" &>/dev/null
         elif command -v opkg &>/dev/null; then
             opkg list-installed | grep -qw "$package"
         else
@@ -421,6 +473,10 @@ remove() {
                 apt purge "$package"* -y
             elif command -v apk &>/dev/null; then
                 apk del "$package"* -y
+            elif command -v pacman &>/dev/null; then
+                pacman -Rns --noconfirm "$package"
+            elif command -v zypper &>/dev/null; then
+                zypper remove -y "$package"
             elif command -v opkg &>/dev/null; then
                 opkg remove --force "$package"
             fi
@@ -565,7 +621,7 @@ end_of() {
 # 检查用户是否为root
 need_root() {
     clear
-    [ "$(id -u)" -ne "0" ] && _red "提示：该功能需要root用户才能运行！" && end_of && honeok
+    [ "$(id -u)" -ne "0" ] && _red "提示: 该功能需要root用户才能运行！" && end_of && honeok
 }
 
 # 获取公网IP地址
@@ -605,9 +661,8 @@ set_script_dir() {
         globle_script_dir="$script_dir"
     fi
 }
-#################### 通用函数END ####################
 
-#################### 系统更新START ####################
+# =============== 系统更新START ===============
 wait_for_lock() {
     local timeout=300  # 设置超时时间为300秒(5分钟)
     local waited=0
@@ -649,9 +704,8 @@ linux_update() {
     fi
     return 0
 }
-#################### 系统更新END ####################
 
-#################### 系统清理START ####################
+# =============== 系统清理START ===============
 linux_clean() {
     _yellow "正在系统清理"
 
@@ -692,9 +746,8 @@ linux_clean() {
     fi
     return 0
 }
-#################### 系统清理END ####################
 
-#################### 常用工具START ####################
+# =============== 常用工具START ===============
 linux_tools() {
     while true; do
         clear
@@ -905,9 +958,8 @@ linux_tools() {
         end_of
     done
 }
-#################### 常用工具END ####################
 
-#################### BBR START ####################
+# =============== BBR START ===============
 linux_bbr() {
     clear
     if [ -f "/etc/alpine-release" ]; then
@@ -957,9 +1009,22 @@ linux_bbr() {
         rm tcpx.sh
     fi
 }
-#################### BBR END ####################
 
-#################### Docker START ####################
+## =============== Docker START ===============
+
+# Docker全局状态显示
+docker_global_status() {
+    local container_count=$(docker ps -a -q 2>/dev/null | wc -l)
+    local image_count=$(docker images -q 2>/dev/null | wc -l)
+    local network_count=$(docker network ls -q 2>/dev/null | wc -l)
+    local volume_count=$(docker volume ls -q 2>/dev/null | wc -l)
+
+    if command -v docker &> /dev/null; then
+        echo "-------------------------"
+        echo -e "${green}环境已经安装${white}  容器: ${green}$container_count${white}  镜像: ${green}$image_count${white}  网络: ${green}$network_count${white}  卷: ${green}$volume_count${white}"
+    fi
+}
+
 install_docker() {
     if ! command -v docker >/dev/null 2>&1; then
         install_add_docker
@@ -1150,7 +1215,7 @@ base_config = {
     "ipv6": False
 }
 
-# 如果是中国服务器,将registry-mirrors放在前面
+# 如果是中国服务器，将registry-mirrors放在前面
 if "$is_china_server" == "true" and registry_mirrors:
     config = {
         "registry-mirrors": registry_mirrors,
@@ -1168,7 +1233,7 @@ EOF
     daemon_reload
     restart docker
     _yellow "Docker配置文件已根据服务器IP归属做相关优化"
-    _yellow "配置文件默认关闭IPV6，如需调整自行修改$config_file"
+    _yellow "配置文件默认关闭ipv6，如需调整自行修改$config_file"
 }
 
 docker_ipv6_on() {
@@ -1225,7 +1290,7 @@ EOF
         if [[ "$RESULT" == *"RELOAD"* ]]; then
             restart docker
         elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-            _yellow "当前已开启IPV6访问"
+            _yellow "当前已开启ipv6访问"
         else
             _red "处理配置时发生错误"
         fi
@@ -1276,7 +1341,7 @@ EOF
     if [[ "$RESULT" == *"RELOAD"* ]]; then
         restart docker
     elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-        _yellow "当前已关闭IPV6访问"
+        _yellow "当前已关闭ipv6访问"
     else
         _red "处理配置时发生错误"
     fi
@@ -1494,23 +1559,23 @@ docker_image() {
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    _yellow "正在获取镜像: " "$name"
-                    docker pull "$name"
+                    echo -e "${yellow}正在获取镜像: $name${white}"
+                    docker pull $name
                 done
                 ;;
             2)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    _yellow "正在更新镜像: " "$name"
-                    docker pull "$name"
+                    echo -e "${yellow}正在更新镜像: $name${white}"
+                    docker pull $name
                 done
                 ;;
             3)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    docker rmi -f "$name"
+                    docker rmi -f $name
                 done
                 ;;
             4)
@@ -1519,9 +1584,14 @@ docker_image() {
 
                 case "$choice" in
                     [Yy])
-                        docker rmi -f $(docker images -q)
+                        if [ -n "$(docker images -q)" ]; then
+                            docker rmi -f $(docker images -q)
+                        else
+                            _yellow "没有镜像可删除"
+                        fi
                         ;;
                     [Nn])
+                        _yellow "操作已取消"
                         ;;
                     *)
                         _red "无效选项，请重新输入"
@@ -1542,6 +1612,7 @@ docker_manager(){
     while true; do
         clear
         echo "▶ Docker管理"
+        docker_global_status
         echo "-------------------------"
         echo "1. 安装更新Docker环境"
         echo "-------------------------"
@@ -1565,7 +1636,7 @@ docker_manager(){
         echo "------------------------"
         echo "0. 返回主菜单"
         echo "------------------------"
-        
+
         echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
         read -r choice
 
@@ -1597,22 +1668,33 @@ docker_manager(){
                 ;;
             2)
                 clear
-                echo "Docker版本"
-                docker -v
-                manage_compose version
-                echo ""
-                echo "Docker镜像列表"
-                docker image ls
-                echo ""
-                echo "Docker容器列表"
-                docker ps -a
-                echo ""
-                echo "Docker卷列表"
-                docker volume ls
-                echo ""
-                echo "Docker网络列表"
-                docker network ls
-                echo ""
+                local image_count=$(docker images -q 2>/dev/null | wc -l)
+                local container_count=$(docker ps -a -q 2>/dev/null | wc -l)
+                local network_count=$(docker network ls -q 2>/dev/null | wc -l)
+                local volume_count=$(docker volume ls -q 2>/dev/null | wc -l)
+
+                # 显示镜像、容器、卷和网络列表
+                for resource in "镜像列表" "容器列表" "卷列表" "网络列表"; do
+                    case "$resource" in
+                        "镜像列表") count_var=$image_count ;;
+                        "容器列表") count_var=$container_count ;;
+                        "卷列表") count_var=$volume_count ;;
+                        "网络列表") count_var=$network_count ;;
+                    esac
+
+                    echo "Docker${resource}:"
+                    if [ "$count_var" -gt 0 ]; then
+                        case "$resource" in
+                            "镜像列表") docker image ls ;;
+                            "容器列表") docker ps -a ;;
+                            "卷列表") docker volume ls ;;
+                            "网络列表") docker network ls ;;
+                        esac
+                    else
+                        _red "None"
+                    fi
+                    echo ""
+                done
                 ;;
             3)
                 docker_ps
@@ -2226,7 +2308,7 @@ linux_panel() {
                         echo "------------------------"
                         echo "0. 返回上一级"
                         echo "------------------------"
-                        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值：完整安装）:${white}"
+                        echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值: 完整安装）:${white}"
 
                         # 重置choice变量
                         choice=""
@@ -2807,9 +2889,8 @@ linux_panel() {
         end_of
     done
 }
-#################### Docker END ####################
 
-#################### LDNMP建站START ####################
+# =============== LDNMP建站START ===============
 manage_compose() {
     local compose_cmd
     # 检查 docker compose 版本
@@ -3295,15 +3376,18 @@ add_domain() {
 }
 
 iptables_open() {
-    iptables -P INPUT ACCEPT
-    iptables -P FORWARD ACCEPT
-    iptables -P OUTPUT ACCEPT
-    iptables -F
+    local table
+    for table in iptables ip6tables; do
+        if ! command -v $table &> /dev/null; then
+            _red "错误: $table 命令未找到，跳过相关操作"
+            continue
+        fi
 
-    ip6tables -P INPUT ACCEPT
-    ip6tables -P FORWARD ACCEPT
-    ip6tables -P OUTPUT ACCEPT
-    ip6tables -F
+        $table -P INPUT ACCEPT
+        $table -P FORWARD ACCEPT
+        $table -P OUTPUT ACCEPT
+        $table -F
+    done
 }
 
 ldnmp_install_ssltls() {
@@ -4861,9 +4945,8 @@ linux_ldnmp() {
         end_of
     done
 }
-#################### LDNMP建站END ####################
 
-#################### 系统工具START ####################
+# =============== 系统工具START ===============
 restart_ssh() {
     restart sshd ssh > /dev/null 2>&1
 }
@@ -4978,24 +5061,50 @@ rollbak_dns() {
     fi
 }
 
+lock_dns() {
+    chattr +i /etc/resolv.conf
+    _green "DNS 文件已锁定，防止其他服务修改"
+}
+
+unlock_dns() {
+    chattr -i /etc/resolv.conf
+    _green "DNS文件已解锁，可以被修改"
+}
+
+lock_dns_status() {
+    if lsattr /etc/resolv.conf | grep -qi 'i'; then
+        echo -e -n "${green}已锁定${white}"
+    else
+        echo -e -n "${yellow}已解锁${white}"
+    fi
+}
+
 reinstall_system() {
+    local initialPort
+    local current_sshport=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
     local os_text="当前操作系统: ${os_info}"
 
-    dd_xitong_MollyLau() {
+    reins_script_MollyLau() {
         wget --no-check-certificate -qO InstallNET.sh "${github_proxy}https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh" && chmod a+x InstallNET.sh
     }
 
-    dd_xitong_bin456789() {
+    reins_script_bin456789() {
         curl -fsSL -O "${github_proxy}https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh"
     }
 
     dd_xitong_1() {
-        echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  初始端口: ${yellow}22${white}"
+        if [[ ${current_sshport} != "22" ]];then
+            initialPort="重装后端口: ${yellow}${current_sshport}${white}"
+        else
+            initialPort="重装后端口: ${yellow}22${white}"
+        fi
+
+        echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  ${initialPort}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
         install wget
-        dd_xitong_MollyLau
+        reins_script_MollyLau
     }
 
     dd_xitong_2() {
@@ -5003,21 +5112,21 @@ reinstall_system() {
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
         install wget
-        dd_xitong_MollyLau
+        reins_script_MollyLau
     }
 
     dd_xitong_3() {
         echo -e "重装后初始用户名: ${yellow}root${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}22${white}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
-        dd_xitong_bin456789
+        reins_script_bin456789
     }
 
     dd_xitong_4() {
         echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}3389${white}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
-        dd_xitong_bin456789
+        reins_script_bin456789
     }
 
     # 重装系统
@@ -5025,7 +5134,7 @@ reinstall_system() {
     while true; do
         need_root
         clear
-        echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据"
+        echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据！"
         echo "感谢MollyLau大佬和bin456789大佬的脚本支持！"
         echo "-------------------------"
         _yellow "${os_text}"
@@ -5040,7 +5149,7 @@ reinstall_system() {
         echo "23. Alma Linux 9              24. Alma Linux 8"
         echo "25. Oracle Linux 9            26. Oracle Linux 8"
         echo "27. Fedora Linux 40           28. Fedora Linux 39"
-        echo "29. CentOS 7"
+        echo "29. CentOS 9                  30. CentOS 7"
         echo "-------------------------"
         echo "31. Alpine Linux              32. Arch Linux"
         echo "33. Kali Linux                34. openEuler"
@@ -5107,7 +5216,7 @@ reinstall_system() {
                 ;;
             21)
                 dd_xitong_3
-                bash reinstall.sh rocky
+                bash reinstall.sh rocky 9
                 reboot
                 exit
                 ;;
@@ -5119,7 +5228,7 @@ reinstall_system() {
                 ;;
             23)
                 dd_xitong_3
-                bash reinstall.sh alma
+                bash reinstall.sh alma 9
                 reboot
                 exit
                 ;;
@@ -5131,7 +5240,7 @@ reinstall_system() {
                 ;;
             25)
                 dd_xitong_3
-                bash reinstall.sh oracle
+                bash reinstall.sh oracle 9
                 reboot
                 exit
                 ;;
@@ -5143,7 +5252,7 @@ reinstall_system() {
                 ;;
             27)
                 dd_xitong_3
-                bash reinstall.sh fedora
+                bash reinstall.sh fedora 40
                 reboot
                 exit
                 ;;
@@ -5154,6 +5263,12 @@ reinstall_system() {
                 exit
                 ;;
             29)
+                dd_xitong_3
+                bash reinstall.sh centos 9
+                reboot
+                exit
+                ;;
+            30)
                 dd_xitong_1
                 bash InstallNET.sh -centos 7
                 reboot
@@ -5258,18 +5373,26 @@ check_swap() {
             local new_swap=1024
             add_swap "$new_swap"
         else
-            _green "物理内存大于900MB,不需要添加交换空间"
+            _yellow "物理内存大于900MB，不需要添加交换空间"
         fi
     else
-        _green "系统已经有交换空间,总大小为 ${swap_total}MB"
+        _green "系统已经有交换空间，总大小为${swap_total}MB"
     fi
 }
 
 add_swap() {
     local new_swap=$1
 
+    # VPS虚拟化校验排除LXC和OpenVZ
     if [[ -d "/proc/vz" ]]; then
         _red "您的VPS基于OpenVZ，不受支持！"
+        end_of
+        return 1
+    fi
+
+    if [[ $(cat /proc/1/environ | tr '\0' '\n' | grep -i '^container=' | awk -F'=' '{print $2}') =~ ^[lL][xX][cC]$ ]]; then
+        _red "您的VPS基于LXC容器，不受支持！"
+        end_of
         return 1
     fi
 
@@ -5310,7 +5433,7 @@ add_swap() {
         rc-update add local
     fi
 
-    _green "虚拟内存大小已调整为 ${new_swap}MB"
+    _green "虚拟内存大小已调整为: ${new_swap}MB"
 }
 
 # 查看当前服务器时区
@@ -5357,8 +5480,9 @@ set_default_qdisc() {
     while true; do
         echo "请选择要设置的队列规则"
         echo "-------------------------"
-        echo "1. fq （默认）"
-        echo "2. fq_pie"
+        echo "1. fq （默认值）: 基本的公平排队算法，旨在确保每个流获得公平的带宽分配，防止某个流占用过多带宽"
+        echo "2. fq_pie      : 将FQ和PI（Proportional Integral）控制结合在一起，旨在改善延迟和带宽利用率"
+        echo "3. fq_codel    : 结合了公平排队和控制延迟的算法，通过主动丢包和公平分配带宽来减少延迟并提高多流的性能"
         echo "-------------------------"
 
         echo -n -e "${yellow}请输入选项并按回车键确认（回车使用默认值:fq）:${white}"
@@ -5371,6 +5495,10 @@ set_default_qdisc() {
                 ;;
             2)
                 chosen_qdisc="fq_pie"
+                break
+                ;;
+            3)
+                chosen_qdisc="fq_codel"
                 break
                 ;;
             *)
@@ -5600,13 +5728,14 @@ install_crontab() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         case "$ID" in
-            ubuntu|debian)
-                install cron
+            ubuntu|debian|kali)
+                apt update
+                apt install -y cron
                 enable cron
                 start cron
                 ;;
             centos|rhel|almalinux|rocky|fedora)
-                install cronie
+                yum install -y cronie
                 enable crond
                 start crond
                 ;;
@@ -5614,6 +5743,22 @@ install_crontab() {
                 apk add --no-cache cronie
                 rc-update add crond
                 rc-service crond start
+                ;;
+            arch|manjaro)
+                pacman -S --noconfirm cronie
+                enable cronie
+                start cronie
+                ;;
+            opensuse|suse|opensuse-tumbleweed)
+                zypper install -y cron
+                enable cron
+                start cron
+                ;;
+            openwrt|lede)
+                opkg update
+                opkg install cron
+                /etc/init.d/cron enable
+                /etc/init.d/cron start
                 ;;
             *)
                 _red "不支持的发行版:$ID"
@@ -5921,13 +6066,13 @@ redhat_kernel_update() {
         os_name=$(awk -F= '/^NAME/{print $2}' /etc/os-release)
         # 确保支持的操作系统上运行
         if [[ "$os_name" != *"Red Hat"* && "$os_name" != *"AlmaLinux"* && "$os_name" != *"Rocky"* && "$os_name" != *"Oracle"* && "$os_name" != *"CentOS"* ]]; then
-            _red "不支持的操作系统：$os_name"
+            _red "不支持的操作系统: $os_name"
             end_of
             linux_system_tools
         fi
 
         # 打印检测到的操作系统信息
-        _yellow "检测到的操作系统：$os_name $os_version"
+        _yellow "检测到的操作系统: $os_name $os_version"
 
         # 根据系统版本安装对应的 ELRepo 仓库配置
         if [[ "$os_version" == 8 ]]; then
@@ -5956,7 +6101,7 @@ redhat_kernel_update() {
             clear
             kernel_version=$(uname -r)
             echo "您已安装elrepo内核"
-            echo "当前内核版本：$kernel_version"
+            echo "当前内核版本: $kernel_version"
 
             echo ""
             echo "内核管理"
@@ -6091,7 +6236,7 @@ optimize_balanced() {
     echo -e "${yellow}其他优化...${white}"
     # 还原透明大页面
     echo always > /sys/kernel/mm/transparent_hugepage/enabled
-    # 还原 NUMA balancing
+    # 还原NUMA balancing
     sysctl -w kernel.numa_balancing=1 2>/dev/null
 }
 
@@ -6187,8 +6332,8 @@ clamav_antivirus() {
         clear
         echo "clamav病毒扫描工具"
         echo "------------------------"
-        echo "clamav是一个开源的防病毒软件工具,主要用于检测和删除各种类型的恶意软件"
-        echo "包括病毒,特洛伊木马,间谍软件,恶意脚本和其他有害软件"
+        echo "clamav是一个开源的防病毒软件工具，主要用于检测和删除各种类型的恶意软件"
+        echo "包括病毒,特洛伊木马,间谍软件，恶意脚本和其他有害软件"
         echo "------------------------"
         echo "1. 全盘扫描     2. 重要目录扫描     3. 自定义目录扫描"
         echo "------------------------"
@@ -6216,7 +6361,7 @@ clamav_antivirus() {
                 end_of
                 ;;
             3)
-                echo -n "请输入要扫描的目录 用空格分隔(例如: /etc /var /usr /home /root)"
+                echo -n "请输入要扫描的目录，用空格分隔（例如: /etc /var /usr /home /root）:"
                 read -r directories
 
                 install_docker
@@ -6337,14 +6482,14 @@ file_manage() {
                 echo -n "请输入要移动的文件或目录路径:"
                 read -r src_path
                 if [ ! -e "$src_path" ]; then
-                    _red "错误：文件或目录不存在"
+                    _red "错误: 文件或目录不存在"
                     continue
                 fi
 
                 echo -n "请输入目标路径（包括新文件名或目录名）:"
                 read -r dest_path
                 if [ -z "$dest_path" ]; then
-                    _red "错误：请输入目标路径"
+                    _red "错误: 请输入目标路径"
                     continue
                 fi
 
@@ -6354,14 +6499,14 @@ file_manage() {
                 echo -n "请输入要复制的文件或目录路径:"
                 read -r src_path
                 if [ ! -e "$src_path" ]; then
-                    _red "错误：文件或目录不存在"
+                    _red "错误: 文件或目录不存在"
                     continue
                 fi
 
                 echo -n "请输入目标路径（包括新文件名或目录名）:"
                 read -r dest_path
                 if [ -z "$dest_path" ]; then
-                    _red "错误：请输入目标路径"
+                    _red "错误: 请输入目标路径"
                     continue
                 fi
 
@@ -6372,14 +6517,14 @@ file_manage() {
                 echo -n "请输入要传送的文件路径:"
                 read -r file_to_transfer
                 if [ ! -f "$file_to_transfer" ]; then
-                    _red "错误：文件不存在"
+                    _red "错误: 文件不存在"
                     continue
                 fi
 
                 echo -n "请输入远端服务器IP:"
                 read -r remote_ip
                 if [ -z "$remote_ip" ]; then
-                    _red "错误：请输入远端服务器IP"
+                    _red "错误: 请输入远端服务器IP"
                     continue
                 fi
 
@@ -6391,7 +6536,7 @@ file_manage() {
                 echo -n "请输入远端服务器密码:"
                 read -r -s remote_password
                 if [ -z "$remote_password" ]; then
-                    _red "错误：请输入远端服务器密码"
+                    _red "错误: 请输入远端服务器密码"
                     continue
                 fi
 
@@ -6440,14 +6585,14 @@ linux_language() {
                     locale-gen
                     echo "LANG=${lang}" > /etc/default/locale
                     export LANG=${lang}
-                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    echo -e "${green}系统语言已经修改为: $lang 重新连接SSH生效${white}"
                     end_of
                     ;;
                 centos|rhel|almalinux|rocky|fedora)
                     install glibc-langpack-zh
                     localectl set-locale LANG=${lang}
                     echo "LANG=${lang}" | tee /etc/locale.conf
-                    echo -e "${green}系统语言已经修改为：$lang 重新连接SSH生效${white}"
+                    echo -e "${green}系统语言已经修改为: $lang 重新连接SSH生效${white}"
                     end_of
                     ;;
                 *)
@@ -6659,10 +6804,10 @@ cloudflare_ddns() {
         echo "Cloudflare ddns解析"
         echo "-------------------------"
         if [ -f /usr/local/bin/cf-ddns.sh ] || [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
-            echo -e "${white}Cloudflare ddns：${green}已安装${white}"
+            echo -e "${white}Cloudflare ddns: ${green}已安装${white}"
             crontab -l | grep "/usr/local/bin/cf-ddns.sh"
         else
-            echo -e "${white}Cloudflare ddns：${yellow}未安装${white}"
+            echo -e "${white}Cloudflare ddns: ${yellow}未安装${white}"
             echo "使用动态解析之前请解析一个域名，如ddns.honeok.com到你的当前公网IP"
         fi
         echo "公网IPV4地址: ${ipv4_address}"
@@ -6709,7 +6854,7 @@ cloudflare_ddns() {
                     if [[ "$CFZONE_NAME" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
                         break
                     else
-                        _red "无效的域名格式,请重新输入"
+                        _red "无效的域名格式，请重新输入"
                     fi
                 done
 
@@ -6784,7 +6929,7 @@ cloudflare_ddns() {
                         read -n 1 -s -r -p ""
                     fi
                 else
-                    _red "定时任务中未找到与 '/usr/local/bin/cf-ddns.sh' 相关的任务"
+                    _red "定时任务中未找到与'/usr/local/bin/cf-ddns.sh'相关的任务"
                 fi
 
                 if [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
@@ -6875,13 +7020,13 @@ linux_system_tools() {
                 echo "------------------------"
                 echo "该功能可无缝安装Python官方支持的任何版本！"
                 VERSION=$(python3 -V 2>&1 | awk '{print $2}')
-                echo -e "当前python版本号：${yellow}$VERSION${white}"
+                echo -e "当前python版本号: ${yellow}$VERSION${white}"
                 echo "------------------------"
                 echo "推荐版本:  3.12    3.11    3.10    3.9    3.8    2.7"
-                echo "查询更多版本：https://www.python.org/downloads/"
+                echo "查询更多版本: https://www.python.org/downloads/"
                 echo "------------------------"
 
-                echo -n -e "${yellow}请输入选项并按回车键确认(0退出):${white}"
+                echo -n -e "${yellow}请输入选项并按回车键确认（0退出）:${white}"
                 read -r py_new_v
 
                 if [[ "$py_new_v" == "0" ]]; then
@@ -6943,9 +7088,10 @@ EOF
                 rm -fr $(pyenv root)/cache/*
 
                 VERSION=$(python -V 2>&1 | awk '{print $2}')
-                echo -e "当前Python版本号：${yellow}$VERSION${white}"
+                echo -e "当前Python版本号: ${yellow}$VERSION${white}"
                 ;;
             5)
+                need_root
                 iptables_open
                 remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
                 _green "端口已全部开放"
@@ -6962,12 +7108,12 @@ EOF
                     current_port=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
 
                     # 打印当前的SSH端口号
-                    echo -e "当前的SSH端口号是：${yellow}$current_port${white}"
+                    echo -e "当前的SSH端口号是: ${yellow}$current_port${white}"
                     echo "------------------------"
                     echo "端口号范围10000到65535之间的数字（按0退出）"
 
                     # 提示用户输入新的SSH端口号
-                    echo -n "请输入新的SSH端口号："
+                    echo -n "请输入新的SSH端口号:"
                     read -r new_port
 
                     # 判断端口号是否在有效范围内
@@ -7005,6 +7151,7 @@ EOF
                     echo "1. 设置DNS优化"
                     echo "2. 恢复DNS原有配置"
                     echo "3. 手动编辑DNS配置"
+                    echo -e "4. 锁定/解锁DNS文件 当前状态$(lock_dns_status)"
                     echo "------------------------"
                     echo "0. 返回上一级"
                     echo "------------------------"
@@ -7021,11 +7168,10 @@ EOF
                             rollbak_dns
                             ;;
                         3)
-                            if command -v vim >/dev/null 2>&1; then
-                                vim /etc/resolv.conf
-                            else
-                                vi /etc/resolv.conf
-                            fi
+                            ( command -v vim >/dev/null 2>&1 && vim /etc/resolv.conf ) || vi /etc/resolv.conf
+                            ;;
+                        4)
+                            ( lsattr /etc/resolv.conf | grep -qi 'i' && unlock_dns ) || lock_dns
                             ;;
                         0)
                             break
@@ -7113,8 +7259,11 @@ EOF
                             echo "该功能由jhb提供，感谢！"
                             bash <(curl -L -s jhb.ovh/jb/v6.sh)
                             ;;
-                        *)
+                        0)
                             break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
                             ;;
                     esac
                 done
@@ -7133,9 +7282,9 @@ EOF
                     swap_total=$(free -m | awk 'NR==3{print $2}')
                     swap_info=$(free -m | awk 'NR==3{used=$3; total=$2; if (total == 0) {percentage=0} else {percentage=used*100/total}; printf "%dMB/%dMB (%d%%)", used, total, percentage}')
 
-                    _yellow "当前虚拟内存：${swap_info}"
+                    _yellow "当前虚拟内存: ${swap_info}"
                     echo "------------------------"
-                    echo "1. 分配1024MB     2. 分配2048MB     3. 自定义大小（建议为内存的2倍！）     0. 退出"
+                    echo "1. 分配1024MB         2. 分配2048MB         3. 自定义大小         0. 退出"
                     echo "------------------------"
                     
                     echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
@@ -7198,7 +7347,7 @@ EOF
 
                     case $choice in
                         1)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r new_username
 
                             useradd -m -s /bin/bash "$new_username" && \
@@ -7206,7 +7355,7 @@ EOF
                             _green "普通账户创建完成"
                             ;;
                         2)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r new_username
 
                             useradd -m -s /bin/bash "$new_username" && \
@@ -7215,7 +7364,7 @@ EOF
                             _green "高级账户创建完成"
                             ;;
                         3)
-                            echo -n "请输入新用户名："
+                            echo -n "请输入新用户名:"
                             read -r username
 
                             echo "$username ALL=(ALL:ALL) ALL" | sudo tee -a /etc/sudoers && \
@@ -7232,7 +7381,7 @@ EOF
                             fi
                             ;;
                         5)
-                            echo -n "请输入要删除的用户名："
+                            echo -n "请输入要删除的用户名:"
                             read -r username
 
                             # 删除用户及其主目录
@@ -7390,13 +7539,15 @@ EOF
                         echo ""
                         echo "防火墙管理"
                         echo "------------------------"
-                        echo "1. 开放指定端口              2. 关闭指定端口"
-                        echo "3. 开放所有端口              4. 关闭所有端口"
+                        echo "1. 开放指定端口                 2.  关闭指定端口"
+                        echo "3. 开放所有端口                 4.  关闭所有端口"
                         echo "------------------------"
-                        echo "5. IP白名单                  6. IP黑名单"
+                        echo "5. IP白名单                    6.  IP黑名单"
                         echo "7. 清除指定IP"
                         echo "------------------------"
-                        echo "9. 卸载防火墙"
+                        echo "11. 允许PING                  12. 禁止PING"
+                        echo "------------------------"
+                        echo "99. 卸载防火墙"
                         echo "------------------------"
                         echo "0. 返回上一级选单"
                         echo "------------------------"
@@ -7467,7 +7618,16 @@ EOF
                                 sed -i "/-A INPUT -s $d_ip/d" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                            9)
+                            11)
+                                sed -i '$i -A INPUT -p icmp --icmp-type echo-request -j ACCEPT' /etc/iptables/rules.v4
+                                sed -i '$i -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT' /etc/iptables/rules.v4
+                                iptables-restore < /etc/iptables/rules.v4
+                                ;;
+                            12)
+                                sed -i "/icmp/d" /etc/iptables/rules.v4
+                                iptables-restore < /etc/iptables/rules.v4
+                                ;;
+                            99)
                                 remove iptables-persistent
                                 rm /etc/iptables/rules.v4
                                 break
@@ -7538,7 +7698,7 @@ EOF
                 while true; do
                     clear
                     current_hostname=$(hostname)
-                    echo -e "当前主机名：$current_hostname"
+                    echo -e "当前主机名: $current_hostname"
                     echo "------------------------"
                     echo -n "请输入新的主机名（输入0退出）:"
                     read -r new_hostname
@@ -7567,7 +7727,7 @@ EOF
                             echo "::1             $new_hostname localhost localhost.localdomain ipv6-localhost ipv6-loopback" >> /etc/hosts
                         fi
 
-                        echo "主机名已更改为：$new_hostname"
+                        echo "主机名已更改为: $new_hostname"
                         sleep 1
                     else
                         _yellow "已退出，未更改主机名"
@@ -7712,6 +7872,7 @@ EOF
                 ;;
             23)
                 need_root
+                set_script_dir
                 while true; do
                     clear
                     echo "限流关机功能"
@@ -7721,14 +7882,14 @@ EOF
                     echo "$output"
 
                     # 检查是否存在 Limiting_Shut_down.sh 文件
-                    if [ -f ~/Limiting_Shut_down.sh ]; then
+                    if [ -f ${globle_script_dir}/Limiting_Shut_down.sh ]; then
                         # 获取 threshold_gb 的值
-                        rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                        tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                        echo "当前设置的进站限流阈值为：${rx_threshold_gb}GB"
-                        echo "当前设置的出站限流阈值为：${tx_threshold_gb}GB"
+                        rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ${globle_script_dir}/Limiting_Shut_down.sh)
+                        tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ${globle_script_dir}/Limiting_Shut_down.sh)
+                        _yellow "当前设置的进站限流阈值为: ${rx_threshold_gb}GB"
+                        _yellow "当前设置的出站限流阈值为: ${tx_threshold_gb}GB"
                     else
-                        echo "当前未启用限流关机功能"
+                        _red "当前未启用限流关机功能"
                     fi
 
                     echo ""
@@ -7749,23 +7910,23 @@ EOF
                             read -r cz_day
                             cz_day=${cz_day:-1}
 
-                            cd ~
-                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
-                            chmod +x ~/Limiting_Shut_down.sh
-                            sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
-                            sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
+                            cd ${globle_script_dir}
+                            curl -fsSL -o "Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
+                            chmod +x ${globle_script_dir}/Limiting_Shut_down.sh
+                            sed -i "s/110/$rx_threshold_gb/g" ${globle_script_dir}/Limiting_Shut_down.sh
+                            sed -i "s/120/$tx_threshold_gb/g" ${globle_script_dir}/Limiting_Shut_down.sh
                             check_crontab_installed
-                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
-                            (crontab -l ; echo "* * * * * ~/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
+                            crontab -l | grep -v '${globle_script_dir}/Limiting_Shut_down.sh' | crontab -
+                            (crontab -l ; echo "* * * * * ${globle_script_dir}/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
                             crontab -l | grep -v 'reboot' | crontab -
                             (crontab -l ; echo "0 1 $cz_day * * reboot") | crontab - > /dev/null 2>&1
                             _green "限流关机已开启"
                             ;;
                         2)
                             check_crontab_installed
-                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
+                            crontab -l | grep -v '${globle_script_dir}/Limiting_Shut_down.sh' | crontab -
                             crontab -l | grep -v 'reboot' | crontab -
-                            rm ~/Limiting_Shut_down.sh
+                            rm -f ${globle_script_dir}/Limiting_Shut_down.sh
                             _green "限流关机已卸载"
                             ;;
                         *)
@@ -7943,15 +8104,15 @@ EOF
                         echo "------------------------------------------------"
                         bak_dns
                         set_dns
-                        echo -e "[${gl_lv}OK${gl_bai}] 8/10. 自动优化DNS地址${gl_huang}${gl_bai}"
+                        echo -e "[${green}OK${white}] 8/10. 自动优化DNS地址${yellow}${white}"
                         echo "------------------------------------------------"
                         install_docker
                         install wget sudo tar unzip socat btop nano vim
-                        echo -e "[${gl_lv}OK${gl_bai}] 9/10. 安装常用工具${gl_huang}docker wget sudo tar unzip socat btop${gl_bai}"
+                        echo -e "[${green}OK${white}] 9/10. 安装常用工具${yellow}docker wget sudo tar unzip socat btop${white}"
                         echo "------------------------------------------------"
                         optimize_balanced
-                        echo -e "[${gl_lv}OK${gl_bai}] 10/10. Linux系统内核参数优化"
-                        echo -e "${gl_lv}一条龙系统调优已完成${gl_bai}"
+                        echo -e "[${green}OK${white}] 10/10. Linux系统内核参数优化"
+                        echo -e "${green}一条龙系统调优已完成${white}"
                         ;;
                     [Nn])
                         echo "已取消"
@@ -7978,9 +8139,8 @@ EOF
         end_of
     done
 }
-#################### 系统工具END ####################
 
-#################### 工作区START ####################
+# =============== 工作区START ===============
 tmux_run() {
     # 检查会话是否已经存在
     tmux has-session -t $session_name 2>/dev/null
@@ -8016,9 +8176,9 @@ linux_workspace() {
     while true; do
         clear
         echo "▶ 我的工作区"
-        echo "系统将为你提供可以后台常驻运行的工作区,你可以用来执行长时间的任务"
-        echo "即使你断开SSH,工作区中的任务也不会中断,后台常驻任务"
-        echo "提示: 进入工作区后使用Ctrl+b再单独按d,退出工作区!"
+        echo "系统将为你提供可以后台常驻运行的工作区，你可以用来执行长时间的任务"
+        echo "即使你断开SSH，工作区中的任务也不会中断，后台常驻任务"
+        echo "提示: 进入工作区后使用Ctrl+b再单独按d，退出工作区！"
         echo "------------------------"
         echo "1. 1号工作区"
         echo "2. 2号工作区"
@@ -8031,6 +8191,7 @@ linux_workspace() {
         echo "9. 9号工作区"
         echo "10. 10号工作区"
         echo "------------------------"
+        echo "98. SSH常驻模式"
         echo "99. 工作区管理"
         echo "------------------------"
         echo "0. 返回主菜单"
@@ -8100,6 +8261,46 @@ linux_workspace() {
                 session_name="work10"
                 tmux_run
                 ;;
+            98)
+                while true; do
+                    clear
+                    if grep -q 'tmux attach-session -t sshd || tmux new-session -s sshd' ~/.bashrc; then
+                        tmux_sshd_status="${green}开启${white}"
+                    else
+                        tmux_sshd_status="${gray}关闭${white}"
+                    fi
+                    echo -e "SSH常驻模式 ${tmux_sshd_status}"
+                    echo "开启后SSH连接后会直接进入常驻模式，直接回到之前的工作状态"
+                    echo "------------------------"
+                    echo "1. 开启            2. 关闭"
+                    echo "------------------------"
+                    echo "0. 返回上一级"
+                    echo "------------------------"
+
+                    echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
+                    read -r gongzuoqu_del
+
+                    case "$gongzuoqu_del" in
+                        1)
+                            install tmux
+                            session_name="sshd"
+                            grep -q "tmux attach-session -t sshd" ~/.bashrc || echo -e "\n# 自动进入 tmux 会话\nif [[ -z \"\$TMUX\" ]]; then\n    tmux attach-session -t sshd || tmux new-session -s sshd\nfi" >> ~/.bashrc
+                            source ~/.bashrc
+                            tmux_run
+                            ;;
+                        2)
+                            sed -i '/# 自动进入 tmux 会话/,+4d' ~/.bashrc
+                            tmux kill-window -t sshd
+                            ;;
+                        0)
+                            break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
+                            ;;
+                    esac
+                done
+                ;;
             99)
                 while true; do
                     clear
@@ -8119,12 +8320,12 @@ linux_workspace() {
 
                     case "$gongzuoqu_del" in
                         1)
-                            echo -n "请输入你创建或进入的工作区名称,如1001 honeok work1:"
+                            echo -n "请输入你创建或进入的工作区名称，如1001 honeok work1:"
                             read -r session_name
                             tmux_run
                             ;;
                         2)
-                            echo -n "请输入你要后台执行的命令,如:curl -fsSL https://get.docker.com | sh:"
+                            echo -n "请输入你要后台执行的命令，如: curl -fsSL https://get.docker.com | sh:"
                             read -r tmuxd
                             tmux_run_d
                             ;;
@@ -8152,9 +8353,8 @@ linux_workspace() {
         end_of
     done
 }
-#################### 工作区END ####################
 
-#################### VPS测试脚本START ####################
+# =============== VPS测试脚本START ===============
 servertest_script() {
     local choice
     while true; do
@@ -8289,9 +8489,8 @@ servertest_script() {
         end_of
     done
 }
-#################### VPS测试脚本 END ####################
 
-#################### 节点搭建脚本START ####################
+# =============== 节点搭建脚本START ===============
 node_create() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
         clear
@@ -8458,9 +8657,8 @@ node_create() {
         end_of
     done
 }
-#################### 节点搭建脚本END ####################
 
-#################### 甲骨文START ####################
+# =============== 甲骨文START ===============
 oracle_script() {
     while true; do
         clear
@@ -8484,7 +8682,7 @@ oracle_script() {
         case $choice in
             1)
                 clear
-                _yellow "活跃脚本：CPU占用10-20% 内存占用20%"
+                _yellow "活跃脚本: CPU占用10-20% 内存占用20%"
                 echo -n -e "${yellow}确定安装吗?(y/n):${white}"
                 read -r ins
                 
@@ -8542,7 +8740,7 @@ oracle_script() {
                 clear
                 _yellow "重装系统"
                 echo "-------------------------"
-                _yellow "注意：重装有风险失联，不放心者慎用，重装预计花费15分钟，请提前备份数据！"
+                _yellow "注意: 重装有风险失联，不放心者慎用，重装预计花费15分钟，请提前备份数据！"
                 
                 echo -n -e "${yellow}确定继续吗?(y/n):${white}"
                 read -r choice
@@ -8604,9 +8802,8 @@ oracle_script() {
         end_of
     done
 }
-#################### 甲骨文END ####################
 
-#################### 幻兽帕鲁START ####################
+# =============== 幻兽帕鲁START ===============
 palworld_script() {
     need_root
     while true; do
@@ -8662,38 +8859,76 @@ palworld_script() {
         esac
     done
 }
-#################### 幻兽帕鲁END ####################
 
-#################### 脚本更新START ####################
+# =============== 脚本更新START ===============
 honeok_update() {
-    local remote_script_url="${github_proxy}raw.githubusercontent.com/honeok/Tools/main/honeok.sh"
+    local remote_script_url="${github_proxy}https://raw.githubusercontent.com/honeok/Tools/main/honeok.sh"
     local local_script_path="$HOME/honeok.sh"
 
-    # 检查本地脚本是否存在
-    if [[ ! -f "$local_script_path" ]]; then
-        _yellow "本地脚本不存在，正在下载"
-        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
-        return 0
+    # 检测是否通过进程替换执行
+    if [[ "$0" == *"<(curl"* ]]; then
+        _yellow "当前脚本通过进程替换执行，您正在使用的是远程最新版本"
+        echo "是否下载最新版本?（y/n）"
+        read -r answer
+        case $answer in
+            [Yy])
+                _yellow "正在下载最新版本"
+                curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+                ;;
+            [Nn])
+                _yellow "已取消"
+                return 0
+                ;;
+            *)
+                _yellow "无效的输入，已取消"
+                return 0
+                ;;
+        esac
+    else
+        if [[ ! -f "$local_script_path" ]]; then
+            echo "本地脚本不存在，正在下载"
+            curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+            return 0
+        fi
     fi
 
-    # 从远程脚本中提取第6行的版本号
+    # 从远程脚本中提取版本号
     local remote_version
-    remote_version=$(curl -sL "$remote_script_url" | sed -n '6p' | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
+    local attempt=0
+    local max_attempts=3
+    while (( attempt < max_attempts )); do
+        remote_version=$(curl -sL "$remote_script_url" | sed -n 's/.*honeok_v="v\([0-9.]*\).*/\1/p')
+        if [[ -n "$remote_version" ]]; then
+            break  # 如果成功获取版本号，退出循环
+        fi
 
-    # 从本地脚本中提取第6行的版本号
+        attempt=$((attempt + 1))
+        echo -e "${yellow}尝试获取远程版本号失败，正在重试(${attempt}/${max_attempts})${white}"
+        sleep 2  # 等待 2 秒后重试
+    done
+
+    # 如果获取版本号仍然失败，输出错误并退出
+    if [[ -z "$remote_version" ]]; then
+        _red "无法获取远程版本号，请检查网络连接或代理设置"
+        return 1
+    fi
+
+    # 从本地脚本中提取版本号
     local local_version
-    local_version=$(sed -n '6p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
+    local_version=$(sed -n 's/.*honeok_v="v\([0-9.]*\).*/\1/p' "$local_script_path")
 
     # 检查版本号并更新脚本
-    if [[ "$remote_version" != "$local_version" ]]; then
-        echo -e "${white}远程版本：${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
-        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
-        echo -e "${white}脚本已更新到最新版本：${yellow}$remote_version${white}"
+    if [[ "$(printf '%s\n' "$remote_version" "$local_version" | sort -V | head -n 1)" == "$local_version" ]]; then
+        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}（本地版本较新，不需要更新）"
     else
-        echo -e "${white}脚本已是最新版本：${yellow}$local_version${white}"
+        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+        echo -e "${white}脚本已更新到最新版本: ${yellow}$remote_version${white}"
     fi
 }
-#################### 脚本更新END ####################
+
+# =============== Main ===============
 honeok() {
     local choice
 
@@ -8717,11 +8952,10 @@ honeok() {
         echo "15. VPS测试脚本合集 ▶"
         echo "16. 节点搭建脚本合集 ▶"
         echo "17. 甲骨文云脚本合集 ▶"
-        echo "18. 常用环境管理 ▶"
         echo "------------------------"
         echo "99. 幻兽帕鲁开服脚本 ▶"
         echo "------------------------"
-        echo "00.脚本更新"
+        echo "00. 脚本更新"
         echo "------------------------"
         echo "0. 退出脚本"
         echo "------------------------"
@@ -8758,7 +8992,8 @@ honeok() {
                 wget -N https://gitlab.com/fscarmen/warp/-/raw/main/menu.sh && bash menu.sh [option] [license/url/token]
                 ;;
             8)
-                linux_ldnmp
+                #linux_ldnmp
+                _orange "修复中，敬请期待！"
                 ;;
             12)
                 linux_panel
@@ -8778,9 +9013,6 @@ honeok() {
             17)
                 oracle_script
                 ;;
-            18)
-                echo "敬请期待"
-                ;;
             99)
                 palworld_script
                 ;;
@@ -8790,6 +9022,7 @@ honeok() {
             0)
                 _orange "Bye!" && sleep 1
                 clear
+                global_exit_action
                 exit 0
                 ;;
             *)
@@ -8802,4 +9035,5 @@ honeok() {
 
 # 脚本入口
 honeok
+global_exit_action
 exit 0
