@@ -352,7 +352,7 @@ set_region_config() {
         execute_commands=0  # 0 表示允许执行命令
 
         # 定义局部变量，GitHub代理均为双栈兼容IPv4和IPv6
-        local github_cdn=("gh-proxy.com" "ghproxy.cc" "sciproxy.com" "ghproxy.1888866.xyz" "mirrors.chenby.cn")
+        local github_cdn=("gh-proxy.com" "ghproxy.cc" "sciproxy.com" "ghproxy.1888866.xyz" "gh.api.99988866.xyz" "mirrors.chenby.cn")
         local best_proxy=""
         local best_time=9999  # 设置一个较大的初始延迟值
         local ping_time=""
