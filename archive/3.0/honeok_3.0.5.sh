@@ -8,7 +8,6 @@ honeok_v="v3.0.5 (2024.10.24)"
 
 ## fork from kejilion shell script.
 ## Blog: https://blog.kejilion.pro
-
 ## fork from https://github.com/ylx2016
 
 yellow='\033[93m'        # 亮黄色
@@ -19,7 +18,7 @@ cyan='\033[96m'          # 亮青色
 purple='\033[95m'        # 亮紫色
 gray='\033[37m'          # 亮灰色
 orange='\033[38;5;214m'  # 亮橙色
-white='\033[0m'          # 重置为默认颜色
+white='\033[0m'          # 重置
 
 _yellow() { echo -e ${yellow}$@${white}; }
 _red() { echo -e ${red}$@${white}; }
