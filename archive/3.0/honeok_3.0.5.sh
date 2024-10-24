@@ -5337,11 +5337,13 @@ add_swap() {
     # VPS虚拟化校验排除LXC和OpenVZ
     if [[ -d "/proc/vz" ]]; then
         _red "您的VPS基于OpenVZ，不受支持！"
+        end_of
         return 1
     fi
 
     if [[ $(cat /proc/1/environ | tr '\0' '\n' | grep -i '^container=' | awk -F'=' '{print $2}') =~ ^[lL][xX][cC]$ ]]; then
         _red "您的VPS基于LXC容器，不受支持！"
+        end_of
         return 1
     fi
 
@@ -5382,7 +5384,7 @@ add_swap() {
         rc-update add local
     fi
 
-    _green "虚拟内存大小已调整为 ${new_swap}MB"
+    _green "虚拟内存大小已调整为: ${new_swap}MB"
 }
 
 # 查看当前服务器时区
