@@ -6236,7 +6236,7 @@ optimize_balanced() {
     echo -e "${yellow}其他优化...${white}"
     # 还原透明大页面
     echo always > /sys/kernel/mm/transparent_hugepage/enabled
-    # 还原 NUMA balancing
+    # 还原NUMA balancing
     sysctl -w kernel.numa_balancing=1 2>/dev/null
 }
 
@@ -6332,8 +6332,8 @@ clamav_antivirus() {
         clear
         echo "clamav病毒扫描工具"
         echo "------------------------"
-        echo "clamav是一个开源的防病毒软件工具,主要用于检测和删除各种类型的恶意软件"
-        echo "包括病毒,特洛伊木马,间谍软件,恶意脚本和其他有害软件"
+        echo "clamav是一个开源的防病毒软件工具，主要用于检测和删除各种类型的恶意软件"
+        echo "包括病毒,特洛伊木马,间谍软件，恶意脚本和其他有害软件"
         echo "------------------------"
         echo "1. 全盘扫描     2. 重要目录扫描     3. 自定义目录扫描"
         echo "------------------------"
@@ -6361,7 +6361,7 @@ clamav_antivirus() {
                 end_of
                 ;;
             3)
-                echo -n "请输入要扫描的目录 用空格分隔(例如: /etc /var /usr /home /root)"
+                echo -n "请输入要扫描的目录，用空格分隔（例如: /etc /var /usr /home /root）:"
                 read -r directories
 
                 install_docker
@@ -6854,7 +6854,7 @@ cloudflare_ddns() {
                     if [[ "$CFZONE_NAME" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
                         break
                     else
-                        _red "无效的域名格式,请重新输入"
+                        _red "无效的域名格式，请重新输入"
                     fi
                 done
 
@@ -6929,7 +6929,7 @@ cloudflare_ddns() {
                         read -n 1 -s -r -p ""
                     fi
                 else
-                    _red "定时任务中未找到与 '/usr/local/bin/cf-ddns.sh' 相关的任务"
+                    _red "定时任务中未找到与'/usr/local/bin/cf-ddns.sh'相关的任务"
                 fi
 
                 if [ -f ${globle_script_dir}/cf-v4-ddns.sh ]; then
