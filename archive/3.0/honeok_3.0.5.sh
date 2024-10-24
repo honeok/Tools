@@ -191,8 +191,7 @@ system_info(){
     done <<< "$disk_info"
 
     # 启动盘路径
-    #local boot_partition=$(findmnt -n -o SOURCE /)
-    local boot_partition=$(mount | grep ' / ' | awk '{print $1}')
+    local boot_partition=$(findmnt -n -o SOURCE / 2>/dev/null || mount | grep ' / ' | awk '{print $1}')
 
     # 系统在线时间
     local uptime_str=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days %d hour %d min\n",a,b,c)}' /proc/uptime)
@@ -231,22 +230,10 @@ system_info(){
     fi
 
     # 获取CPU架构
-    local cpu_architecture
-    if cpu_architecture=$(uname -m); then
-        :
-    elif cpu_architecture=$(lscpu | awk -F ': +' '/Architecture/{print $2}'); then
-        :
-    else
-        cpu_architecture="Full Unknown"
-    fi
+    local cpu_architecture=$(uname -m 2>/dev/null || lscpu | awk -F ': +' '/Architecture/{print $2}' || echo "Full Unknown")
 
     # 获取内核版本信息
-    local kernel_version
-    if command -v hostnamectl >/dev/null 2>&1; then
-        kernel_version=$(hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p')
-    else
-        kernel_version=$(uname -r)
-    fi
+    local kernel_version=$(command -v hostnamectl >/dev/null 2>&1 && hostnamectl | sed -n 's/^[[:space:]]*Kernel:[[:space:]]*Linux \?\(.*\)$/\1/p' || uname -r)
 
     # 获取网络拥塞控制算法
     local congestion_algorithm=""
@@ -306,16 +293,10 @@ system_info(){
     local location=$(curl -s https://ipinfo.io/city || curl -s https://ipapi.co/json | grep -i "\"city" | awk -F':' '{gsub(/,/, "", $2); print $2}' | sed 's/"/ /g' | xargs)
 
     # 获取系统时区
-    local system_time
-    if grep -q 'Alpine' /etc/issue; then
-        system_time=$(date +"%Z %z")
-    elif command -v timedatectl >/dev/null 2>&1; then
-        system_time=$(timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}')
-    elif [ -f /etc/timezone ]; then
-        system_time=$(cat /etc/timezone)
-    else
-        system_time=$(date +"%Z %z")  # 如果其他方法失败，使用date作为默认选项
-    fi
+    local system_time=$(grep -q 'Alpine' /etc/issue && date +"%Z %z" || \
+                        command -v timedatectl >/dev/null 2>&1 && timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}' || \
+                        [ -f /etc/timezone ] && cat /etc/timezone || \
+                        date +"%Z %z")
 
     # 获取服务器当前时间
     local current_time=$(date +"%Y-%m-%d %H:%M:%S")
