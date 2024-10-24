@@ -6,6 +6,8 @@
 honeok_v="v3.0.5 (2024.10.24)"
 ## export LANG=en_US.UTF-8
 
+## set -x
+
 ## fork from kejilion shell script.
 ## Blog: https://blog.kejilion.pro
 ## fork from https://github.com/ylx2016
@@ -33,7 +35,7 @@ cd /root >/dev/null 2>&1
 honeok_pid="/tmp/honeok.pid"
 
 if [ -f "$honeok_pid" ] && kill -0 $(cat "$honeok_pid") 2>/dev/null; then
-    echo -n  "${red}脚本已经在运行！如误判烦请反馈问题至:${white} https://github.com/honeok/Tools/issues"
+    echo -n "${red}脚本已经在运行！如误判烦请反馈问题至:${white} https://github.com/honeok/Tools/issues"
     exit 1
 fi
 
