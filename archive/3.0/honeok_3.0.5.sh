@@ -8,8 +8,7 @@ honeok_v="v3.0.5 (2024.10.24)"
 
 ## set -x
 
-## fork from kejilion shell script.
-## Blog: https://blog.kejilion.pro
+## fork from https://github.com/kejilion/sh
 ## fork from https://github.com/ylx2016
 
 yellow='\033[93m'        # 亮黄色
