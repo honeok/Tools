@@ -1233,7 +1233,7 @@ EOF
     daemon_reload
     restart docker
     _yellow "Docker配置文件已根据服务器IP归属做相关优化"
-    _yellow "配置文件默认关闭IPV6，如需调整自行修改$config_file"
+    _yellow "配置文件默认关闭ipv6，如需调整自行修改$config_file"
 }
 
 docker_ipv6_on() {
@@ -1290,7 +1290,7 @@ EOF
         if [[ "$RESULT" == *"RELOAD"* ]]; then
             restart docker
         elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-            _yellow "当前已开启IPV6访问"
+            _yellow "当前已开启ipv6访问"
         else
             _red "处理配置时发生错误"
         fi
@@ -1341,7 +1341,7 @@ EOF
     if [[ "$RESULT" == *"RELOAD"* ]]; then
         restart docker
     elif [[ "$RESULT" == *"NO_CHANGE"* ]]; then
-        _yellow "当前已关闭IPV6访问"
+        _yellow "当前已关闭ipv6访问"
     else
         _red "处理配置时发生错误"
     fi
