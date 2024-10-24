@@ -5099,7 +5099,7 @@ reinstall_system() {
     while true; do
         need_root
         clear
-        echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据"
+        echo -e "${red}注意: ${white}重装有风险失联，不放心者慎用重装预计花费15分钟，请提前备份数据！"
         echo "感谢MollyLau大佬和bin456789大佬的脚本支持！"
         echo "-------------------------"
         _yellow "${os_text}"
