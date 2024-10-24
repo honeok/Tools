@@ -412,11 +412,17 @@ install() {
             elif command -v apk &>/dev/null; then
                 apk update
                 apk add "$package"
+            elif command -v pacman &>/dev/null; then
+                pacman -Syu --noconfirm
+                pacman -S --noconfirm "$package"
+            elif command -v zypper &>/dev/null; then
+                zypper refresh
+                zypper install -y "$package"
             elif command -v opkg &>/dev/null; then
                 opkg update
                 opkg install "$package"
             else
-                _red "未知的包管理器"
+                _red "未知的包管理器！"
                 return 1
             fi
         else
@@ -443,6 +449,10 @@ remove() {
             dpkg -l | grep -qw "$package"
         elif command -v apk &>/dev/null; then
             apk info | grep -qw "$package"
+        elif command -v pacman &>/dev/null; then
+            pacman -Qi "$package" &>/dev/null
+        elif command -v zypper &>/dev/null; then
+            zypper se -i "$package" &>/dev/null
         elif command -v opkg &>/dev/null; then
             opkg list-installed | grep -qw "$package"
         else
@@ -463,6 +473,10 @@ remove() {
                 apt purge "$package"* -y
             elif command -v apk &>/dev/null; then
                 apk del "$package"* -y
+            elif command -v pacman &>/dev/null; then
+                pacman -Rns --noconfirm "$package"
+            elif command -v zypper &>/dev/null; then
+                zypper remove -y "$package"
             elif command -v opkg &>/dev/null; then
                 opkg remove --force "$package"
             fi
