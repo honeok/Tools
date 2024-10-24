@@ -281,10 +281,15 @@ system_info(){
     local location=$(curl -s https://ipinfo.io/city || curl -s https://ipapi.co/json | grep -i "\"city" | awk -F':' '{gsub(/,/, "", $2); print $2}' | sed 's/"/ /g' | xargs)
 
     # 获取系统时区
-    local system_time=$(grep -q 'Alpine' /etc/issue && date +"%Z %z" || \
-                        command -v timedatectl >/dev/null 2>&1 && timedatectl | awk '/Time zone/ {print $3}' | awk '{gsub(/^[[:space:]]+|[[:space:]]+$/,""); print}' || \
-                        [ -f /etc/timezone ] && cat /etc/timezone || \
-                        date +"%Z %z")
+    if grep -q 'Alpine' /etc/issue; then
+        local system_time=$(date +"%Z %z")
+    elif command -v timedatectl >/dev/null 2>&1; then
+        local system_time=$(timedatectl | awk '/Time zone/ {print $3}' | xargs)
+    elif [ -f /etc/timezone ]; then
+        local system_time=$(cat /etc/timezone)
+    else
+        local system_time=$(date +"%Z %z")
+    fi
 
     # 获取服务器当前时间
     local current_time=$(date +"%Y-%m-%d %H:%M:%S")
