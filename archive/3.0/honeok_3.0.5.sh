@@ -1215,7 +1215,7 @@ base_config = {
     "ipv6": False
 }
 
-# 如果是中国服务器,将registry-mirrors放在前面
+# 如果是中国服务器，将registry-mirrors放在前面
 if "$is_china_server" == "true" and registry_mirrors:
     config = {
         "registry-mirrors": registry_mirrors,
