@@ -372,16 +372,16 @@ global_exit_action() {
     fi
 }
 
-# =============== 通用函数START ===============
-# 设置地区相关的Github代理配置
+## =============== 通用函数START ===============
+## 设置地区相关的Github代理配置
 set_region_config() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
         _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
-        echo "鸣谢 Github-Mirror: https://github-mirror.us.kg"
+        _orange "鸣谢Github-Mirror: https://github-mirror.us.kg"
         execute_commands=0  # 0 表示允许执行命令
 
         # GitHub代理兼容IPv4和IPv6
-        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.hlg.us.kg" "www.ghpr.cc" "gh.kejilion.pro")
+        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.hlg.us.kg" "ghpr.cc" "git.669966.xyz")
         local best_proxy=""
         local best_time=9999  # 设置一个较大的初始延迟值
         local ping_time=""
@@ -408,7 +408,7 @@ set_region_config() {
     fi
 }
 
-# 根据地区配置条件执行命令的函数
+## 根据地区配置条件执行命令的函数
 exec_cmd() {
     if [ "$execute_commands" -eq 0 ]; then  # 检查是否允许执行命令
         "$@"
