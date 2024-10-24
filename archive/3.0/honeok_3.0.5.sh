@@ -5335,12 +5335,14 @@ add_swap() {
     local new_swap=$1
 
     # VPS虚拟化校验排除LXC和OpenVZ
-    virt_check
-    if [[ ${virt_type} =~ "^[lL][xX][cC]$" ]];then
+    if [[ -d "/proc/vz" ]]; then
+        _red "您的VPS基于OpenVZ，不受支持！"
+        return 1
+    fi
+
+    if [[ $(cat /proc/1/environ | tr '\0' '\n' | grep -i '^container=' | awk -F'=' '{print $2}') =~ ^[lL][xX][cC]$ ]]; then
         _red "您的VPS基于LXC容器，不受支持！"
         return 1
-    elif [[ ${virt_type} =~ "^[Oo][Pp][Ee][Nn][Vv][Zz]" ]];then
-        _red "您的VPS基于OpenVZ，不受支持！"
     fi
 
     # 获取当前系统中所有的swap分区
