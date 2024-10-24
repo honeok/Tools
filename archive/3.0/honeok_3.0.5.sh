@@ -7091,6 +7091,7 @@ EOF
                 echo -e "当前Python版本号: ${yellow}$VERSION${white}"
                 ;;
             5)
+                need_root
                 iptables_open
                 remove iptables-persistent ufw firewalld iptables-services > /dev/null 2>&1
                 _green "端口已全部开放"
@@ -7167,18 +7168,10 @@ EOF
                             rollbak_dns
                             ;;
                         3)
-                            if command -v vim >/dev/null 2>&1; then
-                                vim /etc/resolv.conf
-                            else
-                                vi /etc/resolv.conf
-                            fi
+                            ( command -v vim >/dev/null 2>&1 && vim /etc/resolv.conf ) || vi /etc/resolv.conf
                             ;;
                         4)
-                            if lsattr /etc/resolv.conf | grep -qi 'i'; then
-                                unlock_dns
-                            else
-                                lock_dns
-                            fi
+                            ( lsattr /etc/resolv.conf | grep -qi 'i' && unlock_dns ) || lock_dns
                             ;;
                         0)
                             break
@@ -7266,8 +7259,11 @@ EOF
                             echo "该功能由jhb提供，感谢！"
                             bash <(curl -L -s jhb.ovh/jb/v6.sh)
                             ;;
-                        *)
+                        0)
                             break
+                            ;;
+                        *)
+                            _red "无效选项，请重新输入"
                             ;;
                     esac
                 done
@@ -7288,7 +7284,7 @@ EOF
 
                     _yellow "当前虚拟内存: ${swap_info}"
                     echo "------------------------"
-                    echo "1. 分配1024MB     2. 分配2048MB     3. 自定义大小（建议为内存的2倍！）     0. 退出"
+                    echo "1. 分配1024MB         2. 分配2048MB         3. 自定义大小         0. 退出"
                     echo "------------------------"
                     
                     echo -n -e "${yellow}请输入选项并按回车键确认:${white}"
@@ -7543,13 +7539,15 @@ EOF
                         echo ""
                         echo "防火墙管理"
                         echo "------------------------"
-                        echo "1. 开放指定端口              2. 关闭指定端口"
-                        echo "3. 开放所有端口              4. 关闭所有端口"
+                        echo "1. 开放指定端口                 2.  关闭指定端口"
+                        echo "3. 开放所有端口                 4.  关闭所有端口"
                         echo "------------------------"
-                        echo "5. IP白名单                  6. IP黑名单"
+                        echo "5. IP白名单                    6.  IP黑名单"
                         echo "7. 清除指定IP"
                         echo "------------------------"
-                        echo "9. 卸载防火墙"
+                        echo "11. 允许PING                  12. 禁止PING"
+                        echo "------------------------"
+                        echo "99. 卸载防火墙"
                         echo "------------------------"
                         echo "0. 返回上一级选单"
                         echo "------------------------"
@@ -7620,7 +7618,16 @@ EOF
                                 sed -i "/-A INPUT -s $d_ip/d" /etc/iptables/rules.v4
                                 iptables-restore < /etc/iptables/rules.v4
                                 ;;
-                            9)
+                            11)
+                                sed -i '$i -A INPUT -p icmp --icmp-type echo-request -j ACCEPT' /etc/iptables/rules.v4
+                                sed -i '$i -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT' /etc/iptables/rules.v4
+                                iptables-restore < /etc/iptables/rules.v4
+                                ;;
+                            12)
+                                sed -i "/icmp/d" /etc/iptables/rules.v4
+                                iptables-restore < /etc/iptables/rules.v4
+                                ;;
+                            99)
                                 remove iptables-persistent
                                 rm /etc/iptables/rules.v4
                                 break
@@ -7865,6 +7872,7 @@ EOF
                 ;;
             23)
                 need_root
+                set_script_dir
                 while true; do
                     clear
                     echo "限流关机功能"
@@ -7874,14 +7882,14 @@ EOF
                     echo "$output"
 
                     # 检查是否存在 Limiting_Shut_down.sh 文件
-                    if [ -f ~/Limiting_Shut_down.sh ]; then
+                    if [ -f ${globle_script_dir}/Limiting_Shut_down.sh ]; then
                         # 获取 threshold_gb 的值
-                        rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                        tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ~/Limiting_Shut_down.sh)
-                        echo "当前设置的进站限流阈值为: ${rx_threshold_gb}GB"
-                        echo "当前设置的出站限流阈值为: ${tx_threshold_gb}GB"
+                        rx_threshold_gb=$(grep -oP 'rx_threshold_gb=\K\d+' ${globle_script_dir}/Limiting_Shut_down.sh)
+                        tx_threshold_gb=$(grep -oP 'tx_threshold_gb=\K\d+' ${globle_script_dir}/Limiting_Shut_down.sh)
+                        _yellow "当前设置的进站限流阈值为: ${rx_threshold_gb}GB"
+                        _yellow "当前设置的出站限流阈值为: ${tx_threshold_gb}GB"
                     else
-                        echo "当前未启用限流关机功能"
+                        _red "当前未启用限流关机功能"
                     fi
 
                     echo ""
@@ -7902,23 +7910,23 @@ EOF
                             read -r cz_day
                             cz_day=${cz_day:-1}
 
-                            cd ~
-                            curl -fsSL -o "~/Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
-                            chmod +x ~/Limiting_Shut_down.sh
-                            sed -i "s/110/$rx_threshold_gb/g" ~/Limiting_Shut_down.sh
-                            sed -i "s/120/$tx_threshold_gb/g" ~/Limiting_Shut_down.sh
+                            cd ${globle_script_dir}
+                            curl -fsSL -o "Limiting_Shut_down.sh" "${github_proxy}raw.githubusercontent.com/honeok/Tools/main/InvScripts/Limiting_Shut_down1.sh"
+                            chmod +x ${globle_script_dir}/Limiting_Shut_down.sh
+                            sed -i "s/110/$rx_threshold_gb/g" ${globle_script_dir}/Limiting_Shut_down.sh
+                            sed -i "s/120/$tx_threshold_gb/g" ${globle_script_dir}/Limiting_Shut_down.sh
                             check_crontab_installed
-                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
-                            (crontab -l ; echo "* * * * * ~/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
+                            crontab -l | grep -v '${globle_script_dir}/Limiting_Shut_down.sh' | crontab -
+                            (crontab -l ; echo "* * * * * ${globle_script_dir}/Limiting_Shut_down.sh") | crontab - > /dev/null 2>&1
                             crontab -l | grep -v 'reboot' | crontab -
                             (crontab -l ; echo "0 1 $cz_day * * reboot") | crontab - > /dev/null 2>&1
                             _green "限流关机已开启"
                             ;;
                         2)
                             check_crontab_installed
-                            crontab -l | grep -v '~/Limiting_Shut_down.sh' | crontab -
+                            crontab -l | grep -v '${globle_script_dir}/Limiting_Shut_down.sh' | crontab -
                             crontab -l | grep -v 'reboot' | crontab -
-                            rm ~/Limiting_Shut_down.sh
+                            rm -f ${globle_script_dir}/Limiting_Shut_down.sh
                             _green "限流关机已卸载"
                             ;;
                         *)
