@@ -352,7 +352,7 @@ set_region_config() {
         execute_commands=0  # 0 表示允许执行命令
 
         # GitHub代理兼容IPv4和IPv6
-        local github_cdn=("gh-proxy.com" "sciproxy.com" "ghproxy.1888866.xyz" "gh.api.99988866.xyz")
+        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.kejilion.pro")
         local best_proxy=""
         local best_time=9999  # 设置一个较大的初始延迟值
         local ping_time=""
@@ -8802,31 +8802,68 @@ palworld_script() {
 
 # =============== 脚本更新START ===============
 honeok_update() {
-    local remote_script_url="${github_proxy}raw.githubusercontent.com/honeok/Tools/main/honeok.sh"
+    local remote_script_url="${github_proxy}https://raw.githubusercontent.com/honeok/Tools/main/honeok.sh"
     local local_script_path="$HOME/honeok.sh"
 
-    # 检查本地脚本是否存在
-    if [[ ! -f "$local_script_path" ]]; then
-        _yellow "本地脚本不存在，正在下载"
+    # 检测是否通过进程替换执行
+    if [[ "$0" == *"<(curl"* ]]; then
+        _yellow "当前脚本通过进程替换执行，您正在使用的是远程最新版本"
+        echo "是否下载最新版本?（y/n）"
+        read -r answer
+        case $answer in
+            [Yy])
+                _yellow "正在下载最新版本"
+                curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+                ;;
+            [Nn])
+                _yellow "已取消"
+                return 0
+                ;;
+            *)
+                _yellow "无效的输入，已取消"
+                return 0
+                ;;
+        esac
+    else
+        if [[ ! -f "$local_script_path" ]]; then
+        echo "本地脚本不存在，正在下载"
         curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
         return 0
     fi
 
-    # 从远程脚本中提取第6行的版本号
+    # 从远程脚本中提取版本号
     local remote_version
-    remote_version=$(curl -sL "$remote_script_url" | sed -n '6p' | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
+    local attempt=0
+    local max_attempts=3
+    while (( attempt < max_attempts )); do
+        remote_version=$(curl -sL "$remote_script_url" | sed -n 's/.*honeok_v="v\([0-9.]*\).*/\1/p')
+        if [[ -n "$remote_version" ]]; then
+            break  # 如果成功获取版本号，退出循环
+        fi
 
-    # 从本地脚本中提取第6行的版本号
+        attempt=$((attempt + 1))
+        echo -e "${yellow}尝试获取远程版本号失败，正在重试(${attempt}/${max_attempts})${white}"
+        sleep 2  # 等待 2 秒后重试
+    done
+
+    # 如果获取版本号仍然失败，输出错误并退出
+    if [[ -z "$remote_version" ]]; then
+        _red "无法获取远程版本号，请检查网络连接或代理设置"
+        return 1
+    fi
+
+    # 从本地脚本中提取版本号
     local local_version
-    local_version=$(sed -n '6p' "$local_script_path" | awk -F'=' '{print $2}' | tr -d '"' | awk '{print $1}')
+    local_version=$(sed -n 's/.*honeok_v="v\([0-9.]*\).*/\1/p' "$local_script_path")
 
     # 检查版本号并更新脚本
-    if [[ "$remote_version" != "$local_version" ]]; then
+    if [[ "$(printf '%s\n' "$remote_version" "$local_version" | sort -V | head -n 1)" == "$local_version" ]]; then
+        echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
+        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}（本地版本较新，不需要更新）"
+    else
         echo -e "${white}远程版本: ${yellow}$remote_version${white} ${white}本地版本: ${yellow}$local_version${white}" 
         curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
         echo -e "${white}脚本已更新到最新版本: ${yellow}$remote_version${white}"
-    else
-        echo -e "${white}脚本已是最新版本: ${yellow}$local_version${white}"
     fi
 }
 
