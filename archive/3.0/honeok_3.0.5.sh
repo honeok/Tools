@@ -110,18 +110,13 @@ virt_check() {
 ## 菜单排版参考: https://github.com/spiritLHLS/ecs
 system_info(){
     # 获取CPU型号
-    local cpu_model=$(grep -i 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}')
-    # 如果第一种方法未能获取到CPU型号，则使用第二种方法
-    if [[ -z "$cpu_model" ]]; then
-        cpu_model=$(lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
-    fi
+    local cpu_model=$(grep -i 'model name' /proc/cpuinfo | head -n 1 | awk -F': ' '{print $2}' || \
+                    lscpu | sed -n 's/^Model name:[[:space:]]*\(.*\)$/\1/p')
 
     # 获取核心数
-    local cpu_cores=$(awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo || grep -c '^processor' /proc/cpuinfo)
-    # 如果第一种方法未能获取到CPU核心数，则使用第二种方法
-    if [[ "$cpu_cores" -eq 0 ]]; then
-        cpu_cores=$(lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
-    fi
+    local cpu_cores=$(awk -F: '/model name/ {core++} END {print core}' /proc/cpuinfo 2>/dev/null || \
+                    grep -c '^processor' /proc/cpuinfo || \
+                    lscpu | sed -n 's/^CPU(s):[[:space:]]*\(.*\)$/\1/p')
 
     # 获取CPU频率
     local cpu_frequency=$(awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' || grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
