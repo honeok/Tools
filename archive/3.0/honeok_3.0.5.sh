@@ -5728,13 +5728,14 @@ install_crontab() {
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         case "$ID" in
-            ubuntu|debian)
-                install cron
+            ubuntu|debian|kali)
+                apt update
+                apt install -y cron
                 enable cron
                 start cron
                 ;;
             centos|rhel|almalinux|rocky|fedora)
-                install cronie
+                yum install -y cronie
                 enable crond
                 start crond
                 ;;
@@ -5742,6 +5743,22 @@ install_crontab() {
                 apk add --no-cache cronie
                 rc-update add crond
                 rc-service crond start
+                ;;
+            arch|manjaro)
+                pacman -S --noconfirm cronie
+                enable cronie
+                start cronie
+                ;;
+            opensuse|suse|opensuse-tumbleweed)
+                zypper install -y cron
+                enable cron
+                start cron
+                ;;
+            openwrt|lede)
+                opkg update
+                opkg install cron
+                /etc/init.d/cron enable
+                /etc/init.d/cron start
                 ;;
             *)
                 _red "不支持的发行版:$ID"
