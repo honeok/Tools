@@ -377,7 +377,7 @@ global_exit_action() {
 set_region_config() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
         _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
-        _orange "鸣谢Github-Mirror: https://github-mirror.us.kg"
+        _purple "鸣谢Github-Mirror: https://github-mirror.us.kg"
         execute_commands=0  # 0 表示允许执行命令
 
         # GitHub代理兼容IPv4和IPv6
@@ -1036,7 +1036,7 @@ docker_global_status() {
     local volume_count=$(docker volume ls -q 2>/dev/null | wc -l)
 
     if command -v docker &> /dev/null; then
-        _cyan "------------------------"
+        echo "-------------------------"
         echo -e "${green}环境已经安装${white}  容器: ${green}$container_count${white}  镜像: ${green}$image_count${white}  网络: ${green}$network_count${white}  卷: ${green}$volume_count${white}"
     fi
 }
@@ -1679,22 +1679,33 @@ docker_manager(){
                 ;;
             2)
                 clear
-                echo "Docker版本"
-                docker -v
-                manage_compose version
-                echo ""
-                echo "Docker镜像列表"
-                docker image ls
-                echo ""
-                echo "Docker容器列表"
-                docker ps -a
-                echo ""
-                echo "Docker卷列表"
-                docker volume ls
-                echo ""
-                echo "Docker网络列表"
-                docker network ls
-                echo ""
+                local image_count=$(docker images -q 2>/dev/null | wc -l)
+                local container_count=$(docker ps -a -q 2>/dev/null | wc -l)
+                local network_count=$(docker network ls -q 2>/dev/null | wc -l)
+                local volume_count=$(docker volume ls -q 2>/dev/null | wc -l)
+
+                # 显示镜像、容器、卷和网络列表
+                for resource in "镜像列表" "容器列表" "卷列表" "网络列表"; do
+                    case "$resource" in
+                        "镜像列表") count_var=$image_count ;;
+                        "容器列表") count_var=$container_count ;;
+                        "卷列表") count_var=$volume_count ;;
+                        "网络列表") count_var=$network_count ;;
+                    esac
+
+                    echo "Docker${resource}:"
+                    if [ "$count_var" -gt 0 ]; then
+                        case "$resource" in
+                            "镜像列表") docker image ls ;;
+                            "容器列表") docker ps -a ;;
+                            "卷列表") docker volume ls ;;
+                            "网络列表") docker network ls ;;
+                        esac
+                    else
+                        _red "None"
+                    fi
+                    echo ""
+                done
                 ;;
             3)
                 docker_ps
