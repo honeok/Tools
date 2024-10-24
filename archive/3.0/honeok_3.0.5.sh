@@ -330,7 +330,7 @@ _exit() {
     # 终止信号捕获 Ctrl+c
     echo -e "\n${red}检测到退出操作，脚本终止！${white}"
     global_exit_action
-    exit 1
+    exit 0
 }
 
 # 全局退出操作
