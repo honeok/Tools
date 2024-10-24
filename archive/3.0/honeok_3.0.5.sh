@@ -5373,10 +5373,10 @@ check_swap() {
             local new_swap=1024
             add_swap "$new_swap"
         else
-            _green "物理内存大于900MB,不需要添加交换空间"
+            _yellow "物理内存大于900MB，不需要添加交换空间"
         fi
     else
-        _green "系统已经有交换空间,总大小为 ${swap_total}MB"
+        _green "系统已经有交换空间，总大小为${swap_total}MB"
     fi
 }
 
