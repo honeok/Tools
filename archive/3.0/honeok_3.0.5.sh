@@ -1559,23 +1559,23 @@ docker_image() {
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    _yellow "正在获取镜像: " "$name"
-                    docker pull "$name"
+                    echo -e "${yellow}正在获取镜像: $name${white}"
+                    docker pull $name
                 done
                 ;;
             2)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    _yellow "正在更新镜像: " "$name"
-                    docker pull "$name"
+                    echo -e "${yellow}正在更新镜像: $name${white}"
+                    docker pull $name
                 done
                 ;;
             3)
                 echo -n "请输入镜像名（多个镜像名请用空格分隔）:"
                 read -r imagenames
                 for name in $imagenames; do
-                    docker rmi -f "$name"
+                    docker rmi -f $name
                 done
                 ;;
             4)
@@ -1584,9 +1584,14 @@ docker_image() {
 
                 case "$choice" in
                     [Yy])
-                        docker rmi -f $(docker images -q)
+                        if [ -n "$(docker images -q)" ]; then
+                            docker rmi -f $(docker images -q)
+                        else
+                            _yellow "没有镜像可删除"
+                        fi
                         ;;
                     [Nn])
+                        _yellow "操作已取消"
                         ;;
                     *)
                         _red "无效选项，请重新输入"
