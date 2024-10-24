@@ -127,7 +127,7 @@ system_info(){
     local cpu_frequency=$(awk -F: '/cpu MHz/ {freq=$2} END {print freq}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//' || grep -m 1 'cpu MHz' /proc/cpuinfo | awk '{print $4}')
 
     # 获取CPU缓存大小
-    cpu_cache_info=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
+    local cpu_cache_info=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
 
     # 检查AES-NI指令集支持
     local aes_ni
