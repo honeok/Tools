@@ -384,19 +384,20 @@ set_region_config() {
         local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.hlg.us.kg" "ghpr.cc" "git.669966.xyz")
         local best_proxy=""
         local best_time=9999  # 设置一个较大的初始延迟值
-        local ping_time=""
+        local results
 
-        # 对每个代理进行ping测试，选出延迟最短的代理
-        for proxy in "${github_cdn[@]}"; do
-            # 进行两次ping测试并提取平均时间，如果ping失败则设为9999
-            ping_time=$(ping -c 2 -q "$proxy" | awk -F '/' 'END {print ($5 ? $5 : 9999)}')
+        # 并行检测每个代理
+        results=$(printf "%s\n" "${github_cdn[@]}" | xargs -P 0 -I {} bash -c 'ping -c 2 -q "{}" | tail -n 1 | awk -F "/" "{print (\$5 ? \$5 : 9999) \" {}\"}"')
 
-            # 使用整数比较
-            if (( $(echo "$ping_time" | awk '{print int($1+0.5)}') < $best_time )); then
-                best_time=$(echo "$ping_time" | awk '{print int($1+0.5)}')
+        # 处理结果并找出最佳代理
+        while read -r line; do
+            local time=$(echo "$line" | awk '{print $1}')
+            local proxy=$(echo "$line" | awk '{print $2}')
+            if (( $(echo "$time" | awk '{print int($1+0.5)}') < best_time )); then
+                best_time=$(echo "$time" | awk '{print int($1+0.5)}')
                 best_proxy=$proxy
             fi
-        done
+        done <<< "$results"
 
         # 设置找到的最佳代理
         github_proxy="https://$best_proxy/"
