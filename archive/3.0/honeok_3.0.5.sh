@@ -347,8 +347,8 @@ system_info(){
 # =============== 通用函数START ===============
 # 设置地区相关的Github代理配置
 set_region_config() {
-    if [[ "$(curl -s --connect-timeout 5 -m 6 ipinfo.io/country)" == "CN" ]] || [[ $(curl -s --connect-timeout 5 -m 6 https://cip.cc) =~ "中国" ]]; then
-        _yellow "根据ipinfo.io或cip.cc提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
+    if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
+        _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
         execute_commands=0  # 0 表示允许执行命令
 
         # 定义局部变量，GitHub代理均为双栈兼容IPv4和IPv6
@@ -5045,23 +5045,31 @@ lock_dns_status() {
 }
 
 reinstall_system() {
+    local initialPort
+    local current_sshport=$(grep -E '^[^#]*Port [0-9]+' /etc/ssh/sshd_config | awk '{print $2}')
     local os_info=$(grep '^PRETTY_NAME=' /etc/os-release | cut -d '"' -f 2)
     local os_text="当前操作系统: ${os_info}"
 
-    dd_xitong_MollyLau() {
+    reins_script_MollyLau() {
         wget --no-check-certificate -qO InstallNET.sh "${github_proxy}https://raw.githubusercontent.com/leitbogioro/Tools/master/Linux_reinstall/InstallNET.sh" && chmod a+x InstallNET.sh
     }
 
-    dd_xitong_bin456789() {
+    reins_script_bin456789() {
         curl -fsSL -O "${github_proxy}https://raw.githubusercontent.com/bin456789/reinstall/main/reinstall.sh"
     }
 
     dd_xitong_1() {
-        echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  初始端口: ${yellow}22${white}"
+        if [[ ${current_sshport} != "22" ]];then
+            initialPort="重装后端口: ${yellow}${current_sshport}${white}"
+        else
+            initialPort="重装后端口: ${yellow}22${white}"
+        fi
+
+        echo -e "重装后初始用户名: ${yellow}root${white}  初始密码: ${yellow}LeitboGi0ro${white}  ${initialPort}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
         install wget
-        dd_xitong_MollyLau
+        reins_script_MollyLau
     }
 
     dd_xitong_2() {
@@ -5069,21 +5077,21 @@ reinstall_system() {
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
         install wget
-        dd_xitong_MollyLau
+        reins_script_MollyLau
     }
 
     dd_xitong_3() {
         echo -e "重装后初始用户名: ${yellow}root${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}22${white}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
-        dd_xitong_bin456789
+        reins_script_bin456789
     }
 
     dd_xitong_4() {
         echo -e "重装后初始用户名: ${yellow}Administrator${white} 初始密码: ${yellow}123@@@${white} 初始端口: ${yellow}3389${white}"
         _yellow "按任意键继续"
         read -n 1 -s -r -p ""
-        dd_xitong_bin456789
+        reins_script_bin456789
     }
 
     # 重装系统
@@ -5106,7 +5114,7 @@ reinstall_system() {
         echo "23. Alma Linux 9              24. Alma Linux 8"
         echo "25. Oracle Linux 9            26. Oracle Linux 8"
         echo "27. Fedora Linux 40           28. Fedora Linux 39"
-        echo "29. CentOS 7"
+        echo "29. CentOS 9                  30. CentOS 7"
         echo "-------------------------"
         echo "31. Alpine Linux              32. Arch Linux"
         echo "33. Kali Linux                34. openEuler"
@@ -5173,7 +5181,7 @@ reinstall_system() {
                 ;;
             21)
                 dd_xitong_3
-                bash reinstall.sh rocky
+                bash reinstall.sh rocky 9
                 reboot
                 exit
                 ;;
@@ -5185,7 +5193,7 @@ reinstall_system() {
                 ;;
             23)
                 dd_xitong_3
-                bash reinstall.sh alma
+                bash reinstall.sh alma 9
                 reboot
                 exit
                 ;;
@@ -5197,7 +5205,7 @@ reinstall_system() {
                 ;;
             25)
                 dd_xitong_3
-                bash reinstall.sh oracle
+                bash reinstall.sh oracle 9
                 reboot
                 exit
                 ;;
@@ -5209,7 +5217,7 @@ reinstall_system() {
                 ;;
             27)
                 dd_xitong_3
-                bash reinstall.sh fedora
+                bash reinstall.sh fedora 40
                 reboot
                 exit
                 ;;
@@ -5220,6 +5228,12 @@ reinstall_system() {
                 exit
                 ;;
             29)
+                dd_xitong_3
+                bash reinstall.sh centos 9
+                reboot
+                exit
+                ;;
+            30)
                 dd_xitong_1
                 bash InstallNET.sh -centos 7
                 reboot
