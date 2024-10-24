@@ -377,10 +377,11 @@ global_exit_action() {
 set_region_config() {
     if [[ "$(curl -s --connect-timeout 5 ipinfo.io/country)" == "CN" ]]; then
         _yellow "根据ipinfo.io提供的信息，当前IP可能在中国，正在分配最佳GitHub代理"
+        echo "鸣谢 Github-Mirror: https://github-mirror.us.kg"
         execute_commands=0  # 0 表示允许执行命令
 
         # GitHub代理兼容IPv4和IPv6
-        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.kejilion.pro")
+        local github_cdn=("gh-proxy.com" "ghproxy.1888866.xyz" "gh.hlg.us.kg" "www.ghpr.cc" "gh.kejilion.pro")
         local best_proxy=""
         local best_time=9999  # 设置一个较大的初始延迟值
         local ping_time=""
