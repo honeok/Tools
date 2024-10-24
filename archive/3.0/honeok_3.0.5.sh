@@ -35,7 +35,7 @@ cd /root >/dev/null 2>&1
 honeok_pid="/tmp/honeok.pid"
 
 if [ -f "$honeok_pid" ] && kill -0 $(cat "$honeok_pid") 2>/dev/null; then
-    echo -n "${red}脚本已经在运行！如误判烦请反馈问题至:${white} https://github.com/honeok/Tools/issues"
+    echo -e "${red}脚本已经在运行！如误判烦请反馈问题至:${white} https://github.com/honeok/Tools/issues"
     exit 1
 fi
 
