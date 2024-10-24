@@ -31,6 +31,15 @@ _gray() { echo -e ${gray}$@${white}; }
 _orange() { echo -e ${orange}$@${white}; }
 
 cd /root >/dev/null 2>&1
+honeok_pid="/tmp/honeok.pid"
+
+if [ -f "$honeok_pid" ] && kill -0 $(cat "$honeok_pid") 2>/dev/null; then
+    _red "脚本已经在运行！"
+    exit 1
+fi
+
+## 将当前进程的PID写入文件
+echo $$ > "$honeok_pid"
 
 ## =================== Logo ==================
 print_logo(){
@@ -344,6 +353,25 @@ system_info(){
     echo
 }
 
+## =============== 脚本退出执行相关 ===============
+# 终止信号捕获，意外中断时能优雅地处理
+trap _exit SIGINT SIGQUIT SIGTERM SIGHUP
+
+_exit() {
+    # 终止信号捕获 Ctrl+c
+    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
+    global_exit_action
+    exit 1
+}
+
+# 全局退出操作
+global_exit_action() {
+    # 删除PID文件，如果文件存在
+    if [ -f "$honeok_pid" ]; then
+        rm -f "$honeok_pid"
+    fi
+}
+
 # =============== 通用函数START ===============
 # 设置地区相关的Github代理配置
 set_region_config() {
@@ -375,7 +403,7 @@ set_region_config() {
         sleep 2s
     else
         execute_commands=1  # 1 表示不执行命令
-        github_proxy=""  # 不使用代理
+        github_proxy=""     # 不使用代理
     fi
 }
 
@@ -609,15 +637,6 @@ end_of() {
 need_root() {
     clear
     [ "$(id -u)" -ne "0" ] && _red "提示: 该功能需要root用户才能运行！" && end_of && honeok
-}
-
-# 终止信号捕获，意外中断时能优雅地处理
-trap _exit SIGINT SIGQUIT SIGTERM
-
-_exit() {
-    # 终止信号捕获 Ctrl+c
-    echo -e "\n${red}检测到退出操作，脚本终止！${white}"
-    exit 1
 }
 
 # 获取公网IP地址
@@ -8826,9 +8845,10 @@ honeok_update() {
         esac
     else
         if [[ ! -f "$local_script_path" ]]; then
-        echo "本地脚本不存在，正在下载"
-        curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
-        return 0
+            echo "本地脚本不存在，正在下载"
+            curl -s -o "$local_script_path" "$remote_script_url" && chmod a+x "$local_script_path"
+            return 0
+        fi
     fi
 
     # 从远程脚本中提取版本号
@@ -8961,6 +8981,7 @@ honeok() {
             0)
                 _orange "Bye!" && sleep 1
                 clear
+                global_exit_action
                 exit 0
                 ;;
             *)
@@ -8973,4 +8994,5 @@ honeok() {
 
 # 脚本入口
 honeok
+global_exit_action
 exit 0
